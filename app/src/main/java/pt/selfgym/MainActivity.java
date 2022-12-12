@@ -1,21 +1,23 @@
-package com.example.selfgym;
+package pt.selfgym;
 
 import android.os.Bundle;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.selfgym.databinding.ActivityMainBinding;
+import pt.selfgym.databinding.ActivityMainBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
+import pt.selfgym.Interfaces.ActivityInterface;
+
+public class MainActivity extends AppCompatActivity implements ActivityInterface {
 
     private ActivityMainBinding binding;
-
+    private SharedViewModel model;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,25 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        model  = new ViewModelProvider(this).get(SharedViewModel.class);
+//        model.startDB();
+//        model.getToastMessageObserver().observe(this, message -> {
+//            Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+//        });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //model.startDB();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public MainActivity getMainActivity() {
+        return this;
+    }
 }

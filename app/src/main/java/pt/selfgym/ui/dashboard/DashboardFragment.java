@@ -1,5 +1,6 @@
-package com.example.selfgym.ui.dashboard;
+package pt.selfgym.ui.dashboard;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.selfgym.databinding.FragmentDashboardBinding;
+import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.databinding.FragmentDashboardBinding;
 
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
+    private ActivityInterface activityInterface;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        activityInterface = (ActivityInterface) context;
+    }
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

@@ -1,4 +1,4 @@
-package com.example.selfgym.ui.notifications;
+package pt.selfgym.ui.notifications;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
