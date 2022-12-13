@@ -6,4 +6,6 @@
     <string name="title_calendar">Calendar</string>
     <string name="title_workouts">Workouts</string>
     <string name="title_statistics">Statistics</string>
+    <string name="filter_menu">Filter</string>
+    <string name="searchmenu">Search</string>
 </resources>

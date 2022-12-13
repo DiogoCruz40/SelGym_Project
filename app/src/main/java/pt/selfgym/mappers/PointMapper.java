@@ -3,7 +3,6 @@ package pt.selfgym.mappers;
 
 import pt.selfgym.Interfaces.PointMapperInterface;
 import pt.selfgym.database.entities.Point;
-import pt.selfgym.dtos.PointDTO;
 
 import org.modelmapper.ModelMapper;
 
@@ -27,7 +26,7 @@ public class PointMapper implements PointMapperInterface {
                 .collect(Collectors.toList());
     }
 
-    @Override
+    /*@Override
     public Point toEntityPoint(PointDTO pointDTO) {
         return modelMapper.map(pointDTO, Point.class);
     }
@@ -45,6 +44,6 @@ public class PointMapper implements PointMapperInterface {
     @Override
     public List<PointDTO> toPointsDTO(List<Point> points) {
         return mapList(points, PointDTO.class);
-    }
+    }*/
 
 }
