@@ -1,4 +1,4 @@
-package pt.selfgym.ui.dashboard;
+package pt.selfgym.ui.statistics;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,11 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import pt.selfgym.Interfaces.ActivityInterface;
-import pt.selfgym.databinding.FragmentDashboardBinding;
+import pt.selfgym.databinding.FragmentStatisticsBinding;
 
-public class DashboardFragment extends Fragment {
+public class StatisticsFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentStatisticsBinding binding;
     private ActivityInterface activityInterface;
 
     @Override
@@ -25,17 +25,16 @@ public class DashboardFragment extends Fragment {
         activityInterface = (ActivityInterface) context;
     }
 
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        StatisticsViewModel statisticsViewModel =
+                new ViewModelProvider(this).get(StatisticsViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentStatisticsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textNotifications;
+        statisticsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

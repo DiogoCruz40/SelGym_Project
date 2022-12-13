@@ -1,4 +1,4 @@
-package pt.selfgym.ui.home;
+package pt.selfgym.ui.workouts;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,11 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import pt.selfgym.Interfaces.ActivityInterface;
-import pt.selfgym.databinding.FragmentHomeBinding;
+import pt.selfgym.databinding.FragmentWorkoutsBinding;
 
-public class HomeFragment extends Fragment {
+public class WorkoutFragment extends Fragment {
 
-    private FragmentHomeBinding binding;
+    private FragmentWorkoutsBinding binding;
     private ActivityInterface activityInterface;
 
     @Override
@@ -25,16 +25,17 @@ public class HomeFragment extends Fragment {
         activityInterface = (ActivityInterface) context;
     }
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        WorkoutViewModel workoutViewModel =
+                new ViewModelProvider(this).get(WorkoutViewModel.class);
 
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentWorkoutsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textDashboard;
+        workoutViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
