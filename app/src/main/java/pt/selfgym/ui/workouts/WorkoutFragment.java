@@ -28,11 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.Interfaces.WorkoutsInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
 import pt.selfgym.dtos.WorkoutDTO;
 
-public class WorkoutFragment extends Fragment implements pt.cm.challenge_2.Interfaces.WorkoutsInterface {
+public class WorkoutFragment extends Fragment implements WorkoutsInterface {
 
     private SharedViewModel mViewModel;
     private ListAdapter adapter;

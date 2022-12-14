@@ -1,4 +1,4 @@
-package pt.cm.challenge_2.Interfaces;
+package pt.selfgym.Interfaces;
 
 import android.view.View;
 

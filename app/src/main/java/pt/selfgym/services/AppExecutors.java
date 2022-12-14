@@ -1,4 +1,4 @@
-package pt.selfgym;
+package pt.selfgym.services;
 
 import android.os.Handler;
 import android.os.Looper;

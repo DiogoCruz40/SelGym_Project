@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import pt.cm.challenge_2.Interfaces.WorkoutsInterface;
+import pt.selfgym.Interfaces.WorkoutsInterface;
 import pt.selfgym.R;
 import pt.selfgym.dtos.WorkoutDTO;
 

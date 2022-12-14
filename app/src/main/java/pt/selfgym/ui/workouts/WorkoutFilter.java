@@ -1,5 +1,7 @@
 package pt.selfgym.ui.workouts;
 
+import java.util.Objects;
+
 public class WorkoutFilter {
     private boolean upperBody;
     private boolean lowerBody;
@@ -56,24 +58,24 @@ public class WorkoutFilter {
     }
 
     public boolean filter(String workoutType){
-        if (workoutType == "upper body"){
-            if (upperBody = true){
+        if (Objects.equals(workoutType, "upper body")){
+            if (upperBody){
                 return true;
             }
-        } else if (workoutType == "lower body"){
-            if (lowerBody = true){
+        } else if (Objects.equals(workoutType, "lower body")){
+            if (lowerBody){
                 return true;
             }
-        } else if (workoutType == "full body"){
-            if (fullBody = true){
+        } else if (Objects.equals(workoutType, "full body")){
+            if (fullBody){
                 return true;
             }
-        } else if (workoutType == "push") {
-            if (push = true) {
+        } else if (Objects.equals(workoutType, "push")) {
+            if (push) {
                 return true;
             }
-        } else if (workoutType == "pull"){
-            if (pull = true){
+        } else if (Objects.equals(workoutType, "pull")){
+            if (pull){
                 return true;
             }
         }
