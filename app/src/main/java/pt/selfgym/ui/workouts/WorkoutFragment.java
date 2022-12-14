@@ -1,7 +1,6 @@
 package pt.selfgym.ui.workouts;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -18,15 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +30,6 @@ import java.util.List;
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
-import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.WorkoutDTO;
 
 public class WorkoutFragment extends Fragment implements pt.cm.challenge_2.Interfaces.WorkoutsInterface {
@@ -48,6 +43,8 @@ public class WorkoutFragment extends Fragment implements pt.cm.challenge_2.Inter
     private EditText newNoteName, subscribetopic, topicname;
     private Button deleteNote, saveNewName, cancel, subscribe, unsubscribe, addtopic, removetopic, sharenote;
     private int id;
+    private WorkoutFilter workoutFilters = new WorkoutFilter();
+    private String searchString = "";
 
     public WorkoutFragment() {
 
@@ -75,10 +72,10 @@ public class WorkoutFragment extends Fragment implements pt.cm.challenge_2.Inter
         });*/
 
         ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
-        workouts.add(new WorkoutDTO(1,"olá1","hey","hell"));
-        workouts.add(new WorkoutDTO(2,"olá2","hey","hell"));
-        workouts.add(new WorkoutDTO(3,"olá3","hey","hell"));
-        workouts.add(new WorkoutDTO(4,"olá4","hey","hell"));
+        workouts.add(new WorkoutDTO(1,"olá1","hey","full body"));
+        workouts.add(new WorkoutDTO(2,"olá2","hey","upper body"));
+        workouts.add(new WorkoutDTO(3,"olá3","hey","lower body"));
+        workouts.add(new WorkoutDTO(4,"olá4","hey","push"));
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
         adapter = new ListAdapter(workouts, this);
         recyclerView.setHasFixedSize(true);
@@ -94,6 +91,7 @@ public class WorkoutFragment extends Fragment implements pt.cm.challenge_2.Inter
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_workouts, menu);
         MenuItem menuItem = menu.findItem(R.id.searchbar);
+        MenuItem filterItem = menu.findItem(R.id.filtermenu);
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setQueryHint("Type here to search");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -104,16 +102,20 @@ public class WorkoutFragment extends Fragment implements pt.cm.challenge_2.Inter
 
             @Override
             public boolean onQueryTextChange(String s) {
+                searchString = s; //filter function needs access to this string
                 List<WorkoutDTO> workouts = adapter.getWorkouts();
                 if (s.length() != 0) {
                     List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
                     for (WorkoutDTO n : workouts) {
                         if (n.getName().toLowerCase().contains(s.toLowerCase())) {
-                            filteredList.add(n);
+                            if(workoutFilters.filter(n.getType())){
+                                filteredList.add(n);
+                            }
                         }
                     }
                     if (filteredList.isEmpty()) {
                         Toast.makeText(activityInterface.getMainActivity(), "No Results for your search", Toast.LENGTH_LONG).show();
+                        adapter.setFilteredWorkouts(filteredList);
                     } else {
                         adapter.setFilteredWorkouts(filteredList);
                     }
@@ -121,6 +123,13 @@ public class WorkoutFragment extends Fragment implements pt.cm.challenge_2.Inter
                     adapter.setFilteredWorkouts(workouts);
                 }
 
+                return false;
+            }
+        });
+        filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                createWorkoutFilterPopUp();
                 return false;
             }
         });
@@ -159,106 +168,100 @@ public class WorkoutFragment extends Fragment implements pt.cm.challenge_2.Inter
     }
 
 
-    /*public void createNewTitleDeletePopUp() {
+    public void createWorkoutFilterPopUp() {
 
         dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
-        final View newTitleDeletePopUp = getLayoutInflater().inflate(R.layout.new_title_delete_popup, null);
-        newNoteName = (EditText) newTitleDeletePopUp.findViewById(R.id.newNoteName);
-        newNoteName.setText(mViewModel.getNoteById(id).getTitle());
+        final View createWorkoutFilterPopUp = getLayoutInflater().inflate(R.layout.workout_filter_popup, null);
+        Button filterButton = (Button) createWorkoutFilterPopUp.findViewById(R.id.filterB);
+        CheckBox fullBody = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.fullBodyCB);
+        if (workoutFilters.isFullBody()){
+            fullBody.setChecked(true);
+        } else {
+            fullBody.setChecked(false);
+        }
+        CheckBox lowerBody = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.lowerBodyCB);
+        if (workoutFilters.isLowerBody()){
+            lowerBody.setChecked(true);
+        } else {
+            lowerBody.setChecked(false);
+        }
+        CheckBox upperBody = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.upperBodyCB);
+        if (workoutFilters.isUpperBody()){
+            upperBody.setChecked(true);
+        } else {
+            upperBody.setChecked(false);
+        }
+        CheckBox push = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.pushCB);
+        if (workoutFilters.isPush()){
+            push.setChecked(true);
+        } else {
+            push.setChecked(false);
+        }
+        CheckBox pull = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.pullCB);
+        if (workoutFilters.isPull()){
+            pull.setChecked(true);
+        } else {
+            pull.setChecked(false);
+        }
 
-        deleteNote = (Button) newTitleDeletePopUp.findViewById(R.id.deleteButton);
-        saveNewName = (Button) newTitleDeletePopUp.findViewById(R.id.editNameButton);
-        cancel = (Button) newTitleDeletePopUp.findViewById(R.id.cancelButton);
-        addtopic = (Button) newTitleDeletePopUp.findViewById(R.id.addtopicbtn);
-        removetopic = (Button) newTitleDeletePopUp.findViewById(R.id.removetopicbtn);
-        sharenote = (Button) newTitleDeletePopUp.findViewById(R.id.sharenotebtn);
-        topicname = (EditText) newTitleDeletePopUp.findViewById(R.id.topicnameeditid);
-        spinnertopicshare = (Spinner) newTitleDeletePopUp.findViewById(R.id.spinnersharemqtt);
-        List<String> topics = new ArrayList<String>();
 
-        dialogBuilder.setView(newTitleDeletePopUp);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(fullBody.isChecked()){
+                    workoutFilters.setFullBody(true);
+                } else {
+                    workoutFilters.setFullBody(false);
+                }
+                if(upperBody.isChecked()){
+                    workoutFilters.setUpperBody(true);
+                } else {
+                    workoutFilters.setUpperBody(false);
+                }
+                if(lowerBody.isChecked()){
+                    workoutFilters.setLowerBody(true);
+                } else {
+                    workoutFilters.setLowerBody(false);
+                }
+                if(pull.isChecked()){
+                    workoutFilters.setPull(true);
+                } else {
+                    workoutFilters.setPull(false);
+                }
+                if(push.isChecked()){
+                    workoutFilters.setPush(true);
+                } else {
+                    workoutFilters.setPush(false);
+                }
+
+                List<WorkoutDTO> workouts = adapter.getWorkouts();
+                if (searchString.length() != 0) {
+                    List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
+                    for (WorkoutDTO n : workouts) {
+                        if (n.getName().toLowerCase().contains(searchString.toLowerCase())) {
+                            if(workoutFilters.filter(n.getType())){
+                                filteredList.add(n);
+                            }
+                        }
+                    }
+                    if (filteredList.isEmpty()) {
+                        Toast.makeText(activityInterface.getMainActivity(), "No Results for your search", Toast.LENGTH_LONG).show();
+                        adapter.setFilteredWorkouts(filteredList);
+                    } else {
+                        adapter.setFilteredWorkouts(filteredList);
+                    }
+                } else {
+                    adapter.setFilteredWorkouts(workouts);
+                }
+
+                dialog.dismiss();
+            }
+        });
+
+        dialogBuilder.setView(createWorkoutFilterPopUp);
         dialog = dialogBuilder.create();
         dialog.show();
-
-        deleteNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mViewModel.deleteNote(id);
-                activityInterface.getMainActivity();
-
-                dialog.dismiss();
-            }
-        });
-
-        saveNewName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                newNoteName = (EditText) newTitleDeletePopUp.findViewById(R.id.newNoteName);
-                mViewModel.changeTitle(id, String.valueOf(newNoteName.getText()));
-
-                dialog.dismiss();
-            }
-        });
-
-        addtopic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (topics.contains(topicname.getText().toString()))
-                    Toast.makeText(activityInterface.getMainActivity(), "Already added", Toast.LENGTH_SHORT).show();
-                else if (topicname.getText().toString().isBlank())
-                    Toast.makeText(activityInterface.getMainActivity(), "Write a topic", Toast.LENGTH_SHORT).show();
-                else {
-                    topics.add(topicname.getText().toString());
-                    topicname.setText("");
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, topics);
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnertopicshare.setAdapter(adapter);
-                }
-            }
-        });
-
-        removetopic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(topics.size() > 0) {
-                    topics.remove(spinnertopicshare.getSelectedItem().toString());
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, topics);
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnertopicshare.setAdapter(adapter);
-                }
-                else
-                    Toast.makeText(activityInterface.getMainActivity(), "There are no topics", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        sharenote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(topics.size() > 0)
-                {
-                    NoteDTO noteDTO = mViewModel.getNoteById(id);
-
-                    topics.forEach(topic -> {
-                        mViewModel.publishMessage(noteDTO,topic);
-                    });
-
-                    dialog.dismiss();
-                }
-                else
-                    Toast.makeText(activityInterface.getMainActivity(), "Add a topic first", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-    }*/
+    }
 
 
     /*public void createNewNotePopUp() {

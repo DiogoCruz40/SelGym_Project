@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         final WorkoutDTO workouts = filteredWorkouts.get(position);
         holder.textView.setText(workouts.getName());
+        holder.textView2.setText("(" + workouts.getType() + ")");
     }
 
     @Override
@@ -63,13 +65,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        public TextView textView;
+        public TextView textView,textView2;
         public RelativeLayout relativeLayout;
         WorkoutsInterface workoutsInterface;
 
         public ViewHolder(View itemView, WorkoutsInterface workoutsInterface) {
             super(itemView);
             this.textView = (TextView) itemView.findViewById(R.id.textView);
+            this.textView2 = (TextView) itemView.findViewById(R.id.textView2);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.relativeLayout);
             this.workoutsInterface = workoutsInterface;
 
