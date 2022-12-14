@@ -58,23 +58,25 @@ public class WorkoutFilter {
     }
 
     public boolean filter(String workoutType){
-        if (Objects.equals(workoutType, "upper body")){
+        if (!upperBody && !lowerBody && !fullBody && !push && !pull){
+            return true;
+        } else if (workoutType == "upper body"){
             if (upperBody){
                 return true;
             }
-        } else if (Objects.equals(workoutType, "lower body")){
+        } else if (workoutType == "lower body"){
             if (lowerBody){
                 return true;
             }
-        } else if (Objects.equals(workoutType, "full body")){
+        } else if (workoutType == "full body"){
             if (fullBody){
                 return true;
             }
-        } else if (Objects.equals(workoutType, "push")) {
+        } else if (workoutType == "push") {
             if (push) {
                 return true;
             }
-        } else if (Objects.equals(workoutType, "pull")){
+        } else if (workoutType == "pull"){
             if (pull){
                 return true;
             }

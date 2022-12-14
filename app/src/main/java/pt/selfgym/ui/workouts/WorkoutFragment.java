@@ -121,7 +121,13 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                         adapter.setFilteredWorkouts(filteredList);
                     }
                 } else {
-                    adapter.setFilteredWorkouts(workouts);
+                    List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
+                    for (WorkoutDTO n : workouts) {
+                        if(workoutFilters.filter(n.getType())){
+                            filteredList.add(n);
+                        }
+                    }
+                    adapter.setFilteredWorkouts(filteredList);
                 }
 
                 return false;
@@ -252,7 +258,13 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                         adapter.setFilteredWorkouts(filteredList);
                     }
                 } else {
-                    adapter.setFilteredWorkouts(workouts);
+                    List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
+                    for (WorkoutDTO n : workouts) {
+                            if(workoutFilters.filter(n.getType())){
+                                filteredList.add(n);
+                            }
+                    }
+                    adapter.setFilteredWorkouts(filteredList);
                 }
 
                 dialog.dismiss();
