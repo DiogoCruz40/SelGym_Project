@@ -1,10 +1,13 @@
 package pt.selfgym.dtos;
 
+import java.util.ArrayList;
+
 public class WorkoutDTO {
     private int id;
     private String name;
     private String observation;
     private String type;
+    private ArrayList<Object> workoutComposition;
 
     public WorkoutDTO(int id, String name, String observation, String type) {
         this.id = id;
