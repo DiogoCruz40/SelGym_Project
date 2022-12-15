@@ -7,14 +7,13 @@
     app:layout_constraintTop_toBottomOf="@+id/search_bar"
     tools:context="pt.selfgym.ui.workouts.WorkoutFragment">
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/workouts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:foregroundGravity="top"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,12 +21,11 @@
         android:id="@+id/addWorkoutButton"
         android:layout_width="94dp"
         android:layout_height="94dp"
-        android:layout_marginBottom="112dp"
         android:background="@drawable/add_button_shape"
         android:src="@drawable/add_button1"
         app:circularflow_angles="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/workouts" />
 </androidx.constraintlayout.widget.ConstraintLayout>

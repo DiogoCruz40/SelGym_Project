@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -61,6 +63,9 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_workouts, container, false);
+        //Toolbar myToolbar = (Toolbar) view.findViewById(R.id.workoutMenu);
+        //AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+        //appCompatActivity.setSupportActionBar(myToolbar);
         setHasOptionsMenu(true);
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
         //TODO: ir buscar workouts ao viewmodel
