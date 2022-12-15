@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase;
 
 // Entities and DAOs
 import pt.selfgym.database.daos.ExerciseDAO;
+import pt.selfgym.database.daos.ExerciseWODAO;
 import pt.selfgym.database.daos.WorkoutDAO;
 
 import pt.selfgym.database.entities.Circuit;
@@ -43,4 +44,5 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract ExerciseDAO ExerciseDAO();
     public abstract WorkoutDAO WorkoutDAO();
+    public abstract ExerciseWODAO ExerciseWODAO();
 }
