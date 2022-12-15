@@ -19,9 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -78,17 +80,29 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         });*/
 
         ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
-        workouts.add(new WorkoutDTO(1,"olá1","hey","full body"));
-        workouts.add(new WorkoutDTO(2,"olá2","hey","upper body"));
-        workouts.add(new WorkoutDTO(3,"olá3","hey","lower body"));
-        workouts.add(new WorkoutDTO(4,"olá4","hey","push"));
+        workouts.add(new WorkoutDTO(1, "olá1", "hey", "full body"));
+        workouts.add(new WorkoutDTO(2, "olá2", "hey", "upper body"));
+        workouts.add(new WorkoutDTO(3, "olá3", "hey", "lower body"));
+        workouts.add(new WorkoutDTO(4, "olá4", "hey", "push"));
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
         adapter = new ListAdapter(workouts, this);
         recyclerView.setHasFixedSize(true);
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(adapter);
+
+        ImageButton addWorkoutButton = (ImageButton) view.findViewById(R.id.addWorkoutButton);
+        addWorkoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Create new workout and set the id to be passed
+                EditWorkoutFragment fr = new EditWorkoutFragment();
+                Bundle arg = new Bundle();
+                arg.putInt("id", id);
+                fr.setArguments(arg);
+
+                activityInterface.changeFrag(fr);
+            }
+        });
 
         return view;
     }
@@ -114,7 +128,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                     List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
                     for (WorkoutDTO n : workouts) {
                         if (n.getName().toLowerCase().contains(s.toLowerCase())) {
-                            if(workoutFilters.filter(n.getType())){
+                            if (workoutFilters.filter(n.getType())) {
                                 filteredList.add(n);
                             }
                         }
@@ -128,7 +142,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                 } else {
                     List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
                     for (WorkoutDTO n : workouts) {
-                        if(workoutFilters.filter(n.getType())){
+                        if (workoutFilters.filter(n.getType())) {
                             filteredList.add(n);
                         }
                     }
@@ -152,31 +166,30 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
     @Override
     public void onItemClick(int position, View v) {
 
-//        System.out.println("click on item: " + adapter.getNotes().get(position).getTitle());
+        //System.out.println("click on item: " + adapter.getWorkouts().get(position).getName());
 
-        /*FragmentTwo fr = new FragmentTwo();
+        EditWorkoutFragment fr = new EditWorkoutFragment();
         Bundle arg = new Bundle();
-        if (adapter.getNotes().size() == adapter.getFilteredNotes().size())
-            id = adapter.getNotes().get(position).getId();
+        if (adapter.getWorkouts().size() == adapter.getFilteredWorkouts().size())
+            id = adapter.getWorkouts().get(position).getId();
         else {
-            id = adapter.getFilteredNotes().get(position).getId();
+            id = adapter.getFilteredWorkouts().get(position).getId();
         }
         arg.putInt("id", id);
         fr.setArguments(arg);
 
-        activityInterface.changeFrag(fr);*/
+        activityInterface.changeFrag(fr);
     }
 
     @Override
     public void onLongItemClick(int position, View v) {
-        /*if (adapter.getNotes().size() == adapter.getFilteredNotes().size())
-            id = adapter.getNotes().get(position).getId();
+        //System.out.println("long click on item: " + adapter.getWorkouts().get(position).getName());
+        if (adapter.getWorkouts().size() == adapter.getFilteredWorkouts().size())
+            id = adapter.getWorkouts().get(position).getId();
         else {
-            id = adapter.getFilteredNotes().get(position).getId();
+            id = adapter.getFilteredWorkouts().get(position).getId();
         }
-        createNewTitleDeletePopUp();
-//        System.out.println("long click on item: " + adapter.getNotes().get(position).getTitle());
-    */
+        createDeletePopUp();
     }
 
 
@@ -186,31 +199,31 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         final View createWorkoutFilterPopUp = getLayoutInflater().inflate(R.layout.workout_filter_popup, null);
         Button filterButton = (Button) createWorkoutFilterPopUp.findViewById(R.id.filterB);
         CheckBox fullBody = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.fullBodyCB);
-        if (workoutFilters.isFullBody()){
+        if (workoutFilters.isFullBody()) {
             fullBody.setChecked(true);
         } else {
             fullBody.setChecked(false);
         }
         CheckBox lowerBody = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.lowerBodyCB);
-        if (workoutFilters.isLowerBody()){
+        if (workoutFilters.isLowerBody()) {
             lowerBody.setChecked(true);
         } else {
             lowerBody.setChecked(false);
         }
         CheckBox upperBody = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.upperBodyCB);
-        if (workoutFilters.isUpperBody()){
+        if (workoutFilters.isUpperBody()) {
             upperBody.setChecked(true);
         } else {
             upperBody.setChecked(false);
         }
         CheckBox push = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.pushCB);
-        if (workoutFilters.isPush()){
+        if (workoutFilters.isPush()) {
             push.setChecked(true);
         } else {
             push.setChecked(false);
         }
         CheckBox pull = (CheckBox) createWorkoutFilterPopUp.findViewById(R.id.pullCB);
-        if (workoutFilters.isPull()){
+        if (workoutFilters.isPull()) {
             pull.setChecked(true);
         } else {
             pull.setChecked(false);
@@ -220,27 +233,27 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(fullBody.isChecked()){
+                if (fullBody.isChecked()) {
                     workoutFilters.setFullBody(true);
                 } else {
                     workoutFilters.setFullBody(false);
                 }
-                if(upperBody.isChecked()){
+                if (upperBody.isChecked()) {
                     workoutFilters.setUpperBody(true);
                 } else {
                     workoutFilters.setUpperBody(false);
                 }
-                if(lowerBody.isChecked()){
+                if (lowerBody.isChecked()) {
                     workoutFilters.setLowerBody(true);
                 } else {
                     workoutFilters.setLowerBody(false);
                 }
-                if(pull.isChecked()){
+                if (pull.isChecked()) {
                     workoutFilters.setPull(true);
                 } else {
                     workoutFilters.setPull(false);
                 }
-                if(push.isChecked()){
+                if (push.isChecked()) {
                     workoutFilters.setPush(true);
                 } else {
                     workoutFilters.setPush(false);
@@ -251,7 +264,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                     List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
                     for (WorkoutDTO n : workouts) {
                         if (n.getName().toLowerCase().contains(searchString.toLowerCase())) {
-                            if(workoutFilters.filter(n.getType())){
+                            if (workoutFilters.filter(n.getType())) {
                                 filteredList.add(n);
                             }
                         }
@@ -265,9 +278,9 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                 } else {
                     List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
                     for (WorkoutDTO n : workouts) {
-                            if(workoutFilters.filter(n.getType())){
-                                filteredList.add(n);
-                            }
+                        if (workoutFilters.filter(n.getType())) {
+                            filteredList.add(n);
+                        }
                     }
                     adapter.setFilteredWorkouts(filteredList);
                 }
@@ -281,25 +294,23 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         dialog.show();
     }
 
-
-    /*public void createNewNotePopUp() {
+    public void createDeletePopUp() {
         dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
-        final View newNotePopUp = getLayoutInflater().inflate(R.layout.new_note_popup, null);
-        newNoteName = (EditText) newNotePopUp.findViewById(R.id.newTitle);
+        final View newTitleDeletePopUp = getLayoutInflater().inflate(R.layout.delete_workout_popup, null);
 
-        saveNewName = (Button) newNotePopUp.findViewById(R.id.save);
-        cancel = (Button) newNotePopUp.findViewById(R.id.cancel);
+        deleteNote = (Button) newTitleDeletePopUp.findViewById(R.id.deleteButton);
+        cancel = (Button) newTitleDeletePopUp.findViewById(R.id.cancelButton);
 
-        dialogBuilder.setView(newNotePopUp);
+        dialogBuilder.setView(newTitleDeletePopUp);
         dialog = dialogBuilder.create();
         dialog.show();
 
-        saveNewName.setOnClickListener(new View.OnClickListener() {
+        deleteNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                newNoteName = (EditText) newNotePopUp.findViewById(R.id.newTitle);
-                mViewModel.addNote(String.valueOf(newNoteName.getText()));
+                //TODO: delete workout by id
+                //mViewModel.deleteWorkout(id);
+                activityInterface.getMainActivity();
 
                 dialog.dismiss();
             }
@@ -312,84 +323,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
             }
         });
 
-    }*/
+    }
 
-    /*public void mqttPopUp() {
-        dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
-        final View mqttPopUp = getLayoutInflater().inflate(R.layout.mqtt_popup, null);
-        cancel = (Button) mqttPopUp.findViewById(R.id.cancelbuttonmqtt);
-        subscribe = (Button) mqttPopUp.findViewById(R.id.subscribebuttonmqtt);
-        unsubscribe = (Button) mqttPopUp.findViewById(R.id.unsubbuttonmqtt);
-        spinnermqttpopup = (Spinner) mqttPopUp.findViewById(R.id.spinnermqtt);
-
-        mViewModel.getTopics().observe(activityInterface.getMainActivity(), topics -> {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, topics);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnermqttpopup.setAdapter(adapter);
-        });
-        dialogBuilder.setView(mqttPopUp);
-        dialog = dialogBuilder.create();
-        dialog.show();
-
-        subscribe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                subscribetopic = (EditText) mqttPopUp.findViewById(R.id.subscribemqtt);
-                if (subscribetopic.getText().toString().isBlank())
-                    Toast.makeText(activityInterface.getMainActivity(), "Write a topic", Toast.LENGTH_SHORT).show();
-                else if (mViewModel.subscribeToTopic(subscribetopic.getText().toString()))
-                    subscribetopic.setText("");
-                else
-                    Toast.makeText(activityInterface.getMainActivity(), "Already subscribed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        unsubscribe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (spinnermqttpopup.getSelectedItem() != null)
-                    mViewModel.unsubscribeToTopic(spinnermqttpopup.getSelectedItem().toString());
-                else
-                    Toast.makeText(activityInterface.getMainActivity(), "Nothing to unsubscribe", Toast.LENGTH_SHORT).show();
-            }
-        });
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-    }*/
-
-
-    /*public void mqttMsgPopUp(String topic, MqttMessage message) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
-        final View mqttmesagePopUp = getLayoutInflater().inflate(R.layout.mqtt_message_popup, null);
-        Button confirm = (Button) mqttmesagePopUp.findViewById(R.id.confirmmsgbtnmqtt);
-        Button cancel = (Button) mqttmesagePopUp.findViewById(R.id.cancelmsgbtnmqtt2);
-        TextView topico = (TextView) mqttmesagePopUp.findViewById(R.id.topicmsgmqtt);
-        TextView titulo = (TextView) mqttmesagePopUp.findViewById(R.id.titlemsgmqtt);
-        NoteDTO noteDTO = new Gson().fromJson(message.toString(), NoteDTO.class);
-        topico.setText(topic);
-        titulo.setText(noteDTO.getTitle());
-
-        dialogBuilder.setView(mqttmesagePopUp);
-        Dialog dialog = dialogBuilder.create();
-        dialog.show();
-
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewModel.insertMqttNote(noteDTO.getTitle(), noteDTO.getDescription());
-                dialog.dismiss();
-            }
-        });
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-    }*/
 
 }

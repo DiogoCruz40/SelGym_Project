@@ -57,7 +57,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public List<WorkoutDTO> getFilteredNotes() {
+    public List<WorkoutDTO> getFilteredWorkouts() {
         return filteredWorkouts;
     }
     public List<WorkoutDTO> getWorkouts() {

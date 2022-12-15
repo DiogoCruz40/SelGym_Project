@@ -3,6 +3,8 @@ package pt.selfgym;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -18,9 +20,13 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
 
     private ActivityMainBinding binding;
     private SharedViewModel model;
+    private FragmentManager fm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        fm = getSupportFragmentManager();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -55,4 +61,10 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     public MainActivity getMainActivity() {
         return this;
     }
+
+    @Override
+    public void changeFrag(Fragment fr) {
+        fm.beginTransaction().replace(R.id.container, fr).addToBackStack(null).commit();
+    }
+
 }
