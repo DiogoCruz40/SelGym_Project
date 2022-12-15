@@ -2,7 +2,6 @@ package pt.selfgym.mappers;
 
 
 import pt.selfgym.Interfaces.PointMapperInterface;
-import pt.selfgym.database.entities.Point;
 
 import org.modelmapper.ModelMapper;
 

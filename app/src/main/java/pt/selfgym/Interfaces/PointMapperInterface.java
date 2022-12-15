@@ -1,9 +1,5 @@
 package pt.selfgym.Interfaces;
 
-import pt.selfgym.database.entities.Point;
-
-import java.util.List;
-
 
 public interface PointMapperInterface {
      //Point toEntityPoint(PointDTO pointDTO);

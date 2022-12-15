@@ -8,11 +8,18 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 // Entities and DAOs
-import pt.selfgym.database.daos.PointDAO;
-import pt.selfgym.database.entities.Point;
+import pt.selfgym.database.daos.ExerciseDAO;
+import pt.selfgym.database.daos.WorkoutDAO;
+
+import pt.selfgym.database.entities.Circuit;
+import pt.selfgym.database.entities.Event;
+import pt.selfgym.database.entities.Exercise;
+import pt.selfgym.database.entities.ExerciseSet;
+import pt.selfgym.database.entities.ExerciseWO;
+import pt.selfgym.database.entities.Workout;
 
 
-@Database(entities = {Point.class}, exportSchema = false,version = 1)
+@Database(entities = {Exercise.class, Circuit.class, Event.class, ExerciseWO.class, ExerciseSet.class, Workout.class}, exportSchema = false, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
     private static final String DB_NAME = "selfgym_db";
@@ -34,5 +41,6 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;
     }
 
-    public abstract PointDAO pointsDAO();
+    public abstract ExerciseDAO ExerciseDAO();
+    public abstract WorkoutDAO WorkoutDAO();
 }

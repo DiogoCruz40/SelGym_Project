@@ -3,25 +3,25 @@ package pt.selfgym.database.daos;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
-import pt.selfgym.database.entities.Point;
-
+import pt.selfgym.database.entities.Exercise;
 import java.util.List;
 
 
 @Dao
-public interface PointDAO {
+public interface ExerciseDAO {
 
-    @Query("SELECT * FROM points")
-    List<Point> getAll();
+    @Query("SELECT * FROM exercises")
+    List<Exercise> getAll();
 
     @Delete
-    void delete(Point point);
+    void delete(Exercise exercise);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insert(Point point);
+    @Insert
+    long insert(Exercise exercise);
+
 
    /* @Query("SELECT * FROM Point WHERE id_note IN (:userIds)")
     List<Note> loadAllByIds(int[] userIds);
@@ -33,17 +33,5 @@ public interface PointDAO {
     void updateTitle(int id_nota, String newTitle);
 
     @Query("UPDATE Point SET description = :newNote WHERE id_note = :id_nota")
-    void updateNote(int id_nota, String newNote);
-
-    @Insert
-    void insertNote(Note note);
-
-    @Insert
-    void insertAll(List<Note> notes);
-
-
-
-    @Query("DELETE FROM Point WHERE id_note = :id_nota")
-    void delete(int id_nota);*/
-
+    void updateNote(int id_nota, String newNote); */
 }
