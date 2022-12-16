@@ -39,4 +39,20 @@ public class WorkoutDTO {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
+    }
+
+    public ArrayList<Object> getWorkoutComposition() {
+        return workoutComposition;
+    }
+
+    public void setWorkoutComposition(ArrayList<Object> workoutComposition) {
+        this.workoutComposition = workoutComposition;
+    }
 }

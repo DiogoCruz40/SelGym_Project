@@ -5,15 +5,15 @@ import java.util.ArrayList;
 public class ExerciseWODTO {
     private int id;
     private int order;
-    private float weight;
+    private double weight;
     private int sets;
     private int reps;
-    private TimeDTO rest;
-    private TimeDTO duration;
+    private int rest;
+    private int duration;
     private ExerciseDTO exercise;
     private ArrayList<SetsDTO> setsList;
 
-    public ExerciseWODTO(int id, int order, float weight, int sets, int reps, TimeDTO rest, ExerciseDTO exercise) {
+    public ExerciseWODTO(int id, int order, double weight, int sets, int reps, int rest, ExerciseDTO exercise) {
         //use in case of exercise with fixed sets and reps
         this.id = id;
         this.order = order;
@@ -21,12 +21,12 @@ public class ExerciseWODTO {
         this.sets = sets;
         this.reps = reps;
         this.rest = rest;
-        this.duration = null;
+        this.duration = 0;
         this.exercise = exercise;
         this.setsList = null;
     }
 
-    public ExerciseWODTO(int id, int order, float weight, int sets, TimeDTO rest, TimeDTO duration, ExerciseDTO exercise) {
+    public ExerciseWODTO(int id, int order, double weight, int sets, int rest, ExerciseDTO exercise, int duration) {
         //use in case of exercise with fixed sets and reps
         this.id = id;
         this.order = order;
@@ -39,7 +39,7 @@ public class ExerciseWODTO {
         this.setsList = null;
     }
 
-    public ExerciseWODTO(int id, int order, float weight, int reps, TimeDTO rest, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
+    public ExerciseWODTO(int id, int order, double weight, int reps, int rest, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
         //use in case of exercise with variable sets and reps
         this.id = id;
         this.order = order;
@@ -47,12 +47,12 @@ public class ExerciseWODTO {
         this.sets = 0;
         this.reps = reps;
         this.rest = rest;
-        this.duration = null;
+        this.duration = 0;
         this.exercise = exercise;
         this.setsList = setsList;
     }
 
-    public ExerciseWODTO(int id, int order, float weight, TimeDTO rest, TimeDTO duration, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
+    public ExerciseWODTO(int id, int order, double weight, int rest, ExerciseDTO exercise, int duration, ArrayList<SetsDTO> setsList) {
         //use in case of exercise with variable sets and time
         this.id = id;
         this.order = order;
@@ -66,7 +66,7 @@ public class ExerciseWODTO {
     }
 
     public boolean isFixedSetsReps(){
-        if(setsList == null && duration == null){
+        if(setsList == null && duration == 0){
             return true;
         } else {
             return false;
@@ -82,7 +82,7 @@ public class ExerciseWODTO {
     }
 
     public boolean isVariableSetsReps(){
-        if(sets == 0 && duration == null){
+        if(sets == 0 && duration == 0){
             return true;
         } else {
             return false;

@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -71,7 +70,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         public ViewHolder(View itemView, WorkoutsInterface workoutsInterface) {
             super(itemView);
-            this.textView = (TextView) itemView.findViewById(R.id.textView);
+            this.textView = (TextView) itemView.findViewById(R.id.name);
             this.textView2 = (TextView) itemView.findViewById(R.id.textView2);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.relativeLayout);
             this.workoutsInterface = workoutsInterface;
