@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/name2"
             android:layout_width="218dp"
             android:layout_height="32dp"
             android:gravity="center_horizontal|center_vertical"
@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/duration"
+            android:id="@+id/duration2"
             android:layout_width="65dp"
             android:layout_height="24dp"
             android:layout_marginEnd="16dp"
@@ -40,11 +40,11 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="normal"
-            app:layout_constraintEnd_toStartOf="@+id/weight"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintEnd_toStartOf="@+id/weight2"
+            app:layout_constraintTop_toBottomOf="@+id/name2" />
 
         <TextView
-            android:id="@+id/sets"
+            android:id="@+id/sets2"
             android:layout_width="36dp"
             android:layout_height="24dp"
             android:layout_marginEnd="16dp"
@@ -53,11 +53,11 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="normal"
-            app:layout_constraintEnd_toStartOf="@+id/duration"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintEnd_toStartOf="@+id/duration2"
+            app:layout_constraintTop_toBottomOf="@+id/name2" />
 
         <TextView
-            android:id="@+id/weight"
+            android:id="@+id/weight2"
             android:layout_width="54dp"
             android:layout_height="24dp"
             android:layout_marginEnd="16dp"
@@ -66,11 +66,11 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="normal"
-            app:layout_constraintEnd_toStartOf="@+id/rest"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintEnd_toStartOf="@+id/rest2"
+            app:layout_constraintTop_toBottomOf="@+id/name2" />
 
         <TextView
-            android:id="@+id/rest"
+            android:id="@+id/rest2"
             android:layout_width="32dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
@@ -80,7 +80,7 @@
             android:textSize="16sp"
             android:textStyle="normal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintTop_toBottomOf="@+id/name2" />
 
         <EditText
             android:id="@+id/setsinput2"
@@ -92,7 +92,7 @@
             android:inputType="number"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/durationinput2"
-            app:layout_constraintTop_toBottomOf="@+id/sets" />
+            app:layout_constraintTop_toBottomOf="@+id/sets2" />
 
         <EditText
             android:id="@+id/weightinput2"
@@ -104,7 +104,7 @@
             android:inputType="numberDecimal"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/restinput2"
-            app:layout_constraintTop_toBottomOf="@+id/weight" />
+            app:layout_constraintTop_toBottomOf="@+id/weight2" />
 
         <EditText
             android:id="@+id/restinput2"
@@ -116,7 +116,7 @@
             android:inputType="numberDecimal"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rest" />
+            app:layout_constraintTop_toBottomOf="@+id/rest2" />
 
         <EditText
             android:id="@+id/durationinput2"
@@ -128,7 +128,7 @@
             android:inputType="numberDecimal"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/weightinput2"
-            app:layout_constraintTop_toBottomOf="@+id/duration" />
+            app:layout_constraintTop_toBottomOf="@+id/duration2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -73,8 +73,13 @@ public class EditWorkoutFragment extends Fragment {
         WorkoutDTO workout = new WorkoutDTO(1, "olá" , "hell", "full body");
         ExerciseWODTO exercise1 = new ExerciseWODTO(1,1,0.0,1,1,0,new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"));
         ExerciseWODTO exercise2 = new ExerciseWODTO(2,2,0.0,1,0,new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"),1);
-        ExerciseWODTO exercise3 = new ExerciseWODTO(3,3,0.0,1,0, new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"), new ArrayList<SetsDTO>());
-        ExerciseWODTO exercise4 = new ExerciseWODTO(4,4,0.0 ,0, new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"), 1, new ArrayList<SetsDTO>());
+        SetsDTO setsDTO1 = new SetsDTO(1,1,1,1,1);
+        SetsDTO setsDTO2 = new SetsDTO(1,1,1,1,2);
+        ArrayList<SetsDTO> sets = new ArrayList<SetsDTO>();
+        sets.add(setsDTO1);
+        sets.add(setsDTO2);
+        ExerciseWODTO exercise3 = new ExerciseWODTO(3,3,0.0,1,0, new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"), sets);
+        ExerciseWODTO exercise4 = new ExerciseWODTO(4,4,0.0 ,0, new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"), 1, sets);
         ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
         circuitComposition.add(exercise1);
         circuitComposition.add(exercise2);
@@ -93,13 +98,13 @@ public class EditWorkoutFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
         adapter = new EditAdapter(workout);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(inflater.getContext()) {
+        /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(inflater.getContext()) {
             @Override
             public boolean canScrollVertically() {
                 return false;
             }
-        };
-        recyclerView.setLayoutManager(linearLayoutManager);
+        };*/
+        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(adapter);
 
         observations = (EditText) view.findViewById(R.id.textAreaObservations);
