@@ -12,7 +12,7 @@
         android:layout_height="120dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/list_item_shape"
+        android:background="@drawable/shape_list_item"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,7 +21,7 @@
             android:id="@+id/name"
             android:layout_width="218dp"
             android:layout_height="32dp"
-            android:gravity="center_vertical"
+            android:gravity="center_horizontal|center_vertical"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -87,43 +87,48 @@
             android:layout_width="36dp"
             android:layout_height="40dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:inputType="number"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/sets"
-            tools:layout_editor_absoluteX="121dp" />
+            app:layout_constraintEnd_toStartOf="@+id/durationinput2"
+            app:layout_constraintTop_toBottomOf="@+id/sets" />
 
         <EditText
             android:id="@+id/weightinput2"
             android:layout_width="54dp"
             android:layout_height="40dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:inputType="numberDecimal"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/weight"
-            tools:layout_editor_absoluteX="254dp" />
+            app:layout_constraintEnd_toStartOf="@+id/restinput2"
+            app:layout_constraintTop_toBottomOf="@+id/weight" />
 
         <EditText
             android:id="@+id/restinput2"
-            android:layout_width="54dp"
+            android:layout_width="32dp"
             android:layout_height="40dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
             android:ems="10"
             android:inputType="numberDecimal"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/rest"
-            tools:layout_editor_absoluteX="318dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rest" />
 
         <EditText
-            android:id="@+id/durationinput"
+            android:id="@+id/durationinput2"
             android:layout_width="65dp"
             android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:inputType="numberDecimal"
             android:textSize="14sp"
-            tools:layout_editor_absoluteX="173dp"
-            tools:layout_editor_absoluteY="70dp" />
+            app:layout_constraintEnd_toStartOf="@+id/weightinput2"
+            app:layout_constraintTop_toBottomOf="@+id/duration" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

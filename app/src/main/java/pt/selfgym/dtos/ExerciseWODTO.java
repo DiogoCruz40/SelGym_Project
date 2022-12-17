@@ -96,4 +96,76 @@ public class ExerciseWODTO {
             return false;
         }
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public int getSets() {
+        return sets;
+    }
+
+    public void setSets(int sets) {
+        this.sets = sets;
+    }
+
+    public int getReps() {
+        return reps;
+    }
+
+    public void setReps(int reps) {
+        this.reps = reps;
+    }
+
+    public int getRest() {
+        return rest;
+    }
+
+    public void setRest(int rest) {
+        this.rest = rest;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public ExerciseDTO getExercise() {
+        return exercise;
+    }
+
+    public void setExercise(ExerciseDTO exercise) {
+        this.exercise = exercise;
+    }
+
+    public ArrayList<SetsDTO> getSetsList() {
+        return setsList;
+    }
+
+    public void setSetsList(ArrayList<SetsDTO> setsList) {
+        this.setsList = setsList;
+    }
 }

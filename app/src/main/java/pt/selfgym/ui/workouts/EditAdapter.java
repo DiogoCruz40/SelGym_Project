@@ -3,10 +3,10 @@ package pt.selfgym.ui.workouts;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
 
 import pt.selfgym.R;
 import pt.selfgym.dtos.ExerciseWODTO;
@@ -20,14 +20,30 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     class ViewHolderFixedSetsReps extends RecyclerView.ViewHolder {
+        public EditText  reps, weight, sets, rest;
+        public TextView name;
+
         public ViewHolderFixedSetsReps(View itemView) {
             super(itemView);
+            this.name = (TextView) itemView.findViewById(R.id.name);
+            this.reps = (EditText) itemView.findViewById(R.id.repsinput);
+            this.sets = (EditText) itemView.findViewById(R.id.setsinput);
+            this.weight = (EditText) itemView.findViewById(R.id.weightinput);
+            this.rest = (EditText)  itemView.findViewById(R.id.restinput);
+
         }
     }
 
     class ViewHolderFixedSetsTime extends RecyclerView.ViewHolder {
+        public TextView name;
+        public EditText duration, weight, sets, rest;
         public ViewHolderFixedSetsTime(View itemView) {
             super(itemView);
+            this.name = (TextView) itemView.findViewById(R.id.name);
+            this.duration = (EditText) itemView.findViewById(R.id.durationinput2);
+            this.sets = (EditText) itemView.findViewById(R.id.setsinput2);
+            this.weight = (EditText) itemView.findViewById(R.id.weightinput2);
+            this.rest = (EditText)  itemView.findViewById(R.id.restinput2);
         }
     }
 
@@ -55,8 +71,8 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public int getItemViewType(int position){
-        if ( workout.getWorkoutComposition().get(position) instanceof ExerciseWODTO) {
+    public int getItemViewType(int position) {
+        if (workout.getWorkoutComposition().get(position) instanceof ExerciseWODTO) {
             ExerciseWODTO exerciseWODTO = (ExerciseWODTO) workout.getWorkoutComposition().get(position);
             if (exerciseWODTO.isFixedSetsReps()) {
                 return 0;
@@ -96,17 +112,27 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
-        if (workout.getWorkoutComposition().get(position).getClass().isInstance(ExerciseWODTO.class)) {
+        if (workout.getWorkoutComposition().get(position) instanceof ExerciseWODTO) {
             ExerciseWODTO exerciseWODTO = (ExerciseWODTO) workout.getWorkoutComposition().get(position);
-            if (exerciseWODTO.isFixedSetsReps()){
-                //ViewHolderFixedSetsReps viewHolder1 = (ViewHolderFixedSetsReps) holder;
-                //TODO:atribuir as variáveis ao layout
+            if (exerciseWODTO.isFixedSetsReps()) {
+                ViewHolderFixedSetsReps viewHolder1 = (ViewHolderFixedSetsReps) holder;
+                viewHolder1.rest.setText(exerciseWODTO.getRest()+"");
+                viewHolder1.weight.setText(exerciseWODTO.getWeight()+"");
+                viewHolder1.reps.setText(exerciseWODTO.getReps()+"");
+                viewHolder1.sets.setText(exerciseWODTO.getSets()+"");
+                viewHolder1.name.setText(exerciseWODTO.getExercise().getName());
 
-            } else if (exerciseWODTO.isFixedSetsReps()){
-                //ViewHolderFixedSetsTime viewHolder2 = (ViewHolderFixedSetsTime) holder;
-            } else if (exerciseWODTO.isVariableSetsReps()){
+            } else if (exerciseWODTO.isFixedSetsTime()) {
+                ViewHolderFixedSetsTime viewHolder2 = (ViewHolderFixedSetsTime) holder;
+                viewHolder2.rest.setText(exerciseWODTO.getRest()+"");
+                viewHolder2.weight.setText(exerciseWODTO.getWeight()+"");
+                viewHolder2.duration.setText(exerciseWODTO.getDuration()+"");
+                viewHolder2.sets.setText(exerciseWODTO.getSets()+"");
+                viewHolder2.name.setText(exerciseWODTO.getExercise().getName());
+
+            } else if (exerciseWODTO.isVariableSetsReps()) {
                 //ViewHolderVariableSetsReps viewHolder3 = (ViewHolderVariableSetsReps) holder;
-            } else if (exerciseWODTO.isVariableSetsTime()){
+            } else if (exerciseWODTO.isVariableSetsTime()) {
                 //ViewHolderVariableSetsTime viewHolder4 = (ViewHolderVariableSetsTime) holder;
             }
         } else {
