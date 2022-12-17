@@ -75,7 +75,12 @@ public class EditWorkoutFragment extends Fragment {
         ExerciseWODTO exercise2 = new ExerciseWODTO(2,2,0.0,1,0,new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"),1);
         ExerciseWODTO exercise3 = new ExerciseWODTO(3,3,0.0,1,0, new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"), new ArrayList<SetsDTO>());
         ExerciseWODTO exercise4 = new ExerciseWODTO(4,4,0.0 ,0, new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"), 1, new ArrayList<SetsDTO>());
-        CircuitDTO circuit = new CircuitDTO(5,5,0, new ArrayList<ExerciseWODTO>());
+        ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
+        circuitComposition.add(exercise1);
+        circuitComposition.add(exercise2);
+        circuitComposition.add(exercise3);
+        circuitComposition.add(exercise4);
+        CircuitDTO circuit = new CircuitDTO(5,5,0, circuitComposition);
         ArrayList<Object> workoutComposition = new ArrayList<Object>();
         workoutComposition.add(exercise1);
         workoutComposition.add(exercise2);
@@ -84,10 +89,17 @@ public class EditWorkoutFragment extends Fragment {
         workoutComposition.add(circuit);
         workout.setWorkoutComposition(workoutComposition);
 
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
         adapter = new EditAdapter(workout);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(inflater.getContext()) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
+        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
 
         observations = (EditText) view.findViewById(R.id.textAreaObservations);
@@ -103,6 +115,8 @@ public class EditWorkoutFragment extends Fragment {
                 if( keyCode == KeyEvent.KEYCODE_BACK )
                 {
                     activityInterface.changeFrag(new WorkoutFragment());
+                    BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
+                    navBar.setVisibility(View.VISIBLE);
                     return true;
                 }
                 return false;
@@ -110,7 +124,7 @@ public class EditWorkoutFragment extends Fragment {
         } );
 
         BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
-        navBar.setVisibility(View.GONE);
+        navBar.setVisibility(View.INVISIBLE);
 
         return view;
     }
@@ -126,6 +140,8 @@ public class EditWorkoutFragment extends Fragment {
             public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
                 //TODO: Save workout
                 activityInterface.changeFrag(new WorkoutFragment());
+                BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
+                navBar.setVisibility(View.VISIBLE);
                 return false;
             }
         });
@@ -133,6 +149,8 @@ public class EditWorkoutFragment extends Fragment {
             @Override
             public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
                 activityInterface.changeFrag(new WorkoutFragment());
+                BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
+                navBar.setVisibility(View.VISIBLE);
                 return false;
             }
         });

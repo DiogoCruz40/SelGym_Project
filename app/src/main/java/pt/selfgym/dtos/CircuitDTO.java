@@ -14,4 +14,36 @@ public class CircuitDTO {
         this.rest = rest;
         this.exerciseList = exerciseList;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getLaps() {
+        return laps;
+    }
+
+    public void setLaps(int laps) {
+        this.laps = laps;
+    }
+
+    public int getRest() {
+        return rest;
+    }
+
+    public void setRest(int rest) {
+        this.rest = rest;
+    }
+
+    public ArrayList<ExerciseWODTO> getExerciseList() {
+        return exerciseList;
+    }
+
+    public void setExerciseList(ArrayList<ExerciseWODTO> exerciseList) {
+        this.exerciseList = exerciseList;
+    }
 }

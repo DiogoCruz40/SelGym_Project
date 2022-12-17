@@ -6,14 +6,19 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+
 import pt.selfgym.R;
+import pt.selfgym.dtos.CircuitDTO;
 import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.WorkoutDTO;
 
 public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private WorkoutDTO workout;
+    private LayoutInflater layoutInflater;
 
     public EditAdapter(WorkoutDTO workout) {
         this.workout = workout;
@@ -60,8 +65,13 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     class ViewHolderCircuit extends RecyclerView.ViewHolder {
+        EditText laps, rest;
+        RecyclerView exs;
         public ViewHolderCircuit(View itemView) {
             super(itemView);
+            this.laps = (EditText) itemView.findViewById(R.id.lapsinput);
+            this.rest = (EditText) itemView.findViewById(R.id.restinputcircuit);
+            this.exs = (RecyclerView) itemView.findViewById(R.id.exercisesCircuit);
         }
     }
 
@@ -89,7 +99,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        layoutInflater = LayoutInflater.from(parent.getContext());
         View listItem;
         switch (viewType) {
             case 0:
@@ -136,7 +146,22 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 //ViewHolderVariableSetsTime viewHolder4 = (ViewHolderVariableSetsTime) holder;
             }
         } else {
-            //ViewHolderCircuit viewHolder5 = (ViewHolderCircuit) holder;
+            CircuitDTO circuitDTO = (CircuitDTO) workout.getWorkoutComposition().get(position);
+            ViewHolderCircuit viewHolder5 = (ViewHolderCircuit) holder;
+            viewHolder5.laps.setText(circuitDTO.getLaps()+"");
+            viewHolder5.rest.setText(circuitDTO.getRest()+"");
+
+            WorkoutDTO workoutCircuit = new WorkoutDTO(-1, "circuit","circuit","circuit");
+            ArrayList<Object> exList = new ArrayList<Object>();
+            for(ExerciseWODTO e: ((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList()){
+                exList.add(e);
+            }
+            workoutCircuit.setWorkoutComposition(exList);
+
+            EditAdapter adapter = new EditAdapter(workoutCircuit);
+            viewHolder5.exs.setHasFixedSize(true);
+            viewHolder5.exs.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
+            viewHolder5.exs.setAdapter(adapter);
         }
     }
 }
