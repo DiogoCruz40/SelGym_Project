@@ -2,6 +2,7 @@ package pt.selfgym;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,15 +57,14 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
                 }
             }
         });
-
-
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
         model = new ViewModelProvider(this).get(SharedViewModel.class);
 //        model.startDB();
-//        model.getToastMessageObserver().observe(this, message -> {
-//            Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-//        });
+        model.getToastMessageObserver().observe(this, message -> {
+            Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override

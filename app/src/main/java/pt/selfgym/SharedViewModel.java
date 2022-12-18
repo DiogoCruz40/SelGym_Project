@@ -16,63 +16,64 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-//
-//import pt.cm.challenge_3.Interfaces.ActivityInterface;
-//import pt.cm.challenge_3.Interfaces.PointMapperInterface;
-//import pt.cm.challenge_3.database.AppDatabase;
-//import pt.cm.challenge_3.database.entities.Point;
-//import pt.cm.challenge_3.dtos.PointDTO;
-//import pt.cm.challenge_3.helpers.MQTTHelper;
-//import pt.cm.challenge_3.mappers.PointMapper;
-//
+
+import pt.selfgym.database.AppDatabase;
+import pt.selfgym.dtos.WorkoutDTO;
+import pt.selfgym.mappers.Mapper;
+import pt.selfgym.services.AppExecutors;
+
+
 public class SharedViewModel extends AndroidViewModel {
-//
-//    private AppDatabase mDb;
-//    private final MutableLiveData<List<PointDTO>> points = new MutableLiveData<List<PointDTO>>();
-//    private final MutableLiveData<String> toastMessageObserver = new MutableLiveData<String>();
-//    private MQTTHelper mqttHelper;
-//    private static boolean trigger = true;
-//
+
+    private AppDatabase mDb;
+    private final MutableLiveData<List<WorkoutDTO>> workouts = new MutableLiveData<List<WorkoutDTO>>();
+    private final MutableLiveData<String> toastMessageObserver = new MutableLiveData<String>();
+    //    private static boolean trigger = true;
+
     public SharedViewModel(@NonNull Application application) {
         super(application);
     }
-//
-//    public MutableLiveData<String> getToastMessageObserver() {
-//        return this.toastMessageObserver;
-//    }
-//
-//    public void startDB() {
-//        mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
-//
-//        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                //how to get all points
-//                PointMapperInterface noteMapperInterface = new PointMapper();
-//                List<PointDTO> pointsDTO = noteMapperInterface.toPointsDTO(mDb.pointsDAO().getAll());
-//
-//                new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                        if (pointsDTO == null) {
-//                            points.setValue(new ArrayList<PointDTO>());
+
+    public MutableLiveData<String> getToastMessageObserver() {
+        return this.toastMessageObserver;
+    }
+
+    public MutableLiveData<List<WorkoutDTO>> getWorkouts() {
+        return workouts;
+    }
+
+    public void startDB() {
+        mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how to get all workouts
+                Mapper mapper = new Mapper();
+//                List<WorkoutDTO> workoutDTOList = mapper.toDTOs(mDb.WorkoutDAO().(),WorkoutDTO.class);
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+
+//                        if (workoutDTOList == null) {
+//                            workouts.setValue(new ArrayList<WorkoutDTO>());
 //                        } else {
-//                            points.setValue(pointsDTO);
+//                            workouts.setValue(workoutDTOList);
 //                        }
-//
-//                        /*
-//                        System.out.println("AQUI: " + pointsDTO.size());
-//
-//                        for(PointDTO p: pointsDTO){
-//                            System.out.println(p.getTimestamp() + " " + p.getTemperature());
-//                        }*/
-//
-//                    }
-//                });
-//            }
-//        });
-//    }
+
+                        /*
+                        System.out.println("AQUI: " + pointsDTO.size());
+
+                        for(PointDTO p: pointsDTO){
+                            System.out.println(p.getTimestamp() + " " + p.getTemperature());
+                        }*/
+
+                    }
+                });
+            }
+        });
+    }
 //
 //
 //    public void insertPoint(Float temp, Float hum, String timestamp) {
@@ -160,44 +161,5 @@ public class SharedViewModel extends AndroidViewModel {
 //    }
 //
 //
-//    public void disconmqtt() {
-//        mqttHelper.mqttAndroidClient.disconnect();
-//    }
-//
-//
-//    private void subscribeToTopic(String topic) {
-//        try {
-//            mqttHelper.subscribeToTopic(topic);
-//        } catch (Exception e) {
-//            toastMessageObserver.setValue(e.getMessage());
-//        }
-//    }
-//
-//    private void unsubscribeToTopic(String topic) {
-//        try {
-//            mqttHelper.unsubscribeToTopic(topic);
-//        } catch (Exception e) {
-//            toastMessageObserver.setValue(e.getMessage());
-//        }
-//    }
-//
-//    public void publishMessage(String signal, String topic) {
-//        try {
-//            byte[] encodedPayload;
-//
-////            Log.w("mqtt",signal);
-//            encodedPayload = signal.getBytes(StandardCharsets.UTF_8);
-//            MqttMessage message = new MqttMessage(encodedPayload);
-//            message.setQos(0);
-//
-//            mqttHelper.mqttAndroidClient.publish(topic, message);
-//            // view set text to null
-//        } catch (Throwable e) {
-//            Log.w("mqtt", e.getMessage());
-//        }
-//    }
-//
-//    public MutableLiveData<List<PointDTO>> getPoints() {
-//        return points;
-//    }
+
 }

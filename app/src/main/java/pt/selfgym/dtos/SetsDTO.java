@@ -1,14 +1,14 @@
 package pt.selfgym.dtos;
 
 public class SetsDTO {
-    private int id;
+    private int exerciseSetId;
     private int variable; //serves for both duration and reps
     private int rest;
     private double weight;
     private int order_set;
 
     public SetsDTO(int id, int variable, int rest, double weight, int order_set) {
-        this.id = id;
+        this.exerciseSetId = id;
         this.variable = variable;
         this.rest = rest;
         this.weight = weight;
@@ -16,11 +16,11 @@ public class SetsDTO {
     }
 
     public int getId() {
-        return id;
+        return exerciseSetId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.exerciseSetId = id;
     }
 
     public int getRest() {

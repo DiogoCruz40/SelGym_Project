@@ -75,25 +75,21 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         //AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
         //appCompatActivity.setSupportActionBar(myToolbar);
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
-        //TODO: ir buscar workouts ao viewmodel
-        /*mViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.notes);
-            adapter = new ListAdapter(notes, this);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-            recyclerView.setAdapter(adapter);
-        });*/
+        mViewModel.getWorkouts().observe(getViewLifecycleOwner(), workouts -> {
 
-        ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
-        workouts.add(new WorkoutDTO(1, "olá1", "hey", "full body"));
-        workouts.add(new WorkoutDTO(2, "olá2", "hey", "upper body"));
-        workouts.add(new WorkoutDTO(3, "olá3", "hey", "lower body"));
-        workouts.add(new WorkoutDTO(4, "olá4", "hey", "push"));
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
         adapter = new ListAdapter(workouts, this);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(adapter);
+        });
+//
+//        ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
+//        workouts.add(new WorkoutDTO(1, "olá1", "hey", "full body"));
+//        workouts.add(new WorkoutDTO(2, "olá2", "hey", "upper body"));
+//        workouts.add(new WorkoutDTO(3, "olá3", "hey", "lower body"));
+//        workouts.add(new WorkoutDTO(4, "olá4", "hey", "push"));
+//
 
         ImageButton addWorkoutButton = (ImageButton) view.findViewById(R.id.addWorkoutButton);
         addWorkoutButton.setOnClickListener(new View.OnClickListener() {

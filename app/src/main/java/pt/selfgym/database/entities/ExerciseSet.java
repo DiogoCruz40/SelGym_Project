@@ -33,11 +33,8 @@ public class ExerciseSet {
     @NonNull
     public String rest;
 
-    @ColumnInfo(name = "reps")
-    public Integer reps;
-
-    @ColumnInfo(name = "duration")
-    public String duration;
+    @ColumnInfo(name = "variable")
+    public Integer variable;
 
     @ColumnInfo(name = "weight")
     @NonNull

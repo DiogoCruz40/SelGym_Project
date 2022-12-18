@@ -3,8 +3,8 @@ package pt.selfgym.dtos;
 import java.util.ArrayList;
 
 public class ExerciseWODTO {
-    private int id;
-    private int order;
+    private int exerciseWOId;
+    private int order_exwo;
     private double weight;
     private int sets;
     private int reps;
@@ -15,8 +15,8 @@ public class ExerciseWODTO {
 
     public ExerciseWODTO(int id, int order, double weight, int sets, int reps, int rest, ExerciseDTO exercise) {
         //use in case of exercise with fixed sets and reps
-        this.id = id;
-        this.order = order;
+        this.exerciseWOId = id;
+        this.order_exwo = order;
         this.weight = weight;
         this.sets = sets;
         this.reps = reps;
@@ -28,8 +28,8 @@ public class ExerciseWODTO {
 
     public ExerciseWODTO(int id, int order, double weight, int sets, int rest, ExerciseDTO exercise, int duration) {
         //use in case of exercise with fixed sets and reps
-        this.id = id;
-        this.order = order;
+        this.exerciseWOId = id;
+        this.order_exwo = order;
         this.weight = weight;
         this.sets = sets;
         this.reps = 0;
@@ -41,8 +41,8 @@ public class ExerciseWODTO {
 
     public ExerciseWODTO(int id, int order, double weight, int reps, int rest, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
         //use in case of exercise with variable sets and reps
-        this.id = id;
-        this.order = order;
+        this.exerciseWOId = id;
+        this.order_exwo = order;
         this.weight = weight;
         this.sets = 0;
         this.reps = reps;
@@ -54,8 +54,8 @@ public class ExerciseWODTO {
 
     public ExerciseWODTO(int id, int order, double weight, int rest, ExerciseDTO exercise, int duration, ArrayList<SetsDTO> setsList) {
         //use in case of exercise with variable sets and time
-        this.id = id;
-        this.order = order;
+        this.exerciseWOId = id;
+        this.order_exwo = order;
         this.weight = weight;
         this.sets = 0;
         this.reps = 0;
@@ -98,19 +98,19 @@ public class ExerciseWODTO {
     }
 
     public int getId() {
-        return id;
+        return exerciseWOId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.exerciseWOId = id;
     }
 
     public int getOrder() {
-        return order;
+        return order_exwo;
     }
 
     public void setOrder(int order) {
-        this.order = order;
+        this.order_exwo = order;
     }
 
     public double getWeight() {
