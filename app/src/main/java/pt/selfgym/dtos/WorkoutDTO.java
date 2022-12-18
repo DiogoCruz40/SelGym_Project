@@ -14,6 +14,7 @@ public class WorkoutDTO {
         this.name = name;
         this.observation = observation;
         this.type = type;
+        this.workoutComposition = new ArrayList<Object>();
     }
 
     public String getName() {

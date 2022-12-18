@@ -39,28 +39,28 @@ public class ExerciseWODTO {
         this.setsList = null;
     }
 
-    public ExerciseWODTO(int id, int order, double weight, int reps, int rest, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
+    public ExerciseWODTO(int id, int order,int reps, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
         //use in case of exercise with variable sets and reps
         this.exerciseWOId = id;
         this.order_exwo = order;
-        this.weight = weight;
+        this.weight = 0;
         this.sets = 0;
-        this.reps = reps;
-        this.rest = rest;
+        this.reps = -1;
+        this.rest = 0;
         this.duration = 0;
         this.exercise = exercise;
         this.setsList = setsList;
     }
 
-    public ExerciseWODTO(int id, int order, double weight, int rest, ExerciseDTO exercise, int duration, ArrayList<SetsDTO> setsList) {
+    public ExerciseWODTO(int id, int order, ExerciseDTO exercise, int duration, ArrayList<SetsDTO> setsList) {
         //use in case of exercise with variable sets and time
         this.exerciseWOId = id;
         this.order_exwo = order;
-        this.weight = weight;
+        this.weight = 0;
         this.sets = 0;
         this.reps = 0;
-        this.rest = rest;
-        this.duration = duration;
+        this.rest = 0;
+        this.duration = -1;
         this.exercise = exercise;
         this.setsList = setsList;
     }
