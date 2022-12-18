@@ -4,8 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,7 +64,6 @@ public class EditWorkoutFragment extends Fragment {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.edit_workout_fragment, container, false);
-        setHasOptionsMenu(true);
 
 
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
@@ -128,40 +133,35 @@ public class EditWorkoutFragment extends Fragment {
             }
         } );
 
-        BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
-        navBar.setVisibility(View.INVISIBLE);
+        activityInterface.getMainActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.edit_workout_menu, menu);
+                MenuItem saveItem = menu.findItem(R.id.savemenu);
+                MenuItem exitItem = menu.findItem(R.id.closemenu);
+                saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                        //TODO: Save workout
+                        activityInterface.changeFrag(new WorkoutFragment());
+                        return false;
+                    }
+                });
+                exitItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                        activityInterface.changeFrag(new WorkoutFragment());
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         return view;
     }
-
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.edit_workout_menu, menu);
-        MenuItem saveItem = menu.findItem(R.id.savemenu);
-        MenuItem exitItem = menu.findItem(R.id.closemenu);
-        saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                //TODO: Save workout
-                activityInterface.changeFrag(new WorkoutFragment());
-                BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
-                navBar.setVisibility(View.VISIBLE);
-                return false;
-            }
-        });
-        exitItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                activityInterface.changeFrag(new WorkoutFragment());
-                BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
-                navBar.setVisibility(View.VISIBLE);
-                return false;
-            }
-        });
-
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
 }

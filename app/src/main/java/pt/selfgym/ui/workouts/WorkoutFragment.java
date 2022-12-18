@@ -8,7 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,11 +37,14 @@ import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.Interfaces.WorkoutsInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
+import pt.selfgym.databinding.FragmentStatisticsBinding;
+import pt.selfgym.databinding.FragmentWorkoutsBinding;
 import pt.selfgym.dtos.WorkoutDTO;
 
 public class WorkoutFragment extends Fragment implements WorkoutsInterface {
 
     private SharedViewModel mViewModel;
+    private FragmentWorkoutsBinding binding;
     private ListAdapter adapter;
     private ActivityInterface activityInterface;
     private AlertDialog.Builder dialogBuilder;
@@ -64,11 +69,11 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_workouts, container, false);
+        binding = FragmentWorkoutsBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
         //Toolbar myToolbar = (Toolbar) view.findViewById(R.id.workoutMenu);
         //AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
         //appCompatActivity.setSupportActionBar(myToolbar);
-        setHasOptionsMenu(true);
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
         //TODO: ir buscar workouts ao viewmodel
         /*mViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
@@ -104,62 +109,68 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
             }
         });
 
-        return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_workouts, menu);
-        MenuItem menuItem = menu.findItem(R.id.searchbar);
-        MenuItem filterItem = menu.findItem(R.id.filtermenu);
-        SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setQueryHint("Type here to search");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        activityInterface.getMainActivity().addMenuProvider(new MenuProvider() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_workouts, menu);
+                MenuItem menuItem = menu.findItem(R.id.searchbar);
+                MenuItem filterItem = menu.findItem(R.id.filtermenu);
+                SearchView searchView = (SearchView) menuItem.getActionView();
+                searchView.setQueryHint("Type here to search");
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        return false;
+                    }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
-                searchString = s; //filter function needs access to this string
-                List<WorkoutDTO> workouts = adapter.getWorkouts();
-                if (s.length() != 0) {
-                    List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
-                    for (WorkoutDTO n : workouts) {
-                        if (n.getName().toLowerCase().contains(s.toLowerCase())) {
-                            if (workoutFilters.filter(n.getType())) {
-                                filteredList.add(n);
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        searchString = s; //filter function needs access to this string
+                        List<WorkoutDTO> workouts = adapter.getWorkouts();
+                        if (s.length() != 0) {
+                            List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
+                            for (WorkoutDTO n : workouts) {
+                                if (n.getName().toLowerCase().contains(s.toLowerCase())) {
+                                    if (workoutFilters.filter(n.getType())) {
+                                        filteredList.add(n);
+                                    }
+                                }
                             }
+                            if (filteredList.isEmpty()) {
+                                Toast.makeText(activityInterface.getMainActivity(), "No Results for your search", Toast.LENGTH_LONG).show();
+                                adapter.setFilteredWorkouts(filteredList);
+                            } else {
+                                adapter.setFilteredWorkouts(filteredList);
+                            }
+                        } else {
+                            List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
+                            for (WorkoutDTO n : workouts) {
+                                if (workoutFilters.filter(n.getType())) {
+                                    filteredList.add(n);
+                                }
+                            }
+                            adapter.setFilteredWorkouts(filteredList);
                         }
-                    }
-                    if (filteredList.isEmpty()) {
-                        Toast.makeText(activityInterface.getMainActivity(), "No Results for your search", Toast.LENGTH_LONG).show();
-                        adapter.setFilteredWorkouts(filteredList);
-                    } else {
-                        adapter.setFilteredWorkouts(filteredList);
-                    }
-                } else {
-                    List<WorkoutDTO> filteredList = new ArrayList<WorkoutDTO>();
-                    for (WorkoutDTO n : workouts) {
-                        if (workoutFilters.filter(n.getType())) {
-                            filteredList.add(n);
-                        }
-                    }
-                    adapter.setFilteredWorkouts(filteredList);
-                }
 
-                return false;
+                        return false;
+                    }
+                });
+                filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                        createWorkoutFilterPopUp();
+                        return false;
+                    }
+                });
             }
-        });
-        filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
             @Override
-            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                createWorkoutFilterPopUp();
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 return false;
             }
-        });
-        super.onCreateOptionsMenu(menu, inflater);
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
+        return view;
     }
 
 
@@ -325,5 +336,10 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 
 }
