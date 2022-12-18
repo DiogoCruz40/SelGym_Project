@@ -55,4 +55,8 @@ public class WorkoutDTO {
     public void setWorkoutComposition(ArrayList<Object> workoutComposition) {
         this.workoutComposition = workoutComposition;
     }
+
+    public void addToWorkoutComposition(Object ex){
+        workoutComposition.add(ex);
+    }
 }

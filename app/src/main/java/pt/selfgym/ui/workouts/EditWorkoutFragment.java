@@ -142,7 +142,8 @@ public class EditWorkoutFragment extends Fragment {
                 saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                        //TODO: Save workout
+                        WorkoutDTO newWorkout = adapter.saveWorkoutChanges();
+                        //TODO: Save this new workout
                         activityInterface.changeFrag(new WorkoutFragment());
                         return false;
                     }
