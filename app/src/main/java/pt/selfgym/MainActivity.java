@@ -84,10 +84,11 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     }
 
     @Override
-    public void changeFrag(Fragment fr) {
+    public void changeFrag(Fragment fr,Bundle bundle) {
         if (fr instanceof EditWorkoutFragment)
-            navController.navigate(R.id.editWorkoutFragment);
+            navController.navigate(R.id.editWorkoutFragment, bundle);
         else if (fr instanceof WorkoutFragment)
             navController.navigate(R.id.navigation_workouts);
     }
+
 }

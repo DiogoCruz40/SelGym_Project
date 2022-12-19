@@ -193,7 +193,6 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 workoutSets.setWorkoutComposition(exList);
 
                 EditAdapter adapter = new EditAdapter(workoutSets);
-                viewHolder3.sets.setNestedScrollingEnabled(false);
                 viewHolder3.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                 viewHolder3.sets.setAdapter(adapter);
                 holdersList.add(viewHolder3);
@@ -210,7 +209,6 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 workoutCircuit.setWorkoutComposition(exList);
 
                 EditAdapter adapter = new EditAdapter(workoutCircuit);
-                viewHolder4.sets.setNestedScrollingEnabled(false);
                 viewHolder4.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                 viewHolder4.sets.setAdapter(adapter);
                 holdersList.add(viewHolder4);
@@ -229,7 +227,6 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             workoutCircuit.setWorkoutComposition(exList);
 
             EditAdapter adapter = new EditAdapter(workoutCircuit);
-            viewHolder5.exs.setNestedScrollingEnabled(false);
             viewHolder5.exs.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
             viewHolder5.exs.setAdapter(adapter);
             holdersList.add(viewHolder5);

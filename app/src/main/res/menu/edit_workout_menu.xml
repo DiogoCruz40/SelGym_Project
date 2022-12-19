@@ -9,9 +9,4 @@
         android:icon="@android:drawable/ic_menu_save"
         android:title="save"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/closemenu"
-        android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        android:title="close"
-        app:showAsAction="ifRoom" />
 </menu>
