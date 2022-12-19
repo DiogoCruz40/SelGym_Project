@@ -14,9 +14,9 @@ public class ExerciseWODTO {
     private ExerciseDTO exercise;
     private List<SetsDTO> setsList;
 
-    public ExerciseWODTO(Long id, int order, double weight, int sets, int reps, int rest, ExerciseDTO exercise) {
+    public ExerciseWODTO( int order, double weight, int sets, int reps, int rest, ExerciseDTO exercise) {
         //use in case of exercise with fixed sets and reps
-        this.exerciseWOId = id;
+        this.exerciseWOId = -1L;
         this.order_exwo = order;
         this.weight = weight;
         this.sets = sets;
@@ -27,9 +27,9 @@ public class ExerciseWODTO {
         this.setsList = null;
     }
 
-    public ExerciseWODTO(Long id, int order, double weight, int sets, int rest, ExerciseDTO exercise, int duration) {
+    public ExerciseWODTO( int order, double weight, int sets, int rest, ExerciseDTO exercise, int duration) {
         //use in case of exercise with fixed sets and reps
-        this.exerciseWOId = id;
+        this.exerciseWOId = -1L;
         this.order_exwo = order;
         this.weight = weight;
         this.sets = sets;
@@ -40,9 +40,9 @@ public class ExerciseWODTO {
         this.setsList = null;
     }
 
-    public ExerciseWODTO(Long id, int order,int reps, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
+    public ExerciseWODTO( int order,int reps, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
         //use in case of exercise with variable sets and reps
-        this.exerciseWOId = id;
+        this.exerciseWOId = -1L;
         this.order_exwo = order;
         this.weight = 0;
         this.sets = 0;
@@ -53,9 +53,9 @@ public class ExerciseWODTO {
         this.setsList = setsList;
     }
 
-    public ExerciseWODTO(Long id, int order, ExerciseDTO exercise, int duration, ArrayList<SetsDTO> setsList) {
+    public ExerciseWODTO( int order, ExerciseDTO exercise, int duration, ArrayList<SetsDTO> setsList) {
         //use in case of exercise with variable sets and time
-        this.exerciseWOId = id;
+        this.exerciseWOId = -1L;
         this.order_exwo = order;
         this.weight = 0;
         this.sets = 0;

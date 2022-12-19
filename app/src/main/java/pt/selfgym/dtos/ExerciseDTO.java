@@ -6,8 +6,8 @@ public class ExerciseDTO {
     private String urlImage;
     private String type;
 
-    public ExerciseDTO(Long id, String name, String urlImage, String type) {
-        this.id = id;
+    public ExerciseDTO(String name, String urlImage, String type) {
+        this.id = -1L;
         this.name_exercise = name;
         this.urlImage = urlImage;
         this.type = type;

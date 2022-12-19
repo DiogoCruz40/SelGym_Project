@@ -9,8 +9,8 @@ public class WorkoutDTO {
     private String type;
     private ArrayList<Object> workoutComposition;
 
-    public WorkoutDTO(Long id, String name, String observation, String type) {
-        this.workoutId = id;
+    public WorkoutDTO(String name, String observation, String type) {
+        this.workoutId = -1L;
         this.name_wo = name;
         this.observation = observation;
         this.type = type;

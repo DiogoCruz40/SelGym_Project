@@ -4,45 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/editNameButtonNewWorkout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Confirm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newWorkoutNameNewWorkout" />
+    android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="New workout name:"
+        android:layout_marginTop="32dp"
+        android:text="Delete workout?"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/newWorkoutNameNewWorkout"
-        android:layout_width="224dp"
-        android:layout_height="53dp"
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:ems="10"
-        android:hint="workout name"
-        android:inputType="textPersonName"
+        android:layout_marginBottom="16dp"
+        android:text="OK"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/textDelete" />
 
     <Button
-        android:id="@+id/cancelButtonNewWorkout"
+        android:id="@+id/cancelButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"

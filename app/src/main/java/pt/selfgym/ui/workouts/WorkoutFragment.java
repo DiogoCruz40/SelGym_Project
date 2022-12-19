@@ -47,7 +47,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
     private AlertDialog dialog;
     private Spinner spinnermqttpopup, spinnertopicshare;
     private EditText newWorkoutName;
-    private Button deleteNote, saveNewName, cancel, subscribe, unsubscribe, addtopic, removetopic, sharenote;
+    private Button deleteWorkout, saveNewName, cancel, subscribe, unsubscribe, addtopic, removetopic, sharenote;
     private Long id;
     private WorkoutFilter workoutFilters = new WorkoutFilter();
     private String searchString = "";
@@ -81,10 +81,10 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         });*/
 
         ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
-        workouts.add(new WorkoutDTO(1L, "olá1", "hey", "full body"));
-        workouts.add(new WorkoutDTO(2L, "olá2", "hey", "upper body"));
-        workouts.add(new WorkoutDTO(3L, "olá3", "hey", "lower body"));
-        workouts.add(new WorkoutDTO(4L, "olá4", "hey", "push"));
+        workouts.add(new WorkoutDTO( "olá1", "hey", "full body"));
+        workouts.add(new WorkoutDTO( "olá2", "hey", "upper body"));
+        workouts.add(new WorkoutDTO( "olá3", "hey", "lower body"));
+        workouts.add(new WorkoutDTO( "olá4", "hey", "push"));
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
         adapter = new ListAdapter(workouts, this);
@@ -98,7 +98,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
             public void onClick(View view) {
                 //TODO: Create new workout and set the id to be passed
                 EditWorkoutFragment fr = new EditWorkoutFragment();
-                createNewWorkoutPopup();
+                activityInterface.changeFrag(new EditWorkoutFragment(), null);
             }
         });
 
@@ -192,7 +192,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         else {
             id = adapter.getFilteredWorkouts().get(position).getId();
         }
-        createNewNameDeletePopUp();
+        createDeleteWorkoutPopUp();
     }
 
 
@@ -297,23 +297,18 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         dialog.show();
     }
 
-    public void createNewNameDeletePopUp() {
+    public void createDeleteWorkoutPopUp() {
         dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
-        final View newTitleDeletePopUp = getLayoutInflater().inflate(R.layout.popup_new_title_delete_workout, null);
+        final View DeleteWorkoutPopUp = getLayoutInflater().inflate(R.layout.popup_delete_workout, null);
 
-        saveNewName = (Button)  newTitleDeletePopUp.findViewById(R.id.editNameButton);
-        deleteNote = (Button) newTitleDeletePopUp.findViewById(R.id.deleteButton);
-        cancel = (Button) newTitleDeletePopUp.findViewById(R.id.cancelButton);
-        newWorkoutName = (EditText) newTitleDeletePopUp.findViewById(R.id.newWorkoutName);
+        deleteWorkout = (Button) DeleteWorkoutPopUp.findViewById(R.id.deleteButton);
+        cancel = (Button) DeleteWorkoutPopUp.findViewById(R.id.cancelButton);
 
-        //TODO: get the old workout name by id
-        //newWorkoutName.setText();
-
-        dialogBuilder.setView(newTitleDeletePopUp);
+        dialogBuilder.setView(DeleteWorkoutPopUp);
         dialog = dialogBuilder.create();
         dialog.show();
 
-        deleteNote.setOnClickListener(new View.OnClickListener() {
+        deleteWorkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO: delete workout by id
@@ -324,17 +319,6 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
             }
         });
 
-        saveNewName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String newName = ((EditText) newTitleDeletePopUp.findViewById(R.id.newWorkoutName)).getText().toString();
-                //TODO: save new workout name
-
-                dialog.dismiss();
-            }
-        });
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -342,42 +326,6 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
             }
         });
 
-    }
-
-    public void createNewWorkoutPopup() {
-        dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
-        final View newWorkoutPopUp = getLayoutInflater().inflate(R.layout.popup_new_workout, null);
-
-        saveNewName = (Button)  newWorkoutPopUp.findViewById(R.id.editNameButtonNewWorkout);
-        cancel = (Button) newWorkoutPopUp.findViewById(R.id.cancelButtonNewWorkout);
-        newWorkoutName = (EditText) newWorkoutPopUp.findViewById(R.id.newWorkoutNameNewWorkout);
-
-        //TODO: get the old workout name by id
-        //newWorkoutName.setText();
-
-        dialogBuilder.setView(newWorkoutPopUp);
-        dialog = dialogBuilder.create();
-        dialog.show();
-
-        saveNewName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String newName = ((EditText) newWorkoutPopUp.findViewById(R.id.newWorkoutNameNewWorkout)).getText().toString();
-                //TODO: save new workout name in the view model
-                // so it can be used later when the person
-                // actually decides to save
-
-                dialog.dismiss();
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
     }
 
     @Override

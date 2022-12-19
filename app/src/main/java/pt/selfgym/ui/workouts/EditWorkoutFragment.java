@@ -24,11 +24,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.R;
@@ -45,7 +48,8 @@ public class EditWorkoutFragment extends Fragment {
     private ActivityInterface activityInterface;
     private SharedViewModel mViewModel;
     private EditAdapter adapter;
-    private EditText editTextNote, observations;
+    private EditText editTextNote, observations , name;
+    private Spinner type;
     private View view;
     private long id;
     private WorkoutDTO workout;
@@ -79,22 +83,22 @@ public class EditWorkoutFragment extends Fragment {
             //String note = mViewModel.getNoteContentById(id);
 
             //comment this if needed
-            workout = new WorkoutDTO(1L, "olá" , "hell", "full body");
-            ExerciseWODTO exercise1 = new ExerciseWODTO(1L,1,0.0,1,1,0,new ExerciseDTO(1L,"hell","sodqodmpaod", "sidno"));
-            ExerciseWODTO exercise2 = new ExerciseWODTO(2L,2,0.0,1,0,new ExerciseDTO(1L,"hell","sodqodmpaod", "sidno"),1);
-            SetsDTO setsDTO1 = new SetsDTO(1L,1,1,1,1);
-            SetsDTO setsDTO2 = new SetsDTO(1L,1,1,1,2);
+            workout = new WorkoutDTO( "olá" , "hell", "upper body");
+            ExerciseWODTO exercise1 = new ExerciseWODTO(1,0.0,1,1,0,new ExerciseDTO("hell","sodqodmpaod", "sidno"));
+            ExerciseWODTO exercise2 = new ExerciseWODTO(2,0.0,1,0,new ExerciseDTO("hell","sodqodmpaod", "sidno"),1);
+            SetsDTO setsDTO1 = new SetsDTO(1,1,1,1);
+            SetsDTO setsDTO2 = new SetsDTO(1,1,1,2);
             ArrayList<SetsDTO> sets = new ArrayList<SetsDTO>();
             sets.add(setsDTO1);
             sets.add(setsDTO2);
-            ExerciseWODTO exercise3 = new ExerciseWODTO(3L,3, 1, new ExerciseDTO(1L,"hell","sodqodmpaod", "sidno"), sets);
-            ExerciseWODTO exercise4 = new ExerciseWODTO(4L,4, new ExerciseDTO(1L,"hell","sodqodmpaod", "sidno"), 1, sets);
+            ExerciseWODTO exercise3 = new ExerciseWODTO(3, 1, new ExerciseDTO("hell","sodqodmpaod", "sidno"), sets);
+            ExerciseWODTO exercise4 = new ExerciseWODTO(4, new ExerciseDTO("hell","sodqodmpaod", "sidno"), 1, sets);
             ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
             circuitComposition.add(exercise1);
             circuitComposition.add(exercise2);
             circuitComposition.add(exercise3);
             circuitComposition.add(exercise4);
-            CircuitDTO circuit = new CircuitDTO(5L,5,0, circuitComposition);
+            CircuitDTO circuit = new CircuitDTO(5,0, circuitComposition);
             ArrayList<Object> workoutComposition = new ArrayList<Object>();
             workoutComposition.add(exercise1);
             workoutComposition.add(exercise2);
@@ -104,10 +108,7 @@ public class EditWorkoutFragment extends Fragment {
             workout.setWorkoutComposition(workoutComposition);
         } else {
             //new workout
-            id = -1;
-            //TODO: get the workout name that i told u to save in the view model here
-            // no need to save it yet so the id is -1
-            workout = new WorkoutDTO(id, "" , "", "full body");
+            workout = new WorkoutDTO("" , "", "full body");
         }
 
 
@@ -116,6 +117,25 @@ public class EditWorkoutFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(adapter);
+
+        name = (EditText) view.findViewById(R.id.editWorkoutName);
+        name.setText(workout.getName());
+
+        type = (Spinner) view.findViewById(R.id.workoutTypeSpinner);
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lowerbody","push","pull"));
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        type.setAdapter(typeAdapter);
+        if(workout.getType() == "full body") {
+            type.setSelection(0);
+        } else if(workout.getType() == "upper body") {
+            type.setSelection(1);
+        } else if(workout.getType() == "lower body") {
+            type.setSelection(2);
+        } else if(workout.getType() == "push") {
+            type.setSelection(3);
+        } else if(workout.getType() == "pull") {
+            type.setSelection(4);
+        }
 
         observations = (EditText) view.findViewById(R.id.textAreaObservations);
         observations.setText(workout.getObservation());
@@ -148,6 +168,9 @@ public class EditWorkoutFragment extends Fragment {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
                         WorkoutDTO newWorkout = adapter.saveWorkoutChanges();
+                        newWorkout.setName(name.getText().toString());
+                        newWorkout.setObservation(observations.getText().toString());
+                        newWorkout.setType(type.getSelectedItem().toString());
 
                         if (getArguments()==null){
                             //TODO: This means its a new workout and the id

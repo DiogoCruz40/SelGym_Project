@@ -7,8 +7,8 @@ public class SetsDTO {
     private double weight;
     private int order_set;
 
-    public SetsDTO(Long id, int variable, int rest, double weight, int order_set) {
-        this.exerciseSetId = id;
+    public SetsDTO( int variable, int rest, double weight, int order_set) {
+        this.exerciseSetId = -1L;
         this.variable = variable;
         this.rest = rest;
         this.weight = weight;
