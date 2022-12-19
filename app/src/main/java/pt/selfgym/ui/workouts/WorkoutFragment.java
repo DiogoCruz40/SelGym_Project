@@ -52,7 +52,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
     private Spinner spinnermqttpopup, spinnertopicshare;
     private EditText newNoteName, subscribetopic, topicname;
     private Button deleteNote, saveNewName, cancel, subscribe, unsubscribe, addtopic, removetopic, sharenote;
-    private int id;
+    private Long id;
     private WorkoutFilter workoutFilters = new WorkoutFilter();
     private String searchString = "";
 
@@ -85,10 +85,10 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         });*/
 
         ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
-        workouts.add(new WorkoutDTO(1, "olá1", "hey", "full body"));
-        workouts.add(new WorkoutDTO(2, "olá2", "hey", "upper body"));
-        workouts.add(new WorkoutDTO(3, "olá3", "hey", "lower body"));
-        workouts.add(new WorkoutDTO(4, "olá4", "hey", "push"));
+        workouts.add(new WorkoutDTO(1L, "olá1", "hey", "full body"));
+        workouts.add(new WorkoutDTO(2L, "olá2", "hey", "upper body"));
+        workouts.add(new WorkoutDTO(3L, "olá3", "hey", "lower body"));
+        workouts.add(new WorkoutDTO(4L, "olá4", "hey", "push"));
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
         adapter = new ListAdapter(workouts, this);
@@ -103,7 +103,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                 //TODO: Create new workout and set the id to be passed
                 EditWorkoutFragment fr = new EditWorkoutFragment();
                 Bundle arg = new Bundle();
-                arg.putInt("id", id);
+                arg.putLong("id", id);
                 fr.setArguments(arg);
 
                 activityInterface.changeFrag(fr);
@@ -187,7 +187,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         else {
             id = adapter.getFilteredWorkouts().get(position).getId();
         }
-        arg.putInt("id", id);
+        arg.putLong("id", id);
         fr.setArguments(arg);
 
         activityInterface.changeFrag(fr);
@@ -321,7 +321,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
             @Override
             public void onClick(View v) {
                 //TODO: delete workout by id
-                //mViewModel.deleteWorkout(id);
+                mViewModel.deleteWorkoutbyId(id);
                 activityInterface.getMainActivity();
 
                 dialog.dismiss();

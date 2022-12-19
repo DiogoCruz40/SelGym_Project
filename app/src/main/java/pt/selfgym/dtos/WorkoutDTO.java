@@ -3,26 +3,26 @@ package pt.selfgym.dtos;
 import java.util.ArrayList;
 
 public class WorkoutDTO {
-    private int id;
-    private String name;
+    private Long workoutId;
+    private String name_wo;
     private String observation;
     private String type;
     private ArrayList<Object> workoutComposition;
 
-    public WorkoutDTO(int id, String name, String observation, String type) {
-        this.id = id;
-        this.name = name;
+    public WorkoutDTO(Long id, String name, String observation, String type) {
+        this.workoutId = id;
+        this.name_wo = name;
         this.observation = observation;
         this.type = type;
         this.workoutComposition = new ArrayList<Object>();
     }
 
     public String getName() {
-        return name;
+        return name_wo;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name_wo = name;
     }
 
     public String getType() {
@@ -33,12 +33,12 @@ public class WorkoutDTO {
         this.type = type;
     }
 
-    public int getId() {
-        return id;
+    public Long getId() {
+        return workoutId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(Long id) {
+        this.workoutId = id;
     }
 
     public String getObservation() {
@@ -58,6 +58,10 @@ public class WorkoutDTO {
     }
 
     public void addToWorkoutComposition(Object ex){
+        if(this.workoutComposition == null)
+        {
+            this.workoutComposition = new ArrayList<Object>();
+        }
         workoutComposition.add(ex);
     }
 }

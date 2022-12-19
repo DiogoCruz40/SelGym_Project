@@ -25,10 +25,6 @@ public class ExerciseSet {
     @NonNull
     public Long exerciseWO_id;
 
-    @ColumnInfo(name = "sets")
-    @NonNull
-    public Integer sets;
-
     @ColumnInfo(name = "rest")
     @NonNull
     public String rest;
@@ -38,7 +34,7 @@ public class ExerciseSet {
 
     @ColumnInfo(name = "weight")
     @NonNull
-    public Float weight;
+    public Double weight;
 
     @ColumnInfo(name = "order_set")
     @NonNull

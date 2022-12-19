@@ -1,5 +1,6 @@
 package pt.selfgym.database.daos;
 
+import androidx.core.content.res.TypedArrayUtils;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -8,27 +9,43 @@ import androidx.room.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import pt.selfgym.database.entities.Circuit;
 import pt.selfgym.database.entities.Exercise;
+import pt.selfgym.database.entities.ExerciseSet;
 import pt.selfgym.database.entities.ExerciseWO;
 import pt.selfgym.database.entities.Workout;
+import pt.selfgym.dtos.CircuitDTO;
+import pt.selfgym.dtos.ExerciseDTO;
+import pt.selfgym.dtos.ExerciseWODTO;
+import pt.selfgym.dtos.SetsDTO;
 import pt.selfgym.dtos.WorkoutDTO;
+import pt.selfgym.mappers.Mapper;
 
 @Dao
 public interface DAO {
+
+    /**
+     * Exercises
+     **/
 
     @Query("SELECT * FROM exercises")
     List<Exercise> getAllExercises();
 
     @Query("Select * from exercises where exerciseId = :id_exercise")
-    Exercise getExercisebyId(int id_exercise);
+    Exercise getExercisebyId(long id_exercise);
+
+    @Query("Delete from exercises where exerciseId = :id_exercise")
+    void deleteExercisebyId(long id_exercise);
 
     @Delete
     void deleteExercise(Exercise exercise);
 
     @Insert
     long insertexercise(Exercise exercise);
+
+    /*********************************************************************/
 
     /* @Query("SELECT * FROM Point WHERE id_note IN (:userIds)")
      List<Note> loadAllByIds(int[] userIds);
@@ -41,11 +58,25 @@ public interface DAO {
 
      @Query("UPDATE Point SET description = :newNote WHERE id_note = :id_nota")
      void updateNote(int id_nota, String newNote); */
+
+    //    @Transaction
+//    @Query("SELECT * FROM workouts")
+//    List<WO_Circuits> getWorkoutsandCircuits();
+//
+//    @Transaction
+//    @Query("SELECT * FROM workouts WHERE workoutId = :id_workout")
+//    List<WO_Circuits> getWoandCircuits(int id_workout);
     @Insert
-    void insertworkout(Workout workout);
+    long insertwo(Workout workout);
 
     @Insert
     long insertexwo(ExerciseWO exerciseWO);
+
+    @Insert
+    long insertset(ExerciseSet exerciseSet);
+
+    @Insert
+    long insertcircuit(Circuit circuit);
 
     @Query("Select * from workouts")
     List<Workout> getAllworkouts();
@@ -56,42 +87,111 @@ public interface DAO {
     @Query("Select * from exerciseswo where circuitexwo_id=:id_circuit order by order_exwo asc,exerciseWOId asc")
     List<ExerciseWO> getExsWObycircuit(Long id_circuit);
 
-    @Query("Select * from exerciseswo where workoutexwo_id=:id_workout ORDER BY order_exwo asc")
+    @Query("Select * from exerciseswo where workoutexwo_id=:id_workout ORDER BY order_exwo asc,exerciseWOId asc")
     List<ExerciseWO> getexercisesbyWorkoutId(Long id_workout);
 
-    @Query("Select name_exercise,urltoimage,pushpulllegs,upperlowerbody from exerciseswo Join exercises on exercise_id=exercises.exerciseId where exerciseId=:id_exercise order by order_exwo asc, exerciseWOId asc")
-    List<Exercise> getExercisesofcircuit(Long id_exercise);
+    @Query("Select * from exercise_sets where exerciseWO_id=:id_exwo ORDER BY order_set asc,exerciseSetId asc")
+    List<ExerciseSet> getSetsExWO(Long id_exwo);
 
-//    @Query("Select exerciseSetId,sets,variable,weight,order_set from exercise_sets")
-
-    // TODO: Buscar os Workouts a BD
     @Transaction
     default List<WorkoutDTO> getworkouts() {
         List<Workout> workouts = getAllworkouts();
+        List<WorkoutDTO> workoutDTOList = new ArrayList<WorkoutDTO>();
+
         for (Workout workout : workouts) {
+            WorkoutDTO workoutDTO = (new Mapper()).toDTO(workout, WorkoutDTO.class);
             List<Circuit> circuitList = getcircuitsbyworkout(workout.workoutId);
             List<ExerciseWO> exerciseWOList = getexercisesbyWorkoutId(workout.workoutId);
+            List<Long> addedIdsCircuits = new ArrayList<Long>();
+
             for (ExerciseWO exerciseWO : exerciseWOList) {
-                if (exerciseWO.circuitexwo_id != null) {
-                    for (Circuit circuit : circuitList) {
-                        List<ExerciseWO> exWOCircuitList = getExsWObycircuit(circuit.circuitId);
-                        for (ExerciseWO exerciseWOcircuit : exWOCircuitList) {
-                            List<Exercise> exerciseList = getExercisesofcircuit(exerciseWOcircuit.exercise_id);
+                if (exerciseWO.circuitexwo_id == null) {
+                    ExerciseWODTO exerciseWODTO = (new Mapper()).toDTO(exerciseWO, ExerciseWODTO.class);
+                    exerciseWODTO.setExercise((new Mapper()).toDTO(getExercisebyId(exerciseWO.exercise_id), ExerciseDTO.class));
+                    exerciseWODTO.setSetsList((new Mapper()).toDTOs(getSetsExWO(exerciseWO.exerciseWOId), SetsDTO.class));
+                    workoutDTO.addToWorkoutComposition(exerciseWODTO);
+                } else {
+                    if (!addedIdsCircuits.contains(exerciseWO.circuitexwo_id)) {
+                        addedIdsCircuits.add(exerciseWO.circuitexwo_id);
+
+                        for (Circuit circuit : circuitList) {
+                            if (circuit.circuitId == exerciseWO.circuitexwo_id) {
+                                CircuitDTO circuitDTO = (new Mapper()).toDTO(circuit, CircuitDTO.class);
+
+                                List<ExerciseWO> exWOCircuitList = getExsWObycircuit(circuit.circuitId);
+                                for (ExerciseWO exerciseWOCircuit : exWOCircuitList) {
+                                    ExerciseWODTO exerciseWODTO = (new Mapper()).toDTO(exerciseWOCircuit, ExerciseWODTO.class);
+                                    exerciseWODTO.setExercise((new Mapper()).toDTO(getExercisebyId(exerciseWOCircuit.exercise_id), ExerciseDTO.class));
+                                    exerciseWODTO.setSetsList((new Mapper()).toDTOs(getSetsExWO(exerciseWOCircuit.exerciseWOId), SetsDTO.class));
+                                    circuitDTO.addToExerciseList(exerciseWODTO);
+                                }
+
+                                workoutDTO.addToWorkoutComposition(circuitDTO);
+                                break;
+                            }
                         }
                     }
                 }
             }
+            workoutDTOList.add(workoutDTO);
         }
-        return null;
+        return workoutDTOList;
     }
 
 
-//    @Transaction
-//    @Query("SELECT * FROM workouts")
-//    List<WO_Circuits> getWorkoutsandCircuits();
-//
-//    @Transaction
-//    @Query("SELECT * FROM workouts WHERE workoutId = :id_workout")
-//    List<WO_Circuits> getWoandCircuits(int id_workout);
+    @Transaction
+    default WorkoutDTO insertWorkout(WorkoutDTO workoutDTO) {
+        List<Workout> workouts = getAllworkouts();
+        for (Workout workout : workouts) {
+            if (workout.name_wo.toLowerCase() == workoutDTO.getName().toLowerCase())
+                return null;
+        }
+        Long id_workout = insertwo((new Mapper()).toEntity(workoutDTO, Workout.class));
+        workoutDTO.setId(id_workout);
+        workoutDTO.getWorkoutComposition().forEach(obj -> {
+            if (obj instanceof ExerciseWODTO) {
+                ExerciseWO exerciseWO = (new Mapper()).toEntity(obj, ExerciseWO.class);
+                exerciseWO.workoutexwo_id = id_workout;
+                exerciseWO.exercise_id = ((ExerciseWODTO) obj).getExercise().getId();
+                Long id_exwo = insertexwo(exerciseWO);
+                ((ExerciseWODTO) obj).setId(id_exwo);
 
+                List<SetsDTO> setsDTOList = ((ExerciseWODTO) obj).getSetsList();
+                if (setsDTOList != null) {
+                    for (SetsDTO setsDTO : setsDTOList) {
+                        ExerciseSet exerciseSet = (new Mapper()).toEntity(setsDTO, ExerciseSet.class);
+                        exerciseSet.exerciseWO_id = id_exwo;
+                        insertset(exerciseSet);
+                    }
+                }
+            } else {
+                Circuit circuit = (new Mapper()).toEntity(obj, Circuit.class);
+                circuit.workoutcircuit_id = id_workout;
+                Long id_circuit = insertcircuit(circuit);
+                ((CircuitDTO) obj).setId(id_circuit);
+
+                if (((CircuitDTO) obj).getExerciseList() != null) {
+                    ((CircuitDTO) obj).getExerciseList().forEach(exerciseWODTO -> {
+                        ExerciseWO exerciseWO = (new Mapper()).toEntity(exerciseWODTO, ExerciseWO.class);
+                        exerciseWO.workoutexwo_id = id_workout;
+                        exerciseWO.exercise_id = exerciseWODTO.getExercise().getId();
+                        exerciseWO.circuitexwo_id = id_circuit;
+                        Long id_exwo = insertexwo(exerciseWO);
+                        exerciseWODTO.setId(id_exwo);
+
+                        if (exerciseWODTO.getSetsList() != null) {
+                            exerciseWODTO.getSetsList().forEach(setsDTO -> {
+                                ExerciseSet exerciseSet = (new Mapper()).toEntity(setsDTO, ExerciseSet.class);
+                                exerciseSet.exerciseWO_id = id_exwo;
+                                Long id_set = insertset(exerciseSet);
+                                setsDTO.setId(id_set);
+                            });
+                        }
+                    });
+                }
+
+            }
+        });
+        return workoutDTO;
+    }
 }

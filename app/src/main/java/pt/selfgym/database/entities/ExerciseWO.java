@@ -40,6 +40,22 @@ public class ExerciseWO {
     @ColumnInfo(name = "circuitexwo_id")
     public Long circuitexwo_id;
 
+    @ColumnInfo(name = "rest")
+    @NonNull
+    public String rest;
+
+    @ColumnInfo(name = "sets")
+    @NonNull
+    public Integer sets;
+
+    @ColumnInfo(name = "duration")
+    @NonNull
+    public Integer duration;
+
+    @ColumnInfo(name = "weight")
+    @NonNull
+    public Double weight;
+
     @ColumnInfo(name = "order_exwo")
     @NonNull
     public Long order_exwo;

@@ -27,14 +27,14 @@ public class StatisticsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        StatisticsViewModel statisticsViewModel =
-                new ViewModelProvider(this).get(StatisticsViewModel.class);
+//        StatisticsViewModel statisticsViewModel =
+//                new ViewModelProvider(this).get(StatisticsViewModel.class);
 
         binding = FragmentStatisticsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textNotifications;
-        statisticsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+//        statisticsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

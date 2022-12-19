@@ -27,14 +27,14 @@ public class CalendarFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        CalendarViewModel calendarViewModel =
-                new ViewModelProvider(this).get(CalendarViewModel.class);
+//        CalendarViewModel calendarViewModel =
+//                new ViewModelProvider(this).get(CalendarViewModel.class);
 
         binding = FragmentCalendarBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textHome;
-        calendarViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+//        calendarViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

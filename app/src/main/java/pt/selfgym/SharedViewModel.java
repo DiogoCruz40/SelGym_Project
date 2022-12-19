@@ -16,8 +16,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import pt.selfgym.database.AppDatabase;
+import pt.selfgym.database.entities.Exercise;
+import pt.selfgym.dtos.ExerciseDTO;
 import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.mappers.Mapper;
 import pt.selfgym.services.AppExecutors;
@@ -27,8 +30,9 @@ public class SharedViewModel extends AndroidViewModel {
 
     private AppDatabase mDb;
     private final MutableLiveData<List<WorkoutDTO>> workouts = new MutableLiveData<List<WorkoutDTO>>();
+    private final MutableLiveData<List<ExerciseDTO>> exercises = new MutableLiveData<List<ExerciseDTO>>();
     private final MutableLiveData<String> toastMessageObserver = new MutableLiveData<String>();
-    //    private static boolean trigger = true;
+
 
     public SharedViewModel(@NonNull Application application) {
         super(application);
@@ -42,6 +46,10 @@ public class SharedViewModel extends AndroidViewModel {
         return workouts;
     }
 
+    public MutableLiveData<List<ExerciseDTO>> getExercises() {
+        return exercises;
+    }
+    // TODO: FALTA TESTAR
     public void startDB() {
         mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
 
@@ -50,55 +58,138 @@ public class SharedViewModel extends AndroidViewModel {
             public void run() {
                 //how to get all workouts
                 Mapper mapper = new Mapper();
-//                List<WorkoutDTO> workoutDTOList = mapper.toDTOs(mDb.WorkoutDAO().(),WorkoutDTO.class);
+                List<WorkoutDTO> workoutDTOList = mDb.DAO().getworkouts();
 
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-
-//                        if (workoutDTOList == null) {
-//                            workouts.setValue(new ArrayList<WorkoutDTO>());
-//                        } else {
-//                            workouts.setValue(workoutDTOList);
-//                        }
-
-                        /*
-                        System.out.println("AQUI: " + pointsDTO.size());
-
-                        for(PointDTO p: pointsDTO){
-                            System.out.println(p.getTimestamp() + " " + p.getTemperature());
-                        }*/
-
+                        if (workoutDTOList == null) {
+                            workouts.setValue(new ArrayList<WorkoutDTO>());
+                        } else {
+                            workouts.setValue(workoutDTOList);
+                        }
                     }
                 });
             }
         });
     }
-//
-//
-//    public void insertPoint(Float temp, Float hum, String timestamp) {
-//        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                // insert point
-//                PointMapperInterface noteMapperInterface = new PointMapper();
-//                PointDTO pointsDTO = new PointDTO(timestamp, temp, hum);
-//                pointsDTO.setId((int) mDb.pointsDAO().insert(noteMapperInterface.toEntityPoint(pointsDTO)));
-////                Log.w("mqtt", String.valueOf(pointsDTO.getHumidity()));
-//                new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        List<PointDTO> aux = points.getValue();
-//                        if (aux != null) {
-//                            aux.add(pointsDTO);
-//                            points.setValue(aux);
+
+    /**
+     * Workouts
+     **/
+    // TODO: FALTA TESTAR
+    public void insertWorkout(WorkoutDTO workoutDTO) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how insert a workout
+                WorkoutDTO workoutDTOwithIds = mDb.DAO().insertWorkout(workoutDTO);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (workoutDTOwithIds != null) {
+                            List<WorkoutDTO> workoutDTOList = workouts.getValue();
+                            if (workoutDTOList == null) {
+                                workoutDTOList = new ArrayList<WorkoutDTO>();
+                            }
+                            workoutDTOList.add(workoutDTOwithIds);
+                            workouts.setValue(workoutDTOList);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public void deleteWorkoutbyId(Long id_workout) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how delete a workout
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+//                        List<ExerciseDTO> exerciseDTOList = exercises.getValue();
+//                        if (exerciseDTOList != null) {
+//                            exerciseDTOList = exerciseDTOList.stream().filter(exerciseDTO -> exerciseDTO.getId() != id_exercise).collect(Collectors.toList());
+//                            exercises.setValue(exerciseDTOList);
 //                        }
-//                    }
-//                });
-//            }
-//        });
-//    }
-//
+                    }
+                });
+            }
+        });
+    }
+
+    /**************************************************************************************************************************/
+
+    /**
+     * EXERCISES
+     **/
+    public void insertExercise(ExerciseDTO exerciseDTO) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how insert a exercise
+                Mapper mapper = new Mapper();
+                exerciseDTO.setId(mDb.DAO().insertexercise(mapper.toEntity(exerciseDTO, Exercise.class)));
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<ExerciseDTO> exerciseDTOList = exercises.getValue();
+                        if (exerciseDTOList == null) {
+                            exerciseDTOList = new ArrayList<ExerciseDTO>();
+                        }
+                        exerciseDTOList.add(exerciseDTO);
+                        exercises.setValue(exerciseDTOList);
+                    }
+                });
+            }
+        });
+    }
+
+    public void getAllExercises() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how to get all exercises
+                Mapper mapper = new Mapper();
+                List<ExerciseDTO> exerciseDTOList = mapper.toDTOs(mDb.DAO().getAllExercises(), ExerciseDTO.class);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (exerciseDTOList == null) {
+                            exercises.setValue(new ArrayList<ExerciseDTO>());
+                        } else
+                            exercises.setValue(exerciseDTOList);
+                    }
+                });
+            }
+        });
+    }
+
+    public void deleteExercisebyId(Long id_exercise) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how delete a exercise
+                mDb.DAO().deleteExercisebyId(id_exercise);
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<ExerciseDTO> exerciseDTOList = exercises.getValue();
+                        if (exerciseDTOList != null) {
+                            exerciseDTOList = exerciseDTOList.stream().filter(exerciseDTO -> exerciseDTO.getId() != id_exercise).collect(Collectors.toList());
+                            exercises.setValue(exerciseDTOList);
+                        }
+                    }
+                });
+            }
+        });
+    }
+    /**************************************************************************************************************************/
+
 //    public void deleteAllPoints() {
 //        AppExecutors.getInstance().diskIO().execute(new Runnable() {
 //            @Override
@@ -113,53 +204,4 @@ public class SharedViewModel extends AndroidViewModel {
 //            }
 //        });
 //    }
-//
-//    public void connmqtt(ActivityInterface activityInterface) {
-//        mqttHelper = new MQTTHelper(getApplication().getApplicationContext(), MqttClient.generateClientId());
-//        mqttHelper.setCallback(new MqttCallbackExtended() {
-//            @Override
-//            public void connectComplete(boolean reconnect, String serverURI) {
-//                subscribeToTopic("TempHumADM");
-//                subscribeToTopic("LEDADM");
-//                Log.w("mqtt", "connected");
-//                toastMessageObserver.setValue("MQTT conn and sub successful");
-//            }
-//
-//            @Override
-//            public void connectionLost(Throwable cause) {
-//                Log.w("mqtt", cause);
-//                toastMessageObserver.setValue("Connection Lost. Restart the app");
-//            }
-//
-//            @Override
-//            public void messageArrived(String topic, MqttMessage message) throws Exception {
-//                if (Objects.equals(topic, "TempHumADM")) {
-//                    if (trigger) {
-//                        publishMessage("state", "LEDADM");
-//                        trigger = false;
-//                    }
-//                    //                {"humidity":12.56,"temperature":44.05,"timestamp":""}
-//                    PointDTO pointDTO = new Gson().fromJson(message.toString(), PointDTO.class);
-//                    if (pointDTO.getTimestamp() != null) {
-//                        activityInterface.insertPointAct(pointDTO);
-//
-//                    }
-//                } else if (Objects.equals(topic, "LEDADM")) {
-//                    if (!message.toString().equals("state")) {
-//                        activityInterface.setLedAct(message.toString());
-//                        unsubscribeToTopic("LEDADM");
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void deliveryComplete(IMqttDeliveryToken token) {
-//
-//            }
-//        });
-//        mqttHelper.connect();
-//    }
-//
-//
-
 }

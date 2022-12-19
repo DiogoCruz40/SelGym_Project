@@ -1,32 +1,32 @@
 package pt.selfgym.dtos;
 
 public class ExerciseDTO {
-    private int id;
-    private String name;
+    private Long id;
+    private String name_exercise;
     private String urlImage;
     private String type;
 
-    public ExerciseDTO(int id, String name, String urlImage, String type) {
+    public ExerciseDTO(Long id, String name, String urlImage, String type) {
         this.id = id;
-        this.name = name;
+        this.name_exercise = name;
         this.urlImage = urlImage;
         this.type = type;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     public String getName() {
-        return name;
+        return name_exercise;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name_exercise = name;
     }
 
     public String getUrlImage() {

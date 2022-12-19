@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         model = new ViewModelProvider(this).get(SharedViewModel.class);
-//        model.startDB();
+        model.startDB();
         model.getToastMessageObserver().observe(this, message -> {
             Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
         });
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     @Override
     protected void onResume() {
         super.onResume();
-        //model.startDB();
+        model.startDB();
     }
 
     @Override

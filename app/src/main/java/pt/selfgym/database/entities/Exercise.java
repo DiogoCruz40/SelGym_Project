@@ -1,5 +1,6 @@
 package pt.selfgym.database.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
@@ -13,15 +14,13 @@ public class Exercise {
     public Long exerciseId;
 
     @ColumnInfo(name = "name_exercise")
+    @NonNull
     public String name_exercise;
 
     @ColumnInfo(name = "urltoimage")
     public String urltoimage;
 
-    @ColumnInfo(name = "pushpulllegs")
-    public String pushpulllegs;
-
-    @ColumnInfo(name = "upperlowerbody")
-    public String upperlowerbody;
-
+    @ColumnInfo(name = "type")
+    @NonNull
+    public String type;
 }

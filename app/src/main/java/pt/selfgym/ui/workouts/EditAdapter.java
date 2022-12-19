@@ -185,7 +185,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ViewHolderVariableSetsReps viewHolder3 = (ViewHolderVariableSetsReps) holder;
                 viewHolder3.name.setText(exerciseWODTO.getExercise().getName() + "");
 
-                WorkoutDTO workoutSets = new WorkoutDTO(-1, "set", "set", "set");
+                WorkoutDTO workoutSets = new WorkoutDTO(-1L, "set", "set", "set");
                 ArrayList<Object> exList = new ArrayList<Object>();
                 for (SetsDTO e : ((ExerciseWODTO) workout.getWorkoutComposition().get(position)).getSetsList()) {
                     exList.add(e);
@@ -208,7 +208,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ViewHolderVariableSetsTime viewHolder4 = (ViewHolderVariableSetsTime) holder;
                 viewHolder4.name.setText(exerciseWODTO.getExercise().getName() + "");
 
-                WorkoutDTO workoutCircuit = new WorkoutDTO(-1, "set", "set", "set");
+                WorkoutDTO workoutCircuit = new WorkoutDTO(-1L, "set", "set", "set");
                 ArrayList<Object> exList = new ArrayList<Object>();
                 for (SetsDTO e : ((ExerciseWODTO) workout.getWorkoutComposition().get(position)).getSetsList()) {
                     exList.add(e);
@@ -233,7 +233,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             viewHolder5.laps.setText(circuitDTO.getLaps() + "");
             viewHolder5.rest.setText(circuitDTO.getRest() + "");
 
-            WorkoutDTO workoutCircuit = new WorkoutDTO(-1, "circuit", "circuit", "circuit");
+            WorkoutDTO workoutCircuit = new WorkoutDTO(-1L, "circuit", "circuit", "circuit");
             ArrayList<Object> exList = new ArrayList<Object>();
             for (ExerciseWODTO e : ((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList()) {
                 exList.add(e);
@@ -267,7 +267,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         WorkoutDTO newWorkout = new WorkoutDTO(workout.getId(), workout.getName(), workout.getObservation(), workout.getType());
         for (int i = 0; i < holdersList.size(); i++) {
             if (holdersList.get(i) instanceof ViewHolderFixedSetsReps) {
-                int id = ((ExerciseWODTO) composition.get(i)).getId();
+                Long id = ((ExerciseWODTO) composition.get(i)).getId();
                 int order = ((ExerciseWODTO) composition.get(i)).getOrder();
                 double weight = Double.parseDouble(((ViewHolderFixedSetsReps) holdersList.get(i)).weight.getText().toString());
                 int sets = Integer.parseInt(((ViewHolderFixedSetsReps) holdersList.get(i)).sets.getText().toString());
@@ -278,7 +278,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 newWorkout.addToWorkoutComposition(ex);
 
             } else if (holdersList.get(i) instanceof ViewHolderFixedSetsTime) {
-                int id = ((ExerciseWODTO) composition.get(i)).getId();
+                Long id = ((ExerciseWODTO) composition.get(i)).getId();
                 int order = ((ExerciseWODTO) composition.get(i)).getOrder();
                 double weight = Double.parseDouble(((ViewHolderFixedSetsTime) holdersList.get(i)).weight.getText().toString());
                 int sets = Integer.parseInt(((ViewHolderFixedSetsTime) holdersList.get(i)).sets.getText().toString());
@@ -289,7 +289,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 newWorkout.addToWorkoutComposition(ex);
 
             } else if (holdersList.get(i) instanceof ViewHolderVariableSetsReps) {
-                int id = ((ExerciseWODTO) composition.get(i)).getId();
+                Long id = ((ExerciseWODTO) composition.get(i)).getId();
                 int order = ((ExerciseWODTO) composition.get(i)).getOrder();
                 int reps = ((ExerciseWODTO) composition.get(i)).getReps();
                 ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
@@ -304,7 +304,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 newWorkout.addToWorkoutComposition(ex);
 
             } else if (holdersList.get(i) instanceof ViewHolderVariableSetsTime) {
-                int id = ((ExerciseWODTO) composition.get(i)).getId();
+                Long id = ((ExerciseWODTO) composition.get(i)).getId();
                 int order = ((ExerciseWODTO) composition.get(i)).getOrder();
                 int duration = ((ExerciseWODTO) composition.get(i)).getDuration();
                 ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
@@ -319,7 +319,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 newWorkout.addToWorkoutComposition(ex);
 
             } else if (holdersList.get(i) instanceof ViewHolderCircuit) {
-                int id = ((CircuitDTO) composition.get(i)).getId();
+                Long id = ((CircuitDTO) composition.get(i)).getId();
                 int rest = Integer.parseInt(((ViewHolderCircuit) holdersList.get(i)).rest.getText().toString());
                 int laps = Integer.parseInt(((ViewHolderCircuit) holdersList.get(i)).laps.getText().toString());
                 EditAdapter exsAdapter = (EditAdapter) ((ViewHolderCircuit) holdersList.get(i)).exs.getAdapter();
@@ -333,7 +333,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 newWorkout.addToWorkoutComposition(ex);
 
             } else {
-                int id = ((SetsDTO) composition.get(i)).getId();
+                Long id = ((SetsDTO) composition.get(i)).getId();
                 int order = ((SetsDTO) composition.get(i)).getOrder_set();
                 double weight = Double.parseDouble(((ViewHolderSet) holdersList.get(i)).weight.getText().toString());
                 int rest = Integer.parseInt(((ViewHolderSet) holdersList.get(i)).rest.getText().toString());

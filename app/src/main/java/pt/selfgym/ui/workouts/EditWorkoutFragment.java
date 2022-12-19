@@ -75,22 +75,22 @@ public class EditWorkoutFragment extends Fragment {
         //TODO: get workout by id
         //String note = mViewModel.getNoteContentById(id);
 
-        WorkoutDTO workout = new WorkoutDTO(1, "olá" , "hell", "full body");
-        ExerciseWODTO exercise1 = new ExerciseWODTO(1,1,0.0,1,1,0,new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"));
-        ExerciseWODTO exercise2 = new ExerciseWODTO(2,2,0.0,1,0,new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"),1);
-        SetsDTO setsDTO1 = new SetsDTO(1,1,1,1,1);
-        SetsDTO setsDTO2 = new SetsDTO(1,1,1,1,2);
+        WorkoutDTO workout = new WorkoutDTO(1L, "olá" , "hell", "full body");
+        ExerciseWODTO exercise1 = new ExerciseWODTO(1L,1,0.0,1,1,0,new ExerciseDTO(1L,"hell","sodqodmpaod", "sidno"));
+        ExerciseWODTO exercise2 = new ExerciseWODTO(2L,2,0.0,1,0,new ExerciseDTO(1L,"hell","sodqodmpaod", "sidno"),1);
+        SetsDTO setsDTO1 = new SetsDTO(1L,1,1,1,1);
+        SetsDTO setsDTO2 = new SetsDTO(1L,1,1,1,2);
         ArrayList<SetsDTO> sets = new ArrayList<SetsDTO>();
         sets.add(setsDTO1);
         sets.add(setsDTO2);
-        ExerciseWODTO exercise3 = new ExerciseWODTO(3,3, 1, new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"), sets);
-        ExerciseWODTO exercise4 = new ExerciseWODTO(4,4, new ExerciseDTO(1,"hell","sodqodmpaod", "sidno"), 1, sets);
+        ExerciseWODTO exercise3 = new ExerciseWODTO(3L,3, 1, new ExerciseDTO(1L,"hell","sodqodmpaod", "sidno"), sets);
+        ExerciseWODTO exercise4 = new ExerciseWODTO(4L,4, new ExerciseDTO(1L,"hell","sodqodmpaod", "sidno"), 1, sets);
         ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
         circuitComposition.add(exercise1);
         circuitComposition.add(exercise2);
         circuitComposition.add(exercise3);
         circuitComposition.add(exercise4);
-        CircuitDTO circuit = new CircuitDTO(5,5,0, circuitComposition);
+        CircuitDTO circuit = new CircuitDTO(5L,5,0, circuitComposition);
         ArrayList<Object> workoutComposition = new ArrayList<Object>();
         workoutComposition.add(exercise1);
         workoutComposition.add(exercise2);

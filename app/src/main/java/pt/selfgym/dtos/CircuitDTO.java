@@ -3,24 +3,24 @@ package pt.selfgym.dtos;
 import java.util.ArrayList;
 
 public class CircuitDTO {
-    private int id;
+    private Long circuitId;
     private int laps;
     private int rest;
     private ArrayList<ExerciseWODTO> exerciseList;
 
-    public CircuitDTO(int id, int laps, int rest, ArrayList<ExerciseWODTO> exerciseList) {
-        this.id = id;
+    public CircuitDTO(Long id, int laps, int rest, ArrayList<ExerciseWODTO> exerciseList) {
+        this.circuitId = id;
         this.laps = laps;
         this.rest = rest;
         this.exerciseList = exerciseList;
     }
 
-    public int getId() {
-        return id;
+    public Long getId() {
+        return circuitId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(Long id) {
+        this.circuitId = id;
     }
 
     public int getLaps() {
@@ -45,5 +45,13 @@ public class CircuitDTO {
 
     public void setExerciseList(ArrayList<ExerciseWODTO> exerciseList) {
         this.exerciseList = exerciseList;
+    }
+    public void addToExerciseList(ExerciseWODTO exerciseWODTO)
+    {
+        if(this.exerciseList == null)
+        {
+            this.exerciseList = new ArrayList<ExerciseWODTO>();
+        }
+        exerciseList.add(exerciseWODTO);
     }
 }

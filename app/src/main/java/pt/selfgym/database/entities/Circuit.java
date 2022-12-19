@@ -24,8 +24,10 @@ public class Circuit {
     @NonNull public Long workoutcircuit_id;
 
     @ColumnInfo(name = "laps")
+    @NonNull
     public Integer laps;
 
     @ColumnInfo(name = "restlaps")
+    @NonNull
     public String restlaps;
 }
