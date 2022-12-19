@@ -92,7 +92,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
         adapter = new ListAdapter(workouts, this);
-        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(adapter);
 
