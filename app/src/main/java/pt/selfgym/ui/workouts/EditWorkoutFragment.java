@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
@@ -158,7 +159,9 @@ public class EditWorkoutFragment extends Fragment {
             }
         } );
 
-        activityInterface.getMainActivity().addMenuProvider(new MenuProvider() {
+        Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
+
+        toolbar.addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.edit_workout_menu, menu);

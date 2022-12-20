@@ -1,6 +1,7 @@
 package pt.selfgym;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -10,13 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -24,7 +22,6 @@ import pt.selfgym.databinding.ActivityMainBinding;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.Objects;
 
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.ui.workouts.EditWorkoutFragment;
@@ -46,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         // assigning ID of the toolbar to a variable
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -77,6 +76,17 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         model.getToastMessageObserver().observe(this, message -> {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

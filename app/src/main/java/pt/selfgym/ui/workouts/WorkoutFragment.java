@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
@@ -27,7 +28,7 @@ import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.Toolbar;
+
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -105,8 +106,8 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                 activityInterface.changeFrag(new EditWorkoutFragment(), null);
             }
         });
-
-        activityInterface.getMainActivity().addMenuProvider(new MenuProvider() {
+        Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
+        toolbar.addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_workouts, menu);
@@ -175,6 +176,12 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+
+                switch (menuItem.getItemId()) {
+                    case android.R.id.home:
+                        dialog.onBackPressed();
+                        return true;
+                }
                 return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
