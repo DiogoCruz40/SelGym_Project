@@ -4,6 +4,7 @@ import androidx.core.content.res.TypedArrayUtils;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
@@ -42,7 +43,7 @@ public interface DAO {
     @Delete
     void deleteExercise(Exercise exercise);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertexercise(Exercise exercise);
 
     /*********************************************************************/
@@ -66,17 +67,32 @@ public interface DAO {
 //    @Transaction
 //    @Query("SELECT * FROM workouts WHERE workoutId = :id_workout")
 //    List<WO_Circuits> getWoandCircuits(int id_workout);
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertwo(Workout workout);
 
-    @Insert
+    @Query("Delete from workouts where workoutId=:id_workout")
+    void deletewo(Long id_workout);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertexwo(ExerciseWO exerciseWO);
 
-    @Insert
+    @Query("Delete from exerciseswo where workoutexwo_id=:id_workout")
+    void deletexswo(Long id_workout);
+
+    @Query("Delete from events where workoutevents_id=:id_workout")
+    void deleteeventsofwo(Long id_workout);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertset(ExerciseSet exerciseSet);
 
-    @Insert
+    @Query("Delete from exercise_sets where exerciseWO_id=:id_exwo")
+    void deletesetsofexwo(Long id_exwo);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertcircuit(Circuit circuit);
+
+    @Query("Delete from circuits where workoutcircuit_id=:id_workout")
+    void deletecircuits(Long id_workout);
 
     @Query("Select * from workouts")
     List<Workout> getAllworkouts();
@@ -193,5 +209,17 @@ public interface DAO {
             }
         });
         return workoutDTO;
+    }
+
+    @Transaction
+    default void deleteWorkout(Long id_workout) {
+        List<ExerciseWO> exerciseWOList = getexercisesbyWorkoutId(id_workout);
+        exerciseWOList.forEach(exerciseWO -> {
+            deletesetsofexwo(exerciseWO.exerciseWOId);
+        });
+        deletexswo(id_workout);
+        deletecircuits(id_workout);
+        deleteeventsofwo(id_workout);
+        deletewo(id_workout);
     }
 }

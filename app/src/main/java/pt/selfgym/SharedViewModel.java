@@ -49,7 +49,7 @@ public class SharedViewModel extends AndroidViewModel {
     public MutableLiveData<List<ExerciseDTO>> getExercises() {
         return exercises;
     }
-    // TODO: FALTA TESTAR
+
     public void startDB() {
         mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
 
@@ -106,15 +106,15 @@ public class SharedViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 //how delete a workout
-
+                mDb.DAO().deleteWorkout(id_workout);
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-//                        List<ExerciseDTO> exerciseDTOList = exercises.getValue();
-//                        if (exerciseDTOList != null) {
-//                            exerciseDTOList = exerciseDTOList.stream().filter(exerciseDTO -> exerciseDTO.getId() != id_exercise).collect(Collectors.toList());
-//                            exercises.setValue(exerciseDTOList);
-//                        }
+                        List<WorkoutDTO> workoutDTOList = workouts.getValue();
+                        if (workoutDTOList != null) {
+                            workoutDTOList = workoutDTOList.stream().filter(workoutDTO -> workoutDTO.getId() != id_workout).collect(Collectors.toList());
+                            workouts.setValue(workoutDTOList);
+                        }
                     }
                 });
             }
