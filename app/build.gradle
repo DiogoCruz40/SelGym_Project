@@ -35,6 +35,8 @@ android {
 }
 
 dependencies {
+    //glide images from url
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     //notifications
     implementation "androidx.core:core:1.9.0"
