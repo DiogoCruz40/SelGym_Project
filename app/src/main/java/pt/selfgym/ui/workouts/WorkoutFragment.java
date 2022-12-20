@@ -10,6 +10,7 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,9 @@ import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,10 +85,10 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         });*/
 
         ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
-        workouts.add(new WorkoutDTO( "olá1", "hey", "full body"));
-        workouts.add(new WorkoutDTO( "olá2", "hey", "upper body"));
-        workouts.add(new WorkoutDTO( "olá3", "hey", "lower body"));
-        workouts.add(new WorkoutDTO( "olá4", "hey", "push"));
+        workouts.add(new WorkoutDTO("olá1", "hey", "full body"));
+        workouts.add(new WorkoutDTO("olá2", "hey", "upper body"));
+        workouts.add(new WorkoutDTO("olá3", "hey", "lower body"));
+        workouts.add(new WorkoutDTO("olá4", "hey", "push"));
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
         adapter = new ListAdapter(workouts, this);
@@ -111,6 +115,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                 SearchView searchView = (SearchView) menuItem.getActionView();
                 searchView.setQueryHint("Type here to search");
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
                     @Override
                     public boolean onQueryTextSubmit(String s) {
                         return false;
@@ -146,6 +151,17 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
                         }
 
                         return false;
+                    }
+                });
+                searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                            BottomNavigationView bottomNavigationView = activityInterface.getMainActivity().findViewById(R.id.nav_view);
+                        if (hasFocus) {
+                            bottomNavigationView.setVisibility(View.GONE);
+                        } else {
+                            bottomNavigationView.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
                 filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {

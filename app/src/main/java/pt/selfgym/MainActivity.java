@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +24,8 @@ import pt.selfgym.databinding.ActivityMainBinding;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Objects;
+
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.ui.workouts.EditWorkoutFragment;
 import pt.selfgym.ui.workouts.WorkoutFragment;
@@ -38,6 +42,11 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // assigning ID of the toolbar to a variable
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -57,13 +66,16 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
                 }
             }
         });
+
+
+
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         model = new ViewModelProvider(this).get(SharedViewModel.class);
         model.startDB();
         model.getToastMessageObserver().observe(this, message -> {
-            Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -84,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     }
 
     @Override
-    public void changeFrag(Fragment fr,Bundle bundle) {
+    public void changeFrag(Fragment fr, Bundle bundle) {
         if (fr instanceof EditWorkoutFragment)
             navController.navigate(R.id.editWorkoutFragment, bundle);
         else if (fr instanceof WorkoutFragment)
