@@ -1,26 +1,27 @@
 package pt.selfgym;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import pt.selfgym.databinding.ActivityMainBinding;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.ui.workouts.EditWorkoutFragment;
@@ -38,6 +39,13 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // assigning ID of the toolbar to a variable
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -57,14 +65,28 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
                 }
             }
         });
+
+
+
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         model = new ViewModelProvider(this).get(SharedViewModel.class);
         model.startDB();
         model.getToastMessageObserver().observe(this, message -> {
-            Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -84,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     }
 
     @Override
-    public void changeFrag(Fragment fr,Bundle bundle) {
+    public void changeFrag(Fragment fr, Bundle bundle) {
         if (fr instanceof EditWorkoutFragment)
             navController.navigate(R.id.editWorkoutFragment, bundle);
         else if (fr instanceof WorkoutFragment)
