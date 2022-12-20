@@ -10,7 +10,6 @@
         android:name="pt.selfgym.ui.calendar.CalendarFragment"
         android:label="@string/title_calendar"
         tools:layout="@layout/fragment_calendar" />
-
     <fragment
         android:id="@+id/navigation_workouts"
         android:name="pt.selfgym.ui.workouts.WorkoutFragment"
@@ -25,4 +24,8 @@
         android:id="@+id/editWorkoutFragment"
         android:name="pt.selfgym.ui.workouts.EditWorkoutFragment"
         android:label="Workout"/>
+    <fragment
+        android:id="@+id/addExerciseFrament"
+        android:name="pt.selfgym.ui.workouts.AddExerciseFragment"
+        android:label="Exercise"/>
 </navigation>
