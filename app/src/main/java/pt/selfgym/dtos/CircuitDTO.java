@@ -8,6 +8,10 @@ public class CircuitDTO {
     private int rest;
     private ArrayList<ExerciseWODTO> exerciseList;
 
+    public CircuitDTO()
+    {
+        
+    }
     public CircuitDTO(int laps, int rest, ArrayList<ExerciseWODTO> exerciseList) {
         this.circuitId = -1L;
         this.laps = laps;

@@ -14,6 +14,10 @@ public class ExerciseWODTO {
     private ExerciseDTO exercise;
     private List<SetsDTO> setsList;
 
+    public ExerciseWODTO()
+    {
+        
+    }
     public ExerciseWODTO( int order, double weight, int sets, int reps, int rest, ExerciseDTO exercise) {
         //use in case of exercise with fixed sets and reps
         this.exerciseWOId = -1L;

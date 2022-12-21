@@ -1,10 +1,14 @@
 package pt.selfgym.dtos;
 
 public class ExerciseDTO {
-    private Long id;
+    private Long exerciseId;
     private String name_exercise;
     private String urlImage;
     private String type;
+
+    public ExerciseDTO() {
+
+    }
 
     public ExerciseDTO(String name, String urlImage, String type) {
         this.name_exercise = name;
@@ -12,12 +16,13 @@ public class ExerciseDTO {
         this.type = type;
     }
 
+
     public Long getId() {
-        return id;
+        return exerciseId;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.exerciseId = id;
     }
 
     public String getName() {
