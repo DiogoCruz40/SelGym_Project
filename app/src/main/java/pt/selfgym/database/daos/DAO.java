@@ -37,6 +37,9 @@ public interface DAO {
     @Query("Select * from exercises where exerciseId = :id_exercise")
     Exercise getExercisebyId(long id_exercise);
 
+    @Query("Select * from exercises where name_exercise = :exercise_name")
+    Exercise getExercisebyName(String exercise_name);
+
     @Query("Delete from exercises where exerciseId = :id_exercise")
     void deleteExercisebyId(long id_exercise);
 

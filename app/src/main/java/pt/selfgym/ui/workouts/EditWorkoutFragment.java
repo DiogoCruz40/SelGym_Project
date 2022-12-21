@@ -206,7 +206,7 @@ public class EditWorkoutFragment extends Fragment {
         return view;
     }
 
-    public void setExerciseToBeAdded (String name) {
-        System.out.println("hello");
-    }
+//    public void setExerciseToBeAdded (String name) {
+//        System.out.println("hello");
+//    }
 }

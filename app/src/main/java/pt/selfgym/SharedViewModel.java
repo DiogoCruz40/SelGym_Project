@@ -59,7 +59,7 @@ public class SharedViewModel extends AndroidViewModel {
                 //how to get all workouts
                 Mapper mapper = new Mapper();
                 List<WorkoutDTO> workoutDTOList = mDb.DAO().getworkouts();
-
+                List<ExerciseDTO> exerciseDTOList = mapper.toDTOs(mDb.DAO().getAllExercises(), ExerciseDTO.class);
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -67,6 +67,11 @@ public class SharedViewModel extends AndroidViewModel {
                             workouts.setValue(new ArrayList<WorkoutDTO>());
                         } else {
                             workouts.setValue(workoutDTOList);
+                        }
+                        if (exerciseDTOList == null) {
+                            exercises.setValue(new ArrayList<ExerciseDTO>());
+                        } else {
+                            exercises.setValue(exerciseDTOList);
                         }
                     }
                 });

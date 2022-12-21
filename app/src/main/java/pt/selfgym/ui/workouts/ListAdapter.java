@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import pt.selfgym.Interfaces.ButtonsInterface;
 import pt.selfgym.Interfaces.WorkoutsInterface;
 import pt.selfgym.R;
 import pt.selfgym.dtos.WorkoutDTO;
@@ -18,20 +19,20 @@ import pt.selfgym.dtos.WorkoutDTO;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private List<WorkoutDTO> workouts;
     private List<WorkoutDTO> filteredWorkouts;
-    private WorkoutsInterface workoutsInterface;
+    private ButtonsInterface buttonsInterface;
 
     // RecyclerView recyclerView;
-    public ListAdapter(List<WorkoutDTO> workouts, WorkoutsInterface workoutsInterface) {
+    public ListAdapter(List<WorkoutDTO> workouts, ButtonsInterface buttonsInterface) {
         this.workouts = workouts;
         this.filteredWorkouts = workouts;
-        this.workoutsInterface = workoutsInterface;
+        this.buttonsInterface = buttonsInterface;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View listItem = layoutInflater.inflate(R.layout.list_item, parent, false);
-        return new ViewHolder(listItem, workoutsInterface);
+        return new ViewHolder(listItem, buttonsInterface);
     }
 
     @Override
@@ -66,14 +67,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView textView,textView2;
         public RelativeLayout relativeLayout;
-        WorkoutsInterface workoutsInterface;
+        ButtonsInterface buttonsInterface;
 
-        public ViewHolder(View itemView, WorkoutsInterface workoutsInterface) {
+        public ViewHolder(View itemView, ButtonsInterface buttonsInterface) {
             super(itemView);
             this.textView = (TextView) itemView.findViewById(R.id.name);
             this.textView2 = (TextView) itemView.findViewById(R.id.textView2);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.relativeLayout);
-            this.workoutsInterface = workoutsInterface;
+            this.buttonsInterface = buttonsInterface;
 
             itemView.setOnClickListener(this::onClick);
             itemView.setOnLongClickListener(this::onLongClick);
@@ -82,12 +83,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         @Override
         public void onClick(View view) {
-            workoutsInterface.onItemClick(getAdapterPosition(), view);
+            buttonsInterface.onItemClick(getAdapterPosition(), view);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            workoutsInterface.onLongItemClick(getAdapterPosition(), view);
+            buttonsInterface.onLongItemClick(getAdapterPosition(), view);
             return true;
         }
     }

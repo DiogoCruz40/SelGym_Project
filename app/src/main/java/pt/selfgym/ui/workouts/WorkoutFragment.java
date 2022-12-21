@@ -36,15 +36,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.Interfaces.ButtonsInterface;
 import pt.selfgym.Interfaces.WorkoutsInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
 import pt.selfgym.databinding.FragmentWorkoutsBinding;
 import pt.selfgym.dtos.WorkoutDTO;
 
-public class WorkoutFragment extends Fragment implements WorkoutsInterface {
+public class WorkoutFragment extends Fragment implements WorkoutsInterface, ButtonsInterface {
 
     private SharedViewModel mViewModel;
+    private WorkoutViewModel workoutViewModel;
     private FragmentWorkoutsBinding binding;
     private ListAdapter adapter;
     private ActivityInterface activityInterface;
@@ -76,6 +78,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
         //AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
         //appCompatActivity.setSupportActionBar(myToolbar);
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
+        this.workoutViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(WorkoutViewModel.class);
         /*mViewModel.getWorkouts().observe(getViewLifecycleOwner(), workouts -> {
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
@@ -346,6 +349,12 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface {
             }
         });
 
+    }
+
+    @Override
+    public WorkoutFragment getContextfrag()
+    {
+     return this;
     }
 
     @Override

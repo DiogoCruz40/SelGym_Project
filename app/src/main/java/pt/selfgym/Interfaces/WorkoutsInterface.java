@@ -2,7 +2,8 @@ package pt.selfgym.Interfaces;
 
 import android.view.View;
 
+import pt.selfgym.ui.workouts.WorkoutFragment;
+
 public interface WorkoutsInterface {
-    void onItemClick(int position, View v);
-    void onLongItemClick(int position, View v);
+    WorkoutFragment getContextfrag();
 }
