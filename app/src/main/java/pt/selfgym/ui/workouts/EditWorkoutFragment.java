@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -26,7 +27,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -49,7 +52,8 @@ public class EditWorkoutFragment extends Fragment {
     private ActivityInterface activityInterface;
     private SharedViewModel mViewModel;
     private EditAdapter adapter;
-    private EditText editTextNote, observations , name;
+    private EditText editTextNote, observations, name;
+    private ImageButton addExercise;
     private Spinner type;
     private View view;
     private long id;
@@ -84,22 +88,22 @@ public class EditWorkoutFragment extends Fragment {
             //String note = mViewModel.getNoteContentById(id);
 
             //comment this if needed
-            workout = new WorkoutDTO( "olá" , "hell", "upper body");
-            ExerciseWODTO exercise1 = new ExerciseWODTO(1,0.0,1,1,0,new ExerciseDTO("hell","sodqodmpaod", "sidno"));
-            ExerciseWODTO exercise2 = new ExerciseWODTO(2,0.0,1,0,new ExerciseDTO("hell","sodqodmpaod", "sidno"),1);
-            SetsDTO setsDTO1 = new SetsDTO(1,1,1,1);
-            SetsDTO setsDTO2 = new SetsDTO(1,1,1,2);
+            workout = new WorkoutDTO("olá", "hell", "upper body");
+            ExerciseWODTO exercise1 = new ExerciseWODTO(1, 0.0, 1, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"));
+            ExerciseWODTO exercise2 = new ExerciseWODTO(2, 0.0, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1);
+            SetsDTO setsDTO1 = new SetsDTO(1, 1, 1, 1);
+            SetsDTO setsDTO2 = new SetsDTO(1, 1, 1, 2);
             ArrayList<SetsDTO> sets = new ArrayList<SetsDTO>();
             sets.add(setsDTO1);
             sets.add(setsDTO2);
-            ExerciseWODTO exercise3 = new ExerciseWODTO(3, 1, new ExerciseDTO("hell","sodqodmpaod", "sidno"), sets);
-            ExerciseWODTO exercise4 = new ExerciseWODTO(4, new ExerciseDTO("hell","sodqodmpaod", "sidno"), 1, sets);
+            ExerciseWODTO exercise3 = new ExerciseWODTO(3, 1, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), sets);
+            ExerciseWODTO exercise4 = new ExerciseWODTO(4, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1, sets);
             ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
             circuitComposition.add(exercise1);
             circuitComposition.add(exercise2);
             circuitComposition.add(exercise3);
             circuitComposition.add(exercise4);
-            CircuitDTO circuit = new CircuitDTO(5,0, circuitComposition);
+            CircuitDTO circuit = new CircuitDTO(5, 0, circuitComposition);
             ArrayList<Object> workoutComposition = new ArrayList<Object>();
             workoutComposition.add(exercise1);
             workoutComposition.add(exercise2);
@@ -109,7 +113,7 @@ public class EditWorkoutFragment extends Fragment {
             workout.setWorkoutComposition(workoutComposition);
         } else {
             //new workout
-            workout = new WorkoutDTO("" , "", "full body");
+            workout = new WorkoutDTO("", "", "full body");
         }
 
 
@@ -123,18 +127,18 @@ public class EditWorkoutFragment extends Fragment {
         name.setText(workout.getName());
 
         type = (Spinner) view.findViewById(R.id.workoutTypeSpinner);
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lowerbody","push","pull"));
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lowerbody", "push", "pull"));
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         type.setAdapter(typeAdapter);
-        if(workout.getType() == "full body") {
+        if (workout.getType() == "full body") {
             type.setSelection(0);
-        } else if(workout.getType() == "upper body") {
+        } else if (workout.getType() == "upper body") {
             type.setSelection(1);
-        } else if(workout.getType() == "lower body") {
+        } else if (workout.getType() == "lower body") {
             type.setSelection(2);
-        } else if(workout.getType() == "push") {
+        } else if (workout.getType() == "push") {
             type.setSelection(3);
-        } else if(workout.getType() == "pull") {
+        } else if (workout.getType() == "pull") {
             type.setSelection(4);
         }
 
@@ -143,21 +147,18 @@ public class EditWorkoutFragment extends Fragment {
 
         view.setFocusableInTouchMode(true);
         view.requestFocus();
-        view.setOnKeyListener( new View.OnKeyListener()
-        {
+        view.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public boolean onKey( View v, int keyCode, KeyEvent event )
-            {
-                if( keyCode == KeyEvent.KEYCODE_BACK )
-                {
-                    activityInterface.changeFrag(new WorkoutFragment(),null);
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    activityInterface.changeFrag(new WorkoutFragment(), null);
                     BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
                     navBar.setVisibility(View.VISIBLE);
                     return true;
                 }
                 return false;
             }
-        } );
+        });
 
         Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
 
@@ -175,14 +176,14 @@ public class EditWorkoutFragment extends Fragment {
                         newWorkout.setObservation(observations.getText().toString());
                         newWorkout.setType(type.getSelectedItem().toString());
 
-                        if (getArguments()==null){
+                        if (getArguments() == null) {
                             //TODO: This means its a new workout and the id
                             // hast been generated yet
                         }
 
                         //TODO: Save the updated or new workout cause its the same
 
-                        activityInterface.changeFrag(new WorkoutFragment(),null);
+                        activityInterface.changeFrag(new WorkoutFragment(), null);
                         return false;
                     }
                 });
@@ -194,6 +195,18 @@ public class EditWorkoutFragment extends Fragment {
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
+        addExercise = (ImageButton) view.findViewById(R.id.addExercise);
+        addExercise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activityInterface.changeFrag(new AddExerciseFragment(),null);
+            }
+        });
+
         return view;
+    }
+
+    public void setExerciseToBeAdded (String name) {
+        System.out.println("hello");
     }
 }

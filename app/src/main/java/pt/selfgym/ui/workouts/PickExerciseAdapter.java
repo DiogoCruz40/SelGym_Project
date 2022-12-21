@@ -80,4 +80,8 @@ public class PickExerciseAdapter extends RecyclerView.Adapter<PickExerciseAdapte
             return false;
         }
     }
+
+    public ArrayList<ExerciseDTO> getExerciseList() {
+        return exerciseList;
+    }
 }

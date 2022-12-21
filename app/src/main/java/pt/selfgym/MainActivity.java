@@ -24,6 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.ui.workouts.AddExerciseFragment;
 import pt.selfgym.ui.workouts.EditWorkoutFragment;
 import pt.selfgym.ui.workouts.WorkoutFragment;
 
@@ -111,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
             navController.navigate(R.id.editWorkoutFragment, bundle);
         else if (fr instanceof WorkoutFragment)
             navController.navigate(R.id.navigation_workouts);
+        else if (fr instanceof AddExerciseFragment){
+            navController.navigate(R.id.addExerciseFragment);
+        }
     }
 
 }

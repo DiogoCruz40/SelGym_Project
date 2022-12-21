@@ -25,7 +25,7 @@
         android:name="pt.selfgym.ui.workouts.EditWorkoutFragment"
         android:label="Workout"/>
     <fragment
-        android:id="@+id/addExerciseFrament"
+        android:id="@+id/addExerciseFragment"
         android:name="pt.selfgym.ui.workouts.AddExerciseFragment"
         android:label="Exercise"/>
 </navigation>
