@@ -8,10 +8,10 @@ public class CircuitDTO {
     private int rest;
     private ArrayList<ExerciseWODTO> exerciseList;
 
-    public CircuitDTO()
-    {
-        
+    public CircuitDTO() {
+
     }
+
     public CircuitDTO(int laps, int rest, ArrayList<ExerciseWODTO> exerciseList) {
         this.circuitId = -1L;
         this.laps = laps;
@@ -50,10 +50,9 @@ public class CircuitDTO {
     public void setExerciseList(ArrayList<ExerciseWODTO> exerciseList) {
         this.exerciseList = exerciseList;
     }
-    public void addToExerciseList(ExerciseWODTO exerciseWODTO)
-    {
-        if(this.exerciseList == null)
-        {
+
+    public void addToExerciseList(ExerciseWODTO exerciseWODTO) {
+        if (this.exerciseList == null) {
             this.exerciseList = new ArrayList<ExerciseWODTO>();
         }
         exerciseList.add(exerciseWODTO);

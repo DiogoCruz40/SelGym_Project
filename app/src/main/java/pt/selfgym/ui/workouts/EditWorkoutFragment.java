@@ -152,8 +152,6 @@ public class EditWorkoutFragment extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     activityInterface.changeFrag(new WorkoutFragment(), null);
-                    BottomNavigationView navBar = (BottomNavigationView) activityInterface.getMainActivity().findViewById(R.id.nav_view);
-                    navBar.setVisibility(View.VISIBLE);
                     return true;
                 }
                 return false;

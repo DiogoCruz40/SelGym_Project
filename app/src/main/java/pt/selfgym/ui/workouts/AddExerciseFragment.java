@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,16 +76,17 @@ public class AddExerciseFragment extends Fragment implements ButtonsInterface {
             ArrayList<ExerciseDTO> pullList = new ArrayList<ExerciseDTO>();
 
             for (ExerciseDTO e : exerciseDTOS) {
-                if (e.getType() == "upper body" || e.getType() == "push" || e.getType() == "pull") {
+                if (e.getType().equals("upper body") || e.getType().equals("push") || e.getType().equals("pull")) {
                     upperBodyList.add(e);
                 }
-                if (e.getType() == "lower body") {
+                if (e.getType().equals("lower body")) {
                     lowerBodyList.add(e);
                 }
-                if (e.getType() == "push") {
+                if (e.getType().equals("push")) {
+
                     pushList.add(e);
                 }
-                if (e.getType() == "pull") {
+                if (e.getType().equals("pull")) {
                     pullList.add(e);
                 }
             }
