@@ -130,6 +130,17 @@
             app:layout_constraintEnd_toStartOf="@+id/restinput"
             app:layout_constraintTop_toBottomOf="@+id/weight" />
 
+        <ImageButton
+            android:id="@+id/settings"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="6dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_settings_small_black_24dp_foreground" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

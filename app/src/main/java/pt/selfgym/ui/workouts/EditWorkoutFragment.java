@@ -121,7 +121,7 @@ public class EditWorkoutFragment extends Fragment {
 
         workout = workoutViewModel.getWorkout();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
-        adapter = new EditAdapter(workout);
+        adapter = new EditAdapter(workout, getContext());
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(adapter);
