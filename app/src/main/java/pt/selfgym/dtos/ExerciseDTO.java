@@ -11,7 +11,6 @@ public class ExerciseDTO {
     }
 
     public ExerciseDTO(String name, String urlImage, String type) {
-        this.exerciseId = -1L;
         this.name_exercise = name;
         this.urlImage = urlImage;
         this.type = type;

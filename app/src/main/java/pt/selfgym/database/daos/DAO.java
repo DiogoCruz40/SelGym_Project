@@ -7,6 +7,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,11 +74,17 @@ public interface DAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertwo(Workout workout);
 
+    @Update
+    void updatewo(Workout workout);
+
     @Query("Delete from workouts where workoutId=:id_workout")
     void deletewo(Long id_workout);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertexwo(ExerciseWO exerciseWO);
+
+    @Update
+    void updatexwo(ExerciseWO exerciseWO);
 
     @Query("Delete from exerciseswo where workoutexwo_id=:id_workout")
     void deletexswo(Long id_workout);
@@ -88,11 +95,17 @@ public interface DAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertset(ExerciseSet exerciseSet);
 
+    @Update
+    void updateset(ExerciseSet exerciseSet);
+
     @Query("Delete from exercise_sets where exerciseWO_id=:id_exwo")
     void deletesetsofexwo(Long id_exwo);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertcircuit(Circuit circuit);
+
+    @Update
+    void updatecircuit(Circuit circuit);
 
     @Query("Delete from circuits where workoutcircuit_id=:id_workout")
     void deletecircuits(Long id_workout);
@@ -162,7 +175,7 @@ public interface DAO {
     default WorkoutDTO insertWorkout(WorkoutDTO workoutDTO) {
         List<Workout> workouts = getAllworkouts();
         for (Workout workout : workouts) {
-            if (workout.name_wo.toLowerCase() == workoutDTO.getName().toLowerCase())
+            if (workout.name_wo.toLowerCase().equals(workoutDTO.getName().toLowerCase()))
                 return null;
         }
         Long id_workout = insertwo((new Mapper()).toEntity(workoutDTO, Workout.class));
@@ -177,11 +190,12 @@ public interface DAO {
 
                 List<SetsDTO> setsDTOList = ((ExerciseWODTO) obj).getSetsList();
                 if (setsDTOList != null) {
-                    for (SetsDTO setsDTO : setsDTOList) {
+                    setsDTOList.forEach(setsDTO -> {
                         ExerciseSet exerciseSet = (new Mapper()).toEntity(setsDTO, ExerciseSet.class);
                         exerciseSet.exerciseWO_id = id_exwo;
-                        insertset(exerciseSet);
-                    }
+                        Long id_set = insertset(exerciseSet);
+                        setsDTO.setId(id_set);
+                    });
                 }
             } else {
                 Circuit circuit = (new Mapper()).toEntity(obj, Circuit.class);
@@ -204,6 +218,83 @@ public interface DAO {
                                 exerciseSet.exerciseWO_id = id_exwo;
                                 Long id_set = insertset(exerciseSet);
                                 setsDTO.setId(id_set);
+                            });
+                        }
+                    });
+                }
+
+            }
+        });
+        return workoutDTO;
+    }
+
+    @Transaction
+    default WorkoutDTO updateWorkout(WorkoutDTO workoutDTO) {
+        updatewo((new Mapper()).toEntity(workoutDTO, Workout.class));
+
+        workoutDTO.getWorkoutComposition().forEach(obj -> {
+            if (obj instanceof ExerciseWODTO) {
+                if (((ExerciseWODTO) obj).getId() != null) {
+                    updatexwo((new Mapper()).toEntity(obj, ExerciseWO.class));
+                } else {
+                    ExerciseWO exerciseWO = (new Mapper()).toEntity(obj, ExerciseWO.class);
+                    exerciseWO.workoutexwo_id = workoutDTO.getId();
+                    exerciseWO.exercise_id = ((ExerciseWODTO) obj).getExercise().getId();
+                    Long id_exwo = insertexwo(exerciseWO);
+                    ((ExerciseWODTO) obj).setId(id_exwo);
+                }
+                List<SetsDTO> setsDTOList = ((ExerciseWODTO) obj).getSetsList();
+                if (setsDTOList != null) {
+                    setsDTOList.forEach(setsDTO -> {
+                        if (setsDTO.getId() != null) {
+                            updateset((new Mapper()).toEntity(setsDTO, ExerciseSet.class));
+                        } else {
+                            ExerciseSet exerciseSet = (new Mapper()).toEntity(setsDTO, ExerciseSet.class);
+                            exerciseSet.exerciseWO_id = ((ExerciseWODTO) obj).getId();
+                            Long id_set = insertset(exerciseSet);
+                            setsDTO.setId(id_set);
+                        }
+                    });
+                }
+            } else {
+                Circuit circuit = (new Mapper()).toEntity(obj, Circuit.class);
+                if(circuit.circuitId != null)
+                {
+                    updatecircuit(circuit);
+                }
+                else {
+                    circuit.workoutcircuit_id = workoutDTO.getId();
+                    Long id_circuit = insertcircuit(circuit);
+                    ((CircuitDTO) obj).setId(id_circuit);
+                }
+                if (((CircuitDTO) obj).getExerciseList() != null) {
+                    ((CircuitDTO) obj).getExerciseList().forEach(exerciseWODTO -> {
+                        ExerciseWO exerciseWO = (new Mapper()).toEntity(exerciseWODTO, ExerciseWO.class);
+                        if(exerciseWO.exerciseWOId != null)
+                        {
+                            updatexwo(exerciseWO);
+                        }
+                        else {
+                            exerciseWO.workoutexwo_id = workoutDTO.getId();
+                            exerciseWO.exercise_id = exerciseWODTO.getExercise().getId();
+                            exerciseWO.circuitexwo_id = ((CircuitDTO) obj).getId();
+                            Long id_exwo = insertexwo(exerciseWO);
+                            exerciseWODTO.setId(id_exwo);
+                        }
+
+                        if (exerciseWODTO.getSetsList() != null) {
+                            exerciseWODTO.getSetsList().forEach(setsDTO -> {
+                                ExerciseSet exerciseSet = (new Mapper()).toEntity(setsDTO, ExerciseSet.class);
+                                if(exerciseSet.exerciseSetId != null)
+                                {
+                                    updateset(exerciseSet);
+                                }
+                                else {
+                                    exerciseSet.exerciseWO_id = exerciseWODTO.getId();
+                                    Long id_set = insertset(exerciseSet);
+                                    setsDTO.setId(id_set);
+                                }
+
                             });
                         }
                     });

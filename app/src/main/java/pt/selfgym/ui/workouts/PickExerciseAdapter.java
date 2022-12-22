@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.selfgym.BR;
 import pt.selfgym.Interfaces.ButtonsInterface;
 import pt.selfgym.Interfaces.WorkoutsInterface;
 import pt.selfgym.R;

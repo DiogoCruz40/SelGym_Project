@@ -12,7 +12,6 @@ public class SetsDTO {
         
     }
     public SetsDTO( int variable, int rest, double weight, int order_set) {
-        this.exerciseSetId = -1L;
         this.variable = variable;
         this.rest = rest;
         this.weight = weight;

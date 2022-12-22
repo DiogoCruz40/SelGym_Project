@@ -13,7 +13,6 @@ public class WorkoutDTO {
 
     }
     public WorkoutDTO(String name, String observation, String type) {
-        this.workoutId = -1L;
         this.name_wo = name;
         this.observation = observation;
         this.type = type;

@@ -82,7 +82,6 @@ public class SharedViewModel extends AndroidViewModel {
     /**
      * Workouts
      **/
-    // TODO: FALTA TESTAR
     public void insertWorkout(WorkoutDTO workoutDTO) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -98,6 +97,30 @@ public class SharedViewModel extends AndroidViewModel {
                                 workoutDTOList = new ArrayList<WorkoutDTO>();
                             }
                             workoutDTOList.add(workoutDTOwithIds);
+                            workouts.setValue(workoutDTOList);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public void updateWorkout(WorkoutDTO workoutDTO) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how update a workout
+                WorkoutDTO workoutDTOwithIds = mDb.DAO().updateWorkout(workoutDTO);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (workoutDTOwithIds != null) {
+                            List<WorkoutDTO> workoutDTOList = workouts.getValue();
+                            workoutDTOList.forEach(workout -> {
+                                if (workout.getId().equals(workoutDTOwithIds.getId())) {
+                                    workout = workoutDTOwithIds;
+                                }
+                            });
                             workouts.setValue(workoutDTOList);
                         }
                     }

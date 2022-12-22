@@ -19,6 +19,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +37,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.R;
@@ -51,12 +53,13 @@ public class EditWorkoutFragment extends Fragment {
 
     private ActivityInterface activityInterface;
     private SharedViewModel mViewModel;
+    private WorkoutViewModel workoutViewModel;
     private EditAdapter adapter;
     private EditText editTextNote, observations, name;
     private ImageButton addExercise;
     private Spinner type;
     private View view;
-    private long id;
+    private Long id;
     private WorkoutDTO workout;
 
 
@@ -79,44 +82,44 @@ public class EditWorkoutFragment extends Fragment {
 
 
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
-
+        this.workoutViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(WorkoutViewModel.class);
 
         if (getArguments() != null) {
             id = getArguments().getLong("id");
-
-            //TODO: get workout by id
-            //String note = mViewModel.getNoteContentById(id);
+            Log.w("id", String.valueOf(id));
+            for (WorkoutDTO workoutDTO : mViewModel.getWorkouts().getValue())
+                if (workoutDTO.getId() == id) {
+                    workoutViewModel.setWorkout(workoutDTO);
+                    break;
+                }
 
             //comment this if needed
-            workout = new WorkoutDTO("olá", "hell", "upper body");
-            ExerciseWODTO exercise1 = new ExerciseWODTO(1, 0.0, 1, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"));
-            ExerciseWODTO exercise2 = new ExerciseWODTO(2, 0.0, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1);
-            SetsDTO setsDTO1 = new SetsDTO(1, 1, 1, 1);
-            SetsDTO setsDTO2 = new SetsDTO(1, 1, 1, 2);
-            ArrayList<SetsDTO> sets = new ArrayList<SetsDTO>();
-            sets.add(setsDTO1);
-            sets.add(setsDTO2);
-            ExerciseWODTO exercise3 = new ExerciseWODTO(3, 1, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), sets);
-            ExerciseWODTO exercise4 = new ExerciseWODTO(4, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1, sets);
-            ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
-            circuitComposition.add(exercise1);
-            circuitComposition.add(exercise2);
-            circuitComposition.add(exercise3);
-            circuitComposition.add(exercise4);
-            CircuitDTO circuit = new CircuitDTO(5, 0, circuitComposition);
-            ArrayList<Object> workoutComposition = new ArrayList<Object>();
-            workoutComposition.add(exercise1);
-            workoutComposition.add(exercise2);
-            workoutComposition.add(exercise3);
-            workoutComposition.add(exercise4);
-            workoutComposition.add(circuit);
-            workout.setWorkoutComposition(workoutComposition);
-        } else {
-            //new workout
-            workout = new WorkoutDTO("", "", "full body");
+//            workout = new WorkoutDTO("olá", "hell", "upper body");
+//            ExerciseWODTO exercise1 = new ExerciseWODTO(1, 0.0, 1, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"));
+//            ExerciseWODTO exercise2 = new ExerciseWODTO(2, 0.0, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1);
+//            SetsDTO setsDTO1 = new SetsDTO(1, 1, 1, 1);
+//            SetsDTO setsDTO2 = new SetsDTO(1, 1, 1, 2);
+//            ArrayList<SetsDTO> sets = new ArrayList<SetsDTO>();
+//            sets.add(setsDTO1);
+//            sets.add(setsDTO2);
+//            ExerciseWODTO exercise3 = new ExerciseWODTO(3, 1, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), sets);
+//            ExerciseWODTO exercise4 = new ExerciseWODTO(4, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1, sets);
+//            ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
+//            circuitComposition.add(exercise1);
+//            circuitComposition.add(exercise2);
+//            circuitComposition.add(exercise3);
+//            circuitComposition.add(exercise4);
+//            CircuitDTO circuit = new CircuitDTO(5, 0, circuitComposition);
+//            ArrayList<Object> workoutComposition = new ArrayList<Object>();
+//            workoutComposition.add(exercise1);
+//            workoutComposition.add(exercise2);
+//            workoutComposition.add(exercise3);
+//            workoutComposition.add(exercise4);
+//            workoutComposition.add(circuit);
+//            workout.setWorkoutComposition(workoutComposition);
         }
 
-
+        workout = workoutViewModel.getWorkout();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
         adapter = new EditAdapter(workout);
         recyclerView.setNestedScrollingEnabled(false);
@@ -145,21 +148,22 @@ public class EditWorkoutFragment extends Fragment {
         observations = (EditText) view.findViewById(R.id.textAreaObservations);
         observations.setText(workout.getObservation());
 
-        view.setFocusableInTouchMode(true);
-        view.requestFocus();
-        view.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    activityInterface.changeFrag(new WorkoutFragment(), null);
-                    return true;
-                }
-                return false;
-            }
-        });
+//        view.setFocusableInTouchMode(true);
+//        view.requestFocus();
+//        view.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                    activityInterface.changeFrag(new WorkoutFragment(), null);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
         Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
 
+        //TODO: FIX BUG IN MENU
         toolbar.addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -169,18 +173,17 @@ public class EditWorkoutFragment extends Fragment {
                 saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                        WorkoutDTO newWorkout = adapter.saveWorkoutChanges();
+                        WorkoutDTO newWorkout = adapter.saveWorkoutChanges(workout);
                         newWorkout.setName(name.getText().toString());
                         newWorkout.setObservation(observations.getText().toString());
                         newWorkout.setType(type.getSelectedItem().toString());
 
-                        if (getArguments() == null) {
-                            //TODO: This means its a new workout and the id
-                            // hast been generated yet
-                        }
-
                         //TODO: Save the updated or new workout cause its the same
-
+                        if (workout.getId() == null)
+                            mViewModel.insertWorkout(newWorkout);
+                        else {
+                            mViewModel.updateWorkout(newWorkout);
+                        }
                         activityInterface.changeFrag(new WorkoutFragment(), null);
                         return false;
                     }
@@ -197,14 +200,12 @@ public class EditWorkoutFragment extends Fragment {
         addExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activityInterface.changeFrag(new AddExerciseFragment(),null);
+                workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
+                activityInterface.changeFrag(new AddExerciseFragment(), null);
             }
         });
 
         return view;
     }
 
-    public void setExerciseToBeAdded (String name) {
-
-  }
 }

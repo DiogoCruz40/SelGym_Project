@@ -20,7 +20,6 @@ public class ExerciseWODTO {
     }
     public ExerciseWODTO( int order, double weight, int sets, int reps, int rest, ExerciseDTO exercise) {
         //use in case of exercise with fixed sets and reps
-        this.exerciseWOId = -1L;
         this.order_exwo = order;
         this.weight = weight;
         this.sets = sets;

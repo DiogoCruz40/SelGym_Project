@@ -15,6 +15,7 @@ import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +43,7 @@ import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
 import pt.selfgym.databinding.FragmentWorkoutsBinding;
 import pt.selfgym.dtos.ExerciseDTO;
+import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.WorkoutDTO;
 
 public class WorkoutFragment extends Fragment implements WorkoutsInterface, ButtonsInterface {
@@ -75,12 +77,10 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentWorkoutsBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        //Toolbar myToolbar = (Toolbar) view.findViewById(R.id.workoutMenu);
-        //AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
-        //appCompatActivity.setSupportActionBar(myToolbar);
+
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
         this.workoutViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(WorkoutViewModel.class);
-
+//
 //        mViewModel.insertExercise(new ExerciseDTO("exercise1", "https://www.google.com/search?q=bicep+curl&rlz=1C1FCXM_pt-PTPT957PT957&sxsrf=ALiCzsbTQSTSmWDdXKdSJsZt8Qrun7ToRA:1671573299125&tbm=isch&source=iu&ictx=1&vet=1&fir=VcpWJuh3TkCk2M%252C42_Skd25L6nC7M%252C_%253BHeGNSM-f6U23eM%252CJBuNV4EtKKQBxM%252C_%253BS9QhI7mQOxvpfM%252Cj2vncYSJRz-qrM%252C_%253BOGpgdTPIlUH_lM%252C8X3fLFkuI09VMM%252C_%253BH134j2AtgTAHzM%252CgspqDti2NR4EbM%252C_%253BpTnrpVoZxW_Q6M%252CyMXkHJtHzf97YM%252C_&usg=AI4_-kRN3rMHR782fvEyHREOTzGkDuzi2Q&sa=X&ved=2ahUKEwjhgdfll4n8AhWt87sIHQpRDckQ_h16BAhTEAE#imgrc=S9QhI7mQOxvpfM", "full body"));
 //        mViewModel.insertExercise(new ExerciseDTO("exercise2", "https://www.google.com/search?q=bicep+curl&rlz=1C1FCXM_pt-PTPT957PT957&sxsrf=ALiCzsbTQSTSmWDdXKdSJsZt8Qrun7ToRA:1671573299125&tbm=isch&source=iu&ictx=1&vet=1&fir=VcpWJuh3TkCk2M%252C42_Skd25L6nC7M%252C_%253BHeGNSM-f6U23eM%252CJBuNV4EtKKQBxM%252C_%253BS9QhI7mQOxvpfM%252Cj2vncYSJRz-qrM%252C_%253BOGpgdTPIlUH_lM%252C8X3fLFkuI09VMM%252C_%253BH134j2AtgTAHzM%252CgspqDti2NR4EbM%252C_%253BpTnrpVoZxW_Q6M%252CyMXkHJtHzf97YM%252C_&usg=AI4_-kRN3rMHR782fvEyHREOTzGkDuzi2Q&sa=X&ved=2ahUKEwjhgdfll4n8AhWt87sIHQpRDckQ_h16BAhTEAE#imgrc=S9QhI7mQOxvpfM", "full body"));
 //        mViewModel.insertExercise(new ExerciseDTO("exercise3", "https://www.google.com/search?q=bicep+curl&rlz=1C1FCXM_pt-PTPT957PT957&sxsrf=ALiCzsbTQSTSmWDdXKdSJsZt8Qrun7ToRA:1671573299125&tbm=isch&source=iu&ictx=1&vet=1&fir=VcpWJuh3TkCk2M%252C42_Skd25L6nC7M%252C_%253BHeGNSM-f6U23eM%252CJBuNV4EtKKQBxM%252C_%253BS9QhI7mQOxvpfM%252Cj2vncYSJRz-qrM%252C_%253BOGpgdTPIlUH_lM%252C8X3fLFkuI09VMM%252C_%253BH134j2AtgTAHzM%252CgspqDti2NR4EbM%252C_%253BpTnrpVoZxW_Q6M%252CyMXkHJtHzf97YM%252C_&usg=AI4_-kRN3rMHR782fvEyHREOTzGkDuzi2Q&sa=X&ved=2ahUKEwjhgdfll4n8AhWt87sIHQpRDckQ_h16BAhTEAE#imgrc=S9QhI7mQOxvpfM", "upper body"));
@@ -94,37 +94,39 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
 //        mViewModel.insertExercise(new ExerciseDTO("exercise11", "https://www.google.com/search?q=bicep+curl&rlz=1C1FCXM_pt-PTPT957PT957&sxsrf=ALiCzsbTQSTSmWDdXKdSJsZt8Qrun7ToRA:1671573299125&tbm=isch&source=iu&ictx=1&vet=1&fir=VcpWJuh3TkCk2M%252C42_Skd25L6nC7M%252C_%253BHeGNSM-f6U23eM%252CJBuNV4EtKKQBxM%252C_%253BS9QhI7mQOxvpfM%252Cj2vncYSJRz-qrM%252C_%253BOGpgdTPIlUH_lM%252C8X3fLFkuI09VMM%252C_%253BH134j2AtgTAHzM%252CgspqDti2NR4EbM%252C_%253BpTnrpVoZxW_Q6M%252CyMXkHJtHzf97YM%252C_&usg=AI4_-kRN3rMHR782fvEyHREOTzGkDuzi2Q&sa=X&ved=2ahUKEwjhgdfll4n8AhWt87sIHQpRDckQ_h16BAhTEAE#imgrc=S9QhI7mQOxvpfM", "pull"));
 
 
-        /*mViewModel.getWorkouts().observe(getViewLifecycleOwner(), workouts -> {
+        mViewModel.getWorkouts().observe(getViewLifecycleOwner(), workouts -> {
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
-        adapter = new ListAdapter(workouts, this);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-        recyclerView.setAdapter(adapter);
-        });*/
+//                Log.w("id", ((ExerciseWODTO) workouts.get(1).getWorkoutComposition().get(0)).getId().toString());
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
+            adapter = new ListAdapter(workouts, this);
+            recyclerView.setNestedScrollingEnabled(false);
+            recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+            recyclerView.setAdapter(adapter);
 
-        ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
-        workouts.add(new WorkoutDTO("olá1", "hey", "full body"));
-        workouts.add(new WorkoutDTO("olá2", "hey", "upper body"));
-        workouts.add(new WorkoutDTO("olá3", "hey", "lower body"));
-        workouts.add(new WorkoutDTO("olá4", "hey", "push"));
+        });
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
-        adapter = new ListAdapter(workouts, this);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-        recyclerView.setAdapter(adapter);
+//        ArrayList<WorkoutDTO> workouts = new ArrayList<WorkoutDTO>();
+//        workouts.add(new WorkoutDTO("olá1", "hey", "full body"));
+//        workouts.add(new WorkoutDTO("olá2", "hey", "upper body"));
+//        workouts.add(new WorkoutDTO("olá3", "hey", "lower body"));
+//        workouts.add(new WorkoutDTO("olá4", "hey", "push"));
+//
+//        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
+//        adapter = new ListAdapter(workouts, this);
+//        recyclerView.setNestedScrollingEnabled(false);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+//        recyclerView.setAdapter(adapter);
 
         ImageButton addWorkoutButton = (ImageButton) view.findViewById(R.id.addWorkoutButton);
         addWorkoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Create new workout and set the id to be passed
-                EditWorkoutFragment fr = new EditWorkoutFragment();
+                workoutViewModel.newWorkout();
                 activityInterface.changeFrag(new EditWorkoutFragment(), null);
             }
         });
         Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
+        //TODO: FIX BUG IN MENU
         toolbar.addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -175,7 +177,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
                 searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
-                            BottomNavigationView bottomNavigationView = activityInterface.getMainActivity().findViewById(R.id.nav_view);
+                        BottomNavigationView bottomNavigationView = activityInterface.getMainActivity().findViewById(R.id.nav_view);
                         if (hasFocus) {
                             bottomNavigationView.setVisibility(View.GONE);
                         } else {
@@ -195,11 +197,6 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
 
-                switch (menuItem.getItemId()) {
-                    case android.R.id.home:
-                        dialog.onBackPressed();
-                        return true;
-                }
                 return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
@@ -221,7 +218,6 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
             id = adapter.getFilteredWorkouts().get(position).getId();
         }
         arg.putLong("id", id);
-
         activityInterface.changeFrag(fr, arg);
     }
 
@@ -367,9 +363,8 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
     }
 
     @Override
-    public WorkoutFragment getContextfrag()
-    {
-     return this;
+    public WorkoutFragment getContextfrag() {
+        return this;
     }
 
     @Override

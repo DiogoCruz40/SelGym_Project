@@ -165,16 +165,14 @@ public class AddExerciseFragment extends Fragment implements ButtonsInterface {
 
     @Override
     public void onItemClick(int position, View v) {
-        NavController navController = Navigation.findNavController(v);
-        String name = adapter.getExerciseList().get(position).getName();
-        workoutViewModel.addExercisetoWorkout(name);
-
+        ExerciseDTO exerciseDTO = adapter.getExerciseList().get(position);
+        workoutViewModel.addExercisetoWorkout(exerciseDTO);
+        activityInterface.getMainActivity().changeFrag(new EditWorkoutFragment(),null);
 //        NavBackStackEntry backStackEntry = navController.getPreviousBackStackEntry();
-        //TODO: I STILL CANT FUCKING GET THE OLD FRAGMENT
 //        EditWorkoutFragment previousFragment = (EditWorkoutFragment) navController.findDestination(backStackEntry.getId());
 //        previousFragment.setExerciseToBeAdded(name);
 
-        navController.navigateUp();
+//        navController.navigateUp();
     }
 
     @Override
