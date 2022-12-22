@@ -1,5 +1,7 @@
 package pt.selfgym.ui.workouts;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -200,12 +202,51 @@ public class EditWorkoutFragment extends Fragment {
         addExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
-                activityInterface.changeFrag(new AddExerciseFragment(), null);
+                addExerciseCircuitPopup();
             }
         });
 
         return view;
     }
+
+    public void addExerciseCircuitPopup() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
+        final View AddExerciseCircuitPopup = getLayoutInflater().inflate(R.layout.popup_add_exercise_circuit, null);
+
+        Button cancel = (Button) AddExerciseCircuitPopup.findViewById(R.id.cancelButton);
+        Button addExerciseOption = (Button) AddExerciseCircuitPopup.findViewById(R.id.addExerciseOption);
+        Button addCircuitOption = (Button) AddExerciseCircuitPopup.findViewById(R.id.addCircuitOption);
+
+        dialogBuilder.setView(AddExerciseCircuitPopup);
+        Dialog dialog = dialogBuilder.create();
+        dialog.show();
+
+        addExerciseOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
+                activityInterface.changeFrag(new AddExerciseFragment(), null);
+                dialog.dismiss();
+            }
+        });
+
+        addCircuitOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                workout.addToWorkoutComposition(new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()));
+                adapter.setWorkout(workout);
+                dialog.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+    }
+
 
 }
