@@ -123,7 +123,7 @@ public class EditWorkoutFragment extends Fragment {
 
         workout = workoutViewModel.getWorkout();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
-        adapter = new EditAdapter(workout, getContext());
+        adapter = new EditAdapter(workout, getContext(), workoutViewModel);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(adapter);

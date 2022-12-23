@@ -37,12 +37,14 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ViewGroup parent;
     private ActivityInterface activityInterface;
     private Context context;
+    private WorkoutViewModel workoutViewModel;
 
-    public EditAdapter(WorkoutDTO workout, Context context) {
+    public EditAdapter(WorkoutDTO workout, Context context, WorkoutViewModel workoutViewModel) {
         this.workout = workout;
         this.holdersList = new ArrayList<RecyclerView.ViewHolder>();
         this.activityInterface = (ActivityInterface) context;
         this.context = context;
+        this.workoutViewModel = workoutViewModel;
     }
 
     public WorkoutDTO getWorkout() {
@@ -242,7 +244,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
                 workoutSets.setWorkoutComposition(exList);
 
-                EditAdapter adapter = new EditAdapter(workoutSets, context);
+                EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
                 viewHolder3.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                 viewHolder3.sets.setAdapter(adapter);
 
@@ -265,7 +267,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                         newSets.add(new SetsDTO(0, 0, 0, newSets.size() + 1));
                         workoutSets.setWorkoutComposition(newSets);
-                        EditAdapter adapter = new EditAdapter(workoutSets , context);
+                        EditAdapter adapter = new EditAdapter(workoutSets , context, workoutViewModel);
                         viewHolder3.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                         viewHolder3.sets.setAdapter(adapter);
                     }
@@ -282,7 +284,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         if (newSets.size() > 1) {
                             newSets.remove(newSets.size() - 1);
                             workoutSets.setWorkoutComposition(newSets);
-                            EditAdapter adapter = new EditAdapter(workoutSets, context);
+                            EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
                             viewHolder3.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                             viewHolder3.sets.setAdapter(adapter);
                         }
@@ -308,7 +310,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
                 workoutSets.setWorkoutComposition(exList);
 
-                EditAdapter adapter = new EditAdapter(workoutSets, context);
+                EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
                 viewHolder4.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                 viewHolder4.sets.setAdapter(adapter);
 
@@ -331,7 +333,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                         newSets.add(new SetsDTO(0, 0, 0, newSets.size() + 1));
                         workoutSets.setWorkoutComposition(newSets);
-                        EditAdapter adapter = new EditAdapter(workoutSets, context);
+                        EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
                         viewHolder4.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                         viewHolder4.sets.setAdapter(adapter);
                     }
@@ -348,7 +350,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         if (newSets.size() > 1) {
                             newSets.remove(newSets.size() - 1);
                             workoutSets.setWorkoutComposition(newSets);
-                            EditAdapter adapter = new EditAdapter(workoutSets, context);
+                            EditAdapter adapter = new EditAdapter(workoutSets, context , workoutViewModel);
                             viewHolder4.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                             viewHolder4.sets.setAdapter(adapter);
                         }
@@ -375,14 +377,16 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             workoutCircuit.setWorkoutComposition(exList);
 
-            EditAdapter adapter = new EditAdapter(workoutCircuit, context);
+            EditAdapter adapter = new EditAdapter(workoutCircuit, context, workoutViewModel);
             viewHolder5.exs.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
             viewHolder5.exs.setAdapter(adapter);
 
             viewHolder5.addExerciseCircuit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO: Do your thang Diogo
+                    //TODO: Isto adiciona o exercicio fora do circuito lmao
+                    workoutViewModel.updateworkoutparams(workoutCircuit.getName(), workoutCircuit.getType(), workoutCircuit.getObservation());
+                    activityInterface.changeFrag(new AddExerciseFragment(), null);
                 }
             });
 
@@ -409,6 +413,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public WorkoutDTO saveWorkoutChanges(WorkoutDTO workoutDTO) {
         ArrayList<Object> composition = workout.getWorkoutComposition();
         WorkoutDTO newWorkout = new WorkoutDTO(workout.getName(), workout.getObservation(), workout.getType());
+        newWorkout.setId(workout.getId());
 //        newWorkout.setId(workoutDTO.getId());
         for (int i = 0; i < holdersList.size(); i++) {
             if (holdersList.get(i) instanceof ViewHolderFixedSetsReps) {

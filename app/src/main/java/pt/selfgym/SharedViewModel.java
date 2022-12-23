@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import pt.selfgym.database.AppDatabase;
 import pt.selfgym.database.entities.Exercise;
 import pt.selfgym.dtos.ExerciseDTO;
+import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.mappers.Mapper;
 import pt.selfgym.services.AppExecutors;
@@ -72,6 +73,15 @@ public class SharedViewModel extends AndroidViewModel {
                             exercises.setValue(new ArrayList<ExerciseDTO>());
                         } else {
                             exercises.setValue(exerciseDTOList);
+                        }
+                        if (exercises.getValue().isEmpty()){
+                            ArrayList<ExerciseDTO> newExerciseDTOList = new ArrayList<ExerciseDTO>();
+                            newExerciseDTOList.add(new ExerciseDTO("bicep curl","","pull"));
+                            newExerciseDTOList.add(new ExerciseDTO("push up","","push"));
+                            newExerciseDTOList.add(new ExerciseDTO("muscle up","","upper body"));
+                            newExerciseDTOList.add(new ExerciseDTO("squat","","lower body"));
+                            newExerciseDTOList.add(new ExerciseDTO("burpies","","full body"));
+                            exercises.setValue(newExerciseDTOList);
                         }
                     }
                 });
