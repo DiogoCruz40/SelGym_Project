@@ -120,12 +120,15 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     class ViewHolderCircuit extends RecyclerView.ViewHolder {
         public EditText laps, rest;
         public RecyclerView exs;
+        public ImageButton addExerciseCircuit, deleteCircuit;
 
         public ViewHolderCircuit(View itemView) {
             super(itemView);
             this.laps = (EditText) itemView.findViewById(R.id.lapsinput);
             this.rest = (EditText) itemView.findViewById(R.id.restinputcircuit);
             this.exs = (RecyclerView) itemView.findViewById(R.id.exercisesCircuit);
+            this.addExerciseCircuit = (ImageButton) itemView.findViewById(R.id.addExerciseCircuit);
+            this.deleteCircuit = (ImageButton)  itemView.findViewById(R.id.deleteCircuit);
         }
     }
 
@@ -375,6 +378,22 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             EditAdapter adapter = new EditAdapter(workoutCircuit, context);
             viewHolder5.exs.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
             viewHolder5.exs.setAdapter(adapter);
+
+            viewHolder5.addExerciseCircuit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO: Do your thang Diogo
+                }
+            });
+
+            viewHolder5.deleteCircuit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    workout.getWorkoutComposition().remove(position);
+                    notifyDataSetChanged();
+                }
+            });
+
             holdersList.add(viewHolder5);
 
         } else {
