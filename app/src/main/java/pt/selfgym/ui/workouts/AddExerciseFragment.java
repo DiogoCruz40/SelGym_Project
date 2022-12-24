@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 
 import pt.selfgym.Interfaces.ActivityInterface;
@@ -166,13 +167,13 @@ public class AddExerciseFragment extends Fragment implements ButtonsInterface {
     @Override
     public void onItemClick(int position, View v) {
         ExerciseDTO exerciseDTO = adapter.getExerciseList().get(position);
-        workoutViewModel.addExercisetoWorkout(exerciseDTO);
+        if (getArguments() != null) {
+            workoutViewModel.addToWorkout(exerciseDTO,null, getArguments().getInt("circuitposition"));
+        }
+        else {
+        workoutViewModel.addToWorkout(exerciseDTO,null,null);
+        }
         activityInterface.getMainActivity().changeFrag(new EditWorkoutFragment(),null);
-//        NavBackStackEntry backStackEntry = navController.getPreviousBackStackEntry();
-//        EditWorkoutFragment previousFragment = (EditWorkoutFragment) navController.findDestination(backStackEntry.getId());
-//        previousFragment.setExerciseToBeAdded(name);
-
-//        navController.navigateUp();
     }
 
     @Override

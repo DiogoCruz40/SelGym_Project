@@ -61,6 +61,7 @@ public class SharedViewModel extends AndroidViewModel {
                 Mapper mapper = new Mapper();
                 List<WorkoutDTO> workoutDTOList = mDb.DAO().getworkouts();
                 List<ExerciseDTO> exerciseDTOList = mapper.toDTOs(mDb.DAO().getAllExercises(), ExerciseDTO.class);
+
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -69,19 +70,14 @@ public class SharedViewModel extends AndroidViewModel {
                         } else {
                             workouts.setValue(workoutDTOList);
                         }
-                        if (exerciseDTOList == null) {
-                            exercises.setValue(new ArrayList<ExerciseDTO>());
+                        if (exerciseDTOList.isEmpty()) {
+                            insertExercise(new ExerciseDTO("burpies", "", "full body"));
+                            insertExercise(new ExerciseDTO("squat", "", "lower body"));
+                            insertExercise(new ExerciseDTO("muscle up", "", "upper body"));
+                            insertExercise(new ExerciseDTO("push up", "", "push"));
+                            insertExercise(new ExerciseDTO("bicep curl", "", "pull"));
                         } else {
                             exercises.setValue(exerciseDTOList);
-                        }
-                        if (exercises.getValue().isEmpty()){
-                            ArrayList<ExerciseDTO> newExerciseDTOList = new ArrayList<ExerciseDTO>();
-                            newExerciseDTOList.add(new ExerciseDTO("bicep curl","","pull"));
-                            newExerciseDTOList.add(new ExerciseDTO("push up","","push"));
-                            newExerciseDTOList.add(new ExerciseDTO("muscle up","","upper body"));
-                            newExerciseDTOList.add(new ExerciseDTO("squat","","lower body"));
-                            newExerciseDTOList.add(new ExerciseDTO("burpies","","full body"));
-                            exercises.setValue(newExerciseDTOList);
                         }
                     }
                 });

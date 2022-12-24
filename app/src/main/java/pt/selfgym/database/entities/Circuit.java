@@ -27,7 +27,7 @@ public class Circuit {
     @NonNull
     public Integer laps;
 
-    @ColumnInfo(name = "restlaps")
+    @ColumnInfo(name = "rest")
     @NonNull
-    public String restlaps;
+    public String rest;
 }

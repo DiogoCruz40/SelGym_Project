@@ -62,7 +62,6 @@ public class EditWorkoutFragment extends Fragment {
     private Spinner type;
     private View view;
     private Long id;
-    private WorkoutDTO workout;
 
 
     public EditWorkoutFragment() {
@@ -121,34 +120,78 @@ public class EditWorkoutFragment extends Fragment {
 //            workout.setWorkoutComposition(workoutComposition);
         }
 
-        workout = workoutViewModel.getWorkout();
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
-        adapter = new EditAdapter(workout, getContext(), workoutViewModel);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-        recyclerView.setAdapter(adapter);
+        workoutViewModel.getWorkout().observe(getViewLifecycleOwner(), workout -> {
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
+//            Log.w("help",workout.getWorkoutComposition().toString());
+            adapter = new EditAdapter(workout, getContext(), workoutViewModel);
+            recyclerView.setNestedScrollingEnabled(false);
+            recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+            recyclerView.setAdapter(adapter);
+            name = (EditText) view.findViewById(R.id.editWorkoutName);
+            name.setText(workout.getName());
+            type = (Spinner) view.findViewById(R.id.workoutTypeSpinner);
+            ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lowerbody", "push", "pull"));
+            typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            type.setAdapter(typeAdapter);
+            if (workout.getType() == "full body") {
+                type.setSelection(0);
+            } else if (workout.getType() == "upper body") {
+                type.setSelection(1);
+            } else if (workout.getType() == "lower body") {
+                type.setSelection(2);
+            } else if (workout.getType() == "push") {
+                type.setSelection(3);
+            } else if (workout.getType() == "pull") {
+                type.setSelection(4);
+            }
 
-        name = (EditText) view.findViewById(R.id.editWorkoutName);
-        name.setText(workout.getName());
+            observations = (EditText) view.findViewById(R.id.textAreaObservations);
+            observations.setText(workout.getObservation());
+            Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
 
-        type = (Spinner) view.findViewById(R.id.workoutTypeSpinner);
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lowerbody", "push", "pull"));
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        type.setAdapter(typeAdapter);
-        if (workout.getType() == "full body") {
-            type.setSelection(0);
-        } else if (workout.getType() == "upper body") {
-            type.setSelection(1);
-        } else if (workout.getType() == "lower body") {
-            type.setSelection(2);
-        } else if (workout.getType() == "push") {
-            type.setSelection(3);
-        } else if (workout.getType() == "pull") {
-            type.setSelection(4);
-        }
+            //TODO: FIX BUG IN MENU
+            toolbar.addMenuProvider(new MenuProvider() {
+                @Override
+                public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                    menuInflater.inflate(R.menu.edit_workout_menu, menu);
+                    MenuItem saveItem = menu.findItem(R.id.savemenu);
 
-        observations = (EditText) view.findViewById(R.id.textAreaObservations);
-        observations.setText(workout.getObservation());
+                    saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                            WorkoutDTO newWorkout = adapter.saveWorkoutChanges(workout);
+                            newWorkout.setName(name.getText().toString());
+                            newWorkout.setObservation(observations.getText().toString());
+                            newWorkout.setType(type.getSelectedItem().toString());
+
+                            //TODO: Save the updated or new workout cause its the same
+                            if (workout.getId() == null)
+                                mViewModel.insertWorkout(newWorkout);
+                            else {
+                                mViewModel.updateWorkout(newWorkout);
+                            }
+                            activityInterface.changeFrag(new WorkoutFragment(), null);
+                            return false;
+                        }
+                    });
+                }
+
+                @Override
+                public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                    return false;
+                }
+            }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
+            addExercise = (ImageButton) view.findViewById(R.id.addExercise);
+            addExercise.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    addExerciseCircuitPopup();
+                }
+            });
+
+        });
+
 
 //        view.setFocusableInTouchMode(true);
 //        view.requestFocus();
@@ -163,48 +206,6 @@ public class EditWorkoutFragment extends Fragment {
 //            }
 //        });
 
-        Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
-
-        //TODO: FIX BUG IN MENU
-        toolbar.addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.edit_workout_menu, menu);
-                MenuItem saveItem = menu.findItem(R.id.savemenu);
-
-                saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                        WorkoutDTO newWorkout = adapter.saveWorkoutChanges(workout);
-                        newWorkout.setName(name.getText().toString());
-                        newWorkout.setObservation(observations.getText().toString());
-                        newWorkout.setType(type.getSelectedItem().toString());
-
-                        //TODO: Save the updated or new workout cause its the same
-                        if (workout.getId() == null)
-                            mViewModel.insertWorkout(newWorkout);
-                        else {
-                            mViewModel.updateWorkout(newWorkout);
-                        }
-                        activityInterface.changeFrag(new WorkoutFragment(), null);
-                        return false;
-                    }
-                });
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                return false;
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-
-        addExercise = (ImageButton) view.findViewById(R.id.addExercise);
-        addExercise.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addExerciseCircuitPopup();
-            }
-        });
 
         return view;
     }
@@ -233,8 +234,8 @@ public class EditWorkoutFragment extends Fragment {
         addCircuitOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                workout.addToWorkoutComposition(new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()));
-                adapter.setWorkout(workout);
+                workoutViewModel.addToWorkout(null, new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()),null);
+                adapter.setWorkout(workoutViewModel.getWorkout().getValue());
                 dialog.dismiss();
             }
         });

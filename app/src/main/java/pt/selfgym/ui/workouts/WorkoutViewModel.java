@@ -20,24 +20,23 @@ public class WorkoutViewModel extends AndroidViewModel {
 
     private AppDatabase mDb;
     private final MutableLiveData<WorkoutDTO> workout = new MutableLiveData<WorkoutDTO>();
-    private final MutableLiveData<List<CircuitDTO>> circuits = new MutableLiveData<List<CircuitDTO>>();
     private final MutableLiveData<List<ExerciseWODTO>> exerciseswo = new MutableLiveData<List<ExerciseWODTO>>();
 
     public WorkoutViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public WorkoutDTO getWorkout() {
-        return workout.getValue();
+    public MutableLiveData<WorkoutDTO> getWorkout() {
+        return this.workout;
     }
 
     public void setWorkout(WorkoutDTO workoutDTO) {
         workout.setValue(workoutDTO);
     }
-    public List<CircuitDTO> getCircuits() {
-        return circuits.getValue();
-    }
 
+    public void setExerciseswo(List<ExerciseWODTO> exerciseWODTOList) {
+        exerciseswo.setValue(exerciseWODTOList);
+    }
     public List<ExerciseWODTO> getExerciseswo() {
         return exerciseswo.getValue();
     }
@@ -45,7 +44,6 @@ public class WorkoutViewModel extends AndroidViewModel {
     public void newWorkout() {
         this.workout.setValue(new WorkoutDTO("", "", "full body"));
         this.exerciseswo.setValue(new ArrayList<ExerciseWODTO>());
-        this.circuits.setValue(new ArrayList<CircuitDTO>());
     }
 
     public void updateworkoutparams(String name, String type, String obs) {
@@ -54,7 +52,13 @@ public class WorkoutViewModel extends AndroidViewModel {
         this.workout.getValue().setObservation(obs);
     }
 
-    public void addExercisetoWorkout(ExerciseDTO exerciseDTO) {
+    public void addToWorkout(ExerciseDTO exerciseDTO, CircuitDTO circuitDTO, Integer position) {
+        if (circuitDTO != null) {
+            WorkoutDTO workoutDTO = workout.getValue();
+            workoutDTO.addToWorkoutComposition(circuitDTO);
+            workout.setValue(workoutDTO);
+            return;
+        }
         List<ExerciseWODTO> exercisewoDTOList = exerciseswo.getValue();
         ExerciseWODTO exerciseWODTO;
         if (exercisewoDTOList == null) {
@@ -72,10 +76,18 @@ public class WorkoutViewModel extends AndroidViewModel {
             if (!trigger.get()) {
                 exerciseWODTO = new ExerciseWODTO(exerciseswo.getValue().size() + 1, 0, 0, 0, 0, exerciseDTO);
                 exercisewoDTOList.add(exerciseWODTO);
+                if(position != null)
+                {
+                    ((CircuitDTO) workout.getValue().getWorkoutComposition().get(position)).addToExerciseList(exerciseWODTO);
+                }
+                else
+                {
                 workout.getValue().addToWorkoutComposition(exerciseWODTO);
+                }
                 exerciseswo.setValue(exercisewoDTOList);
             }
         }
+    }
 //        mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
 //        AppExecutors.getInstance().diskIO().execute(new Runnable() {
 //            @Override
@@ -97,7 +109,6 @@ public class WorkoutViewModel extends AndroidViewModel {
 //                });
 //            }
 //        });
-    }
 
 
 }
