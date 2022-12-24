@@ -34,14 +34,15 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     @Override
     public ViewHolderEvent onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View listItem = layoutInflater.inflate(R.layout.list_item, parent, false);
+        View listItem = layoutInflater.inflate(R.layout.list_item_event, parent, false);
         return new ViewHolderEvent(listItem, buttonsInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderEvent holder, int position) {
         holder.textView.setText(events.get(position).getWorkoutName());
-        holder.textView2.setText(events.get(position).getWorkoutName());
+        holder.textView2.setText(events.get(position).getWorkoutType());
+        holder.startTime.setText(events.get(position).getHour() + ":" + events.get(position).getMinute());
     }
 
     @Override
@@ -51,12 +52,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     public void setEvents(ArrayList<EventDTO> events) {
         this.events = events;
+        notifyDataSetChanged();
     }
 
 
 
     public class ViewHolderEvent extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        public TextView textView,textView2;
+        public TextView textView,textView2, startTime;
         public RelativeLayout relativeLayout;
         ButtonsInterface buttonsInterface;
 
@@ -64,6 +66,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             super(itemView);
             this.textView = (TextView) itemView.findViewById(R.id.name);
             this.textView2 = (TextView) itemView.findViewById(R.id.textView2);
+            this.startTime = (TextView) itemView.findViewById(R.id.startTime);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.relativeLayout);
             this.buttonsInterface = buttonsInterface;
 
