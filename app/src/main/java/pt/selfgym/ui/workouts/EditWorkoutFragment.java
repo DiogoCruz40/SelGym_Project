@@ -178,7 +178,8 @@ public class EditWorkoutFragment extends Fragment {
                         if (workout.getId() == null)
                             mViewModel.insertWorkout(newWorkout);
                         else {
-                            mViewModel.updateWorkout(newWorkout);
+                            //TODO: falta corrigir update
+//                            mViewModel.updateWorkout(newWorkout);
                         }
                         activityInterface.changeFrag(new WorkoutFragment(), null);
                         return false;

@@ -119,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         if (fr instanceof EditWorkoutFragment)
             navController.navigate(R.id.editWorkoutFragment, bundle);
         else if (fr instanceof WorkoutFragment)
-            navController.navigate(R.id.navigation_workouts);
+            navController.navigate(R.id.navigation_workouts, bundle);
         else if (fr instanceof AddExerciseFragment) {
-            navController.navigate(R.id.addExerciseFragment);
+            navController.navigate(R.id.addExerciseFragment, bundle);
         }
     }
 

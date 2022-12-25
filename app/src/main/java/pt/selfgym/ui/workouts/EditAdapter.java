@@ -214,7 +214,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder1.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position);
+                        NewExSettingsPopup(position, exerciseWODTO.getOrder());
                     }
                 });
                 holdersList.add(viewHolder1);
@@ -229,7 +229,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder2.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position);
+                        NewExSettingsPopup(position, exerciseWODTO.getOrder());
                     }
                 });
                 holdersList.add(viewHolder2);
@@ -294,7 +294,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder3.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position);
+                        NewExSettingsPopup(position, exerciseWODTO.getOrder());
                     }
                 });
 
@@ -360,7 +360,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder4.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position);
+                        NewExSettingsPopup(position, exerciseWODTO.getOrder());
                     }
                 });
                 holdersList.add(viewHolder4);
@@ -371,7 +371,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             viewHolder5.laps.setText(circuitDTO.getLaps() + "");
             viewHolder5.rest.setText(circuitDTO.getRest() + "");
 
-            WorkoutDTO workoutCircuit = new WorkoutDTO("","","");
+            WorkoutDTO workoutCircuit = new WorkoutDTO("circuit","circuit","circuit");
             ArrayList<Object> exList = new ArrayList<Object>();
             for (ExerciseWODTO e : ((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList()) {
                 exList.add(e);
@@ -385,7 +385,6 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             viewHolder5.addExerciseCircuit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO: Isto adiciona o exercicio fora do circuito lmao
                     Bundle arg = new Bundle();
                     arg.putInt("circuitposition", position);
                     activityInterface.changeFrag(new AddExerciseFragment(), arg);
@@ -496,7 +495,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return newWorkout;
     }
 
-    public void NewExSettingsPopup(int position) {
+    public void NewExSettingsPopup(int position, int order) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
         final View NewExSettingsPopUp = layoutInflater.inflate(R.layout.popup_edit_exercises, null);
 
