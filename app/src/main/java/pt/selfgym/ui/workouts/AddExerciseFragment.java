@@ -166,7 +166,7 @@ public class AddExerciseFragment extends Fragment implements ButtonsInterface {
     @Override
     public void onItemClick(int position, View v) {
         ExerciseDTO exerciseDTO = adapter.getExerciseList().get(position);
-        workoutViewModel.addExercisetoWorkout(exerciseDTO);
+        workoutViewModel.addExerciseToWorkout(exerciseDTO);
         activityInterface.getMainActivity().changeFrag(new EditWorkoutFragment(),null);
 //        NavBackStackEntry backStackEntry = navController.getPreviousBackStackEntry();
 //        EditWorkoutFragment previousFragment = (EditWorkoutFragment) navController.findDestination(backStackEntry.getId());

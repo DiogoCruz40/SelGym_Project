@@ -50,6 +50,11 @@ public interface DAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertexercise(Exercise exercise);
 
+    @Query("SELECT * FROM workouts ORDER BY nrofconclusions DESC LIMIT 5")
+    List<Workout> getTop5Workouts();
+
+    //SELECT * FROM workouts ORDER BY times_completed DESC LIMIT 5;
+
     /*********************************************************************/
 
     /* @Query("SELECT * FROM Point WHERE id_note IN (:userIds)")

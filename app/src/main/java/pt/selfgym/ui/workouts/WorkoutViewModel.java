@@ -54,7 +54,7 @@ public class WorkoutViewModel extends AndroidViewModel {
         this.workout.getValue().setObservation(obs);
     }
 
-    public void addExercisetoWorkout(ExerciseDTO exerciseDTO) {
+    public void addExerciseToWorkout(ExerciseDTO exerciseDTO) {
         List<ExerciseWODTO> exercisewoDTOList = exerciseswo.getValue();
         ExerciseWODTO exerciseWODTO;
         if (exercisewoDTOList == null) {

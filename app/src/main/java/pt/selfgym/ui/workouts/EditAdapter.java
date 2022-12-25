@@ -389,7 +389,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public WorkoutDTO saveWorkoutChanges(WorkoutDTO workoutDTO) {
         ArrayList<Object> composition = workout.getWorkoutComposition();
-        WorkoutDTO newWorkout = new WorkoutDTO(workout.getName(), workout.getObservation(), workout.getType());
+        WorkoutDTO newWorkout = new WorkoutDTO(workout.getName(), workout.getObservation(), workout.getType(), workout.getNrOfConclusions());
 //        newWorkout.setId(workoutDTO.getId());
         for (int i = 0; i < holdersList.size(); i++) {
             if (holdersList.get(i) instanceof ViewHolderFixedSetsReps) {
