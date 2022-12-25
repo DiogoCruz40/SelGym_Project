@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.Interfaces.EditWorkoutInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
 import pt.selfgym.dtos.CircuitDTO;
@@ -51,7 +52,7 @@ import pt.selfgym.dtos.SetsDTO;
 import pt.selfgym.dtos.WorkoutDTO;
 
 
-public class EditWorkoutFragment extends Fragment {
+public class EditWorkoutFragment extends Fragment implements EditWorkoutInterface {
 
     private ActivityInterface activityInterface;
     private SharedViewModel mViewModel;
@@ -125,7 +126,7 @@ public class EditWorkoutFragment extends Fragment {
             this.workout = workout;
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
 //            Log.w("help",workout.getWorkoutComposition().toString());
-            adapter = new EditAdapter(workout, getContext(), workoutViewModel);
+            adapter = new EditAdapter(workout, activityInterface.getMainActivity(),this, workoutViewModel);
             recyclerView.setNestedScrollingEnabled(false);
             recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
             recyclerView.setAdapter(adapter);
@@ -160,7 +161,7 @@ public class EditWorkoutFragment extends Fragment {
 
         });
 
-        this.activityInterface.getMainActivity().addMenuProvider( new MenuProvider() {
+        this.activityInterface.getMainActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.edit_workout_menu, menu);
@@ -191,7 +192,7 @@ public class EditWorkoutFragment extends Fragment {
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 return false;
             }
-        },getViewLifecycleOwner());
+        }, getViewLifecycleOwner());
 
         return view;
     }
@@ -220,8 +221,9 @@ public class EditWorkoutFragment extends Fragment {
         addCircuitOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                workoutViewModel.addToWorkout(null, new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()), null);
-                adapter.setWorkout(workoutViewModel.getWorkout().getValue());
+                workout.addToWorkoutComposition(new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()));
+//                workoutViewModel.addToWorkout(null, new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()), null);
+                adapter.setWorkout(workout);
                 dialog.dismiss();
             }
         });
@@ -235,5 +237,12 @@ public class EditWorkoutFragment extends Fragment {
 
     }
 
+    @Override
+    public void addExercisetoCircuit(int position) {
+        Bundle arg = new Bundle();
+        arg.putInt("circuitposition", position);
+        workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
+        activityInterface.changeFrag(new AddExerciseFragment(), arg);
+    }
 
 }

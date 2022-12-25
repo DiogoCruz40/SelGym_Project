@@ -37,6 +37,7 @@ public class WorkoutViewModel extends AndroidViewModel {
     public void setExerciseswo(List<ExerciseWODTO> exerciseWODTOList) {
         exerciseswo.setValue(exerciseWODTOList);
     }
+
     public List<ExerciseWODTO> getExerciseswo() {
         return exerciseswo.getValue();
     }
@@ -68,25 +69,23 @@ public class WorkoutViewModel extends AndroidViewModel {
             exerciseswo.setValue(exercisewoDTOList);
 
         } else {
-            AtomicBoolean trigger = new AtomicBoolean(false);
-            exercisewoDTOList.forEach(exwo -> {
-                if (exwo.getExercise().getId() == exerciseDTO.getId())
-                    trigger.set(true);
-            });
-            if (!trigger.get()) {
-                exerciseWODTO = new ExerciseWODTO(exerciseswo.getValue().size() + 1, 0, 0, 0, 0, exerciseDTO);
-                exercisewoDTOList.add(exerciseWODTO);
-                if(position != null)
-                {
-                    ((CircuitDTO) workout.getValue().getWorkoutComposition().get(position)).addToExerciseList(exerciseWODTO);
-                }
-                else
-                {
+//            AtomicBoolean trigger = new AtomicBoolean(false);
+//            exercisewoDTOList.forEach(exwo -> {
+//                if (exwo.getExercise().getId() == exerciseDTO.getId())
+//                    trigger.set(true);
+//            });
+//            if (!trigger.get()) {
+            exerciseWODTO = new ExerciseWODTO(exerciseswo.getValue().size() + 1, 0, 0, 0, 0, exerciseDTO);
+            exercisewoDTOList.add(exerciseWODTO);
+            if (position != null) {
+                ((CircuitDTO) workout.getValue().getWorkoutComposition().get(position)).addToExerciseList(exerciseWODTO);
+            } else {
                 workout.getValue().addToWorkoutComposition(exerciseWODTO);
-                }
-                exerciseswo.setValue(exercisewoDTOList);
             }
+            exerciseswo.setValue(exercisewoDTOList);
+//            }
         }
+        
     }
 //        mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
 //        AppExecutors.getInstance().diskIO().execute(new Runnable() {

@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.Interfaces.EditWorkoutInterface;
 import pt.selfgym.R;
 import pt.selfgym.dtos.CircuitDTO;
 import pt.selfgym.dtos.ExerciseDTO;
@@ -38,13 +39,13 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<RecyclerView.ViewHolder> holdersList;
     private ViewGroup parent;
     private ActivityInterface activityInterface;
-    private Context context;
+    private EditWorkoutInterface context;
     private WorkoutViewModel workoutViewModel;
 
-    public EditAdapter(WorkoutDTO workout, Context context, WorkoutViewModel workoutViewModel) {
+    public EditAdapter(WorkoutDTO workout,ActivityInterface activityInterface, EditWorkoutInterface context, WorkoutViewModel workoutViewModel) {
         this.workout = workout;
         this.holdersList = new ArrayList<RecyclerView.ViewHolder>();
-        this.activityInterface = (ActivityInterface) context;
+        this.activityInterface =  activityInterface;
         this.context = context;
         this.workoutViewModel = workoutViewModel;
     }
@@ -56,6 +57,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void setWorkout(WorkoutDTO workout) {
         this.workout = workout;
         holdersList = new ArrayList<RecyclerView.ViewHolder>();
+        notifyDataSetChanged();
     }
 
     class ViewHolderFixedSetsReps extends RecyclerView.ViewHolder {
@@ -214,7 +216,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder1.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position, exerciseWODTO.getOrder());
+                        NewExSettingsPopup(position);
                     }
                 });
                 holdersList.add(viewHolder1);
@@ -229,7 +231,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder2.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position, exerciseWODTO.getOrder());
+                        NewExSettingsPopup(position);
                     }
                 });
                 holdersList.add(viewHolder2);
@@ -245,7 +247,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
                 workoutSets.setWorkoutComposition(exList);
 
-                EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
+                EditAdapter adapter = new EditAdapter(workoutSets, activityInterface,context, workoutViewModel);
                 viewHolder3.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                 viewHolder3.sets.setAdapter(adapter);
 
@@ -268,7 +270,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                         newSets.add(new SetsDTO(0, 0, 0, newSets.size() + 1));
                         workoutSets.setWorkoutComposition(newSets);
-                        EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
+                        EditAdapter adapter = new EditAdapter(workoutSets, activityInterface,context, workoutViewModel);
                         viewHolder3.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                         viewHolder3.sets.setAdapter(adapter);
                     }
@@ -285,7 +287,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         if (newSets.size() > 1) {
                             newSets.remove(newSets.size() - 1);
                             workoutSets.setWorkoutComposition(newSets);
-                            EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
+                            EditAdapter adapter = new EditAdapter(workoutSets, activityInterface,context, workoutViewModel);
                             viewHolder3.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                             viewHolder3.sets.setAdapter(adapter);
                         }
@@ -294,7 +296,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder3.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position, exerciseWODTO.getOrder());
+                        NewExSettingsPopup(position);
                     }
                 });
 
@@ -311,7 +313,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
                 workoutSets.setWorkoutComposition(exList);
 
-                EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
+                EditAdapter adapter = new EditAdapter(workoutSets,activityInterface, context, workoutViewModel);
                 viewHolder4.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                 viewHolder4.sets.setAdapter(adapter);
 
@@ -334,7 +336,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                         newSets.add(new SetsDTO(0, 0, 0, newSets.size() + 1));
                         workoutSets.setWorkoutComposition(newSets);
-                        EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
+                        EditAdapter adapter = new EditAdapter(workoutSets, activityInterface,context, workoutViewModel);
                         viewHolder4.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                         viewHolder4.sets.setAdapter(adapter);
                     }
@@ -351,7 +353,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         if (newSets.size() > 1) {
                             newSets.remove(newSets.size() - 1);
                             workoutSets.setWorkoutComposition(newSets);
-                            EditAdapter adapter = new EditAdapter(workoutSets, context, workoutViewModel);
+                            EditAdapter adapter = new EditAdapter(workoutSets, activityInterface,context, workoutViewModel);
                             viewHolder4.sets.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
                             viewHolder4.sets.setAdapter(adapter);
                         }
@@ -360,7 +362,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder4.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position, exerciseWODTO.getOrder());
+                        NewExSettingsPopup(position);
                     }
                 });
                 holdersList.add(viewHolder4);
@@ -378,16 +380,17 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             workoutCircuit.setWorkoutComposition(exList);
 
-            EditAdapter adapter = new EditAdapter(workoutCircuit, context, workoutViewModel);
+            EditAdapter adapter = new EditAdapter(workoutCircuit, activityInterface,context, workoutViewModel);
             viewHolder5.exs.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
             viewHolder5.exs.setAdapter(adapter);
 
             viewHolder5.addExerciseCircuit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Bundle arg = new Bundle();
-                    arg.putInt("circuitposition", position);
-                    activityInterface.changeFrag(new AddExerciseFragment(), arg);
+                   context.addExercisetoCircuit(position);
+//                    Bundle arg = new Bundle();
+//                    arg.putInt("circuitposition", position);
+//                    activityInterface.changeFrag(new AddExerciseFragment(), arg);
                 }
             });
 
@@ -396,6 +399,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View view) {
                     workout.getWorkoutComposition().remove(position);
                     workoutViewModel.setWorkout(workout);
+
                 }
             });
 
@@ -416,8 +420,8 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         WorkoutDTO newWorkout = new WorkoutDTO(workout.getName(), workout.getObservation(), workout.getType());
         if (workoutDTO.getId() != null)
             newWorkout.setId(workout.getId());
-        if (holdersList.size() > 1) {
-            Log.w("help", String.valueOf(holdersList.size()));
+        if (holdersList.size() > 0) {
+//            Log.w("help", String.valueOf(holdersList.size()));
             for (int i = 0; i < holdersList.size(); i++) {
                 if (holdersList.get(i) instanceof ViewHolderFixedSetsReps) {
                     int order = ((ExerciseWODTO) composition.get(i)).getOrder();
@@ -495,7 +499,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return newWorkout;
     }
 
-    public void NewExSettingsPopup(int position, int order) {
+    public void NewExSettingsPopup(int position) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
         final View NewExSettingsPopUp = layoutInflater.inflate(R.layout.popup_edit_exercises, null);
 
@@ -542,7 +546,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 } else {
                     newWorkout.getWorkoutComposition().set(position, new ExerciseWODTO(composition.getOrder(), composition.getExercise(), 1, new ArrayList<SetsDTO>()));
                 }
-                workoutViewModel.setWorkout(newWorkout);
+                setWorkout(newWorkout);
                 dialog.dismiss();
             }
         });
@@ -550,16 +554,8 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         deleteExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(workout.getWorkoutComposition().get(position) instanceof  ExerciseWODTO)
-                {
-                Integer order = ((ExerciseWODTO) workout.getWorkoutComposition().get(position)).getOrder();
-                workoutViewModel.setExerciseswo(workoutViewModel.getExerciseswo().stream().filter(exerciseWODTO -> exerciseWODTO.getOrder() != order).collect(Collectors.toList()));
-                }
-                else {
-//                    ((CircuitDTO)  workout.getWorkoutComposition().get(position)).getExerciseList().stream().filter(exerciseWODTO -> exerciseWODTO.getOrder() != ())
-                }
                 workout.getWorkoutComposition().remove(position);
-                workoutViewModel.setWorkout(workout);
+                notifyDataSetChanged();
                 dialog.dismiss();
             }
         });

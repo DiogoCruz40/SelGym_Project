@@ -1,6 +1,7 @@
 package pt.selfgym.dtos;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CircuitDTO {
     private Long circuitId;
@@ -46,8 +47,8 @@ public class CircuitDTO {
         return exerciseList;
     }
 
-    public void setExerciseList(ArrayList<ExerciseWODTO> exerciseList) {
-        this.exerciseList = exerciseList;
+    public void setExerciseList(List<ExerciseWODTO> exerciseList) {
+        this.exerciseList = (ArrayList<ExerciseWODTO>) exerciseList;
     }
 
     public void addToExerciseList(ExerciseWODTO exerciseWODTO) {
