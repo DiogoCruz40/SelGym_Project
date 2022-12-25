@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // assigning ID of the toolbar to a variable
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        // assigning ID of the toolbar to a variable
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);

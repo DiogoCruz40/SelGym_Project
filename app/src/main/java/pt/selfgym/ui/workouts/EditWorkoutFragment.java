@@ -147,10 +147,10 @@ public class EditWorkoutFragment extends Fragment {
 
             observations = (EditText) view.findViewById(R.id.textAreaObservations);
             observations.setText(workout.getObservation());
-            Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
+//            Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
 
             //TODO: FIX BUG IN MENU
-            toolbar.addMenuProvider(new MenuProvider() {
+            this.activityInterface.getMainActivity().addMenuProvider( new MenuProvider() {
                 @Override
                 public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                     menuInflater.inflate(R.menu.edit_workout_menu, menu);
@@ -180,7 +180,7 @@ public class EditWorkoutFragment extends Fragment {
                 public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                     return false;
                 }
-            }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+            },getViewLifecycleOwner());
 
             addExercise = (ImageButton) view.findViewById(R.id.addExercise);
             addExercise.setOnClickListener(new View.OnClickListener() {
@@ -234,7 +234,7 @@ public class EditWorkoutFragment extends Fragment {
         addCircuitOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                workoutViewModel.addToWorkout(null, new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()),null);
+                workoutViewModel.addToWorkout(null, new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()), null);
                 adapter.setWorkout(workoutViewModel.getWorkout().getValue());
                 dialog.dismiss();
             }
