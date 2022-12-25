@@ -157,41 +157,6 @@ public class EditStatisticsFragment extends Fragment {
 //            }
 //        });
 
-        Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
-
-        //TODO: FIX BUG IN MENU
-        toolbar.addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.edit_workout_menu, menu);
-                MenuItem saveItem = menu.findItem(R.id.savemenu);
-
-                saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                        //WorkoutDTO newWorkout = adapter.saveWorkoutChanges(workout);
-                        //newWorkout.setName(name.getText().toString());
-                        //newWorkout.setObservation(observations.getText().toString());
-                        //newWorkout.setType(type.getSelectedItem().toString());
-
-                        /*
-                        if (workout.getId() == null)
-                            mViewModel.insertWorkout(newWorkout);
-                        else {
-                            mViewModel.updateWorkout(newWorkout);
-                        }*/
-                        activityInterface.changeFrag(new WorkoutFragment(), null);
-                        return false;
-                    }
-                });
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                return false;
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-
         /*
         addExercise = (ImageButton) view.findViewById(R.id.addExercise);
         addExercise.setOnClickListener(new View.OnClickListener() {
