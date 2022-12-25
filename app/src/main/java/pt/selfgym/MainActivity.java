@@ -1,6 +1,7 @@
 package pt.selfgym;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -67,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         });
 
 
-
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
@@ -87,6 +87,15 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
+        if (f instanceof EditWorkoutFragment)
+            changeFrag(new WorkoutFragment(), null);
     }
 
     @Override
@@ -111,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
             navController.navigate(R.id.editWorkoutFragment, bundle);
         else if (fr instanceof WorkoutFragment)
             navController.navigate(R.id.navigation_workouts);
-        else if (fr instanceof AddExerciseFragment){
+        else if (fr instanceof AddExerciseFragment) {
             navController.navigate(R.id.addExerciseFragment);
         }
     }

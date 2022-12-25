@@ -57,6 +57,7 @@ public class EditWorkoutFragment extends Fragment {
     private SharedViewModel mViewModel;
     private WorkoutViewModel workoutViewModel;
     private EditAdapter adapter;
+    private WorkoutDTO workout;
     private EditText editTextNote, observations, name;
     private ImageButton addExercise;
     private Spinner type;
@@ -121,6 +122,7 @@ public class EditWorkoutFragment extends Fragment {
         }
 
         workoutViewModel.getWorkout().observe(getViewLifecycleOwner(), workout -> {
+            this.workout = workout;
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
 //            Log.w("help",workout.getWorkoutComposition().toString());
             adapter = new EditAdapter(workout, getContext(), workoutViewModel);
@@ -147,40 +149,6 @@ public class EditWorkoutFragment extends Fragment {
 
             observations = (EditText) view.findViewById(R.id.textAreaObservations);
             observations.setText(workout.getObservation());
-//            Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
-
-            //TODO: FIX BUG IN MENU
-            this.activityInterface.getMainActivity().addMenuProvider( new MenuProvider() {
-                @Override
-                public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                    menuInflater.inflate(R.menu.edit_workout_menu, menu);
-                    MenuItem saveItem = menu.findItem(R.id.savemenu);
-
-                    saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                            WorkoutDTO newWorkout = adapter.saveWorkoutChanges(workout);
-                            newWorkout.setName(name.getText().toString());
-                            newWorkout.setObservation(observations.getText().toString());
-                            newWorkout.setType(type.getSelectedItem().toString());
-
-                            //TODO: Save the updated or new workout cause its the same
-                            if (workout.getId() == null)
-                                mViewModel.insertWorkout(newWorkout);
-                            else {
-                                mViewModel.updateWorkout(newWorkout);
-                            }
-                            activityInterface.changeFrag(new WorkoutFragment(), null);
-                            return false;
-                        }
-                    });
-                }
-
-                @Override
-                public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                    return false;
-                }
-            },getViewLifecycleOwner());
 
             addExercise = (ImageButton) view.findViewById(R.id.addExercise);
             addExercise.setOnClickListener(new View.OnClickListener() {
@@ -192,20 +160,37 @@ public class EditWorkoutFragment extends Fragment {
 
         });
 
+        this.activityInterface.getMainActivity().addMenuProvider( new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.edit_workout_menu, menu);
+                MenuItem saveItem = menu.findItem(R.id.savemenu);
 
-//        view.setFocusableInTouchMode(true);
-//        view.requestFocus();
-//        view.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                    activityInterface.changeFrag(new WorkoutFragment(), null);
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+                saveItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                        WorkoutDTO newWorkout = adapter.saveWorkoutChanges(workout);
+                        newWorkout.setName(name.getText().toString());
+                        newWorkout.setObservation(observations.getText().toString());
+                        newWorkout.setType(type.getSelectedItem().toString());
 
+                        //TODO: Save the updated or new workout cause its the same
+                        if (workout.getId() == null)
+                            mViewModel.insertWorkout(newWorkout);
+                        else {
+                            mViewModel.updateWorkout(newWorkout);
+                        }
+                        activityInterface.changeFrag(new WorkoutFragment(), null);
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                return false;
+            }
+        },getViewLifecycleOwner());
 
         return view;
     }
