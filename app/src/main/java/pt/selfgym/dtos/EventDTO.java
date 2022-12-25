@@ -7,13 +7,17 @@ public class EventDTO {
     public DateDTO date;
     public Integer hour, minute;
     public long id;
+    public Integer repetitionNr;
+    public String recurrence;
 
 
-    public EventDTO(WorkoutDTO workoutDTO, DateDTO date, Integer hour, Integer minute) {
+    public EventDTO(WorkoutDTO workoutDTO, DateDTO date, Integer hour, Integer minute , Integer repetitionNr, String recurrence) {
         this.workoutDTO = workoutDTO;
         this.date = date;
         this.hour = hour;
         this.minute = minute;
+        this.repetitionNr = repetitionNr;
+        this.recurrence = recurrence;
     }
 
     public String getWorkoutName(){
