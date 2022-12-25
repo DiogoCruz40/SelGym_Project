@@ -93,6 +93,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             for (WorkoutDTO workoutDTO : mViewModel.getWorkouts().getValue())
                 if (workoutDTO.getId() == id) {
                     workoutViewModel.setWorkout(workoutDTO);
+                    workout = workoutDTO;
                     break;
                 }
 
@@ -126,7 +127,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             this.workout = workout;
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
 //            Log.w("help",workout.getWorkoutComposition().toString());
-            adapter = new EditAdapter(workout, activityInterface.getMainActivity(),this, workoutViewModel);
+            adapter = new EditAdapter(workout, activityInterface.getMainActivity(), this, workoutViewModel);
             recyclerView.setNestedScrollingEnabled(false);
             recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
             recyclerView.setAdapter(adapter);
@@ -214,6 +215,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             public void onClick(View v) {
                 workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
                 activityInterface.changeFrag(new AddExerciseFragment(), null);
+                workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
                 dialog.dismiss();
             }
         });
@@ -243,6 +245,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
         arg.putInt("circuitposition", position);
         workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
         activityInterface.changeFrag(new AddExerciseFragment(), arg);
+        workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
     }
 
 }
