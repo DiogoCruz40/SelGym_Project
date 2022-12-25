@@ -112,9 +112,9 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
                 activityInterface.changeFrag(new EditWorkoutFragment(), null);
             }
         });
-        Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
+//        Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
         //TODO: FIX BUG IN MENU
-        toolbar.addMenuProvider(new MenuProvider() {
+        this.activityInterface.getMainActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_workouts, menu);
@@ -186,7 +186,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
 
                 return false;
             }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+        },getViewLifecycleOwner());
 
         return view;
     }
