@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import pt.selfgym.database.AppDatabase;
 import pt.selfgym.database.entities.Exercise;
 import pt.selfgym.dtos.ExerciseDTO;
+import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.mappers.Mapper;
 import pt.selfgym.services.AppExecutors;
@@ -104,6 +105,7 @@ public class SharedViewModel extends AndroidViewModel {
                 Mapper mapper = new Mapper();
                 List<WorkoutDTO> workoutDTOList = mDb.DAO().getworkouts();
                 List<ExerciseDTO> exerciseDTOList = mapper.toDTOs(mDb.DAO().getAllExercises(), ExerciseDTO.class);
+
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -112,9 +114,12 @@ public class SharedViewModel extends AndroidViewModel {
                         } else {
                             workouts.setValue(workoutDTOList);
                         }
-
-                        if (exerciseDTOList == null) {
-                            exercises.setValue(new ArrayList<ExerciseDTO>());
+                        if (exerciseDTOList.isEmpty()) {
+                            insertExercise(new ExerciseDTO("burpies", "", "full body"));
+                            insertExercise(new ExerciseDTO("squat", "", "lower body"));
+                            insertExercise(new ExerciseDTO("muscle up", "", "upper body"));
+                            insertExercise(new ExerciseDTO("push up", "", "push"));
+                            insertExercise(new ExerciseDTO("bicep curl", "", "pull"));
                         } else {
                             exercises.setValue(exerciseDTOList);
                         }
@@ -131,7 +136,7 @@ public class SharedViewModel extends AndroidViewModel {
      **/
     public void insertWorkout(WorkoutDTO workoutDTO) {
 
-        //TODO: insert statistics
+        //TODO: insert statistics - MARIANA
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -155,7 +160,7 @@ public class SharedViewModel extends AndroidViewModel {
     }
 
     public void updateWorkout(WorkoutDTO workoutDTO) {
-        //TODO: update statistics
+        //TODO: update statistics - MARIANA
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {

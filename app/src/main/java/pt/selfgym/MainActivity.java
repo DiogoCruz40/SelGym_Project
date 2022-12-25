@@ -1,6 +1,7 @@
 package pt.selfgym;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -41,10 +42,10 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // assigning ID of the toolbar to a variable
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        // assigning ID of the toolbar to a variable
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -88,6 +89,15 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
+        if (f instanceof EditWorkoutFragment)
+            changeFrag(new WorkoutFragment(), null);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         model.startDB();
@@ -108,9 +118,9 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         if (fr instanceof EditWorkoutFragment)
             navController.navigate(R.id.editWorkoutFragment, bundle);
         else if (fr instanceof WorkoutFragment)
-            navController.navigate(R.id.navigation_workouts);
-        else if (fr instanceof AddExerciseFragment){
-            navController.navigate(R.id.addExerciseFragment);
+            navController.navigate(R.id.navigation_workouts, bundle);
+        else if (fr instanceof AddExerciseFragment) {
+            navController.navigate(R.id.addExerciseFragment, bundle);
         }
     }
 

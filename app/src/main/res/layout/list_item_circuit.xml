@@ -58,7 +58,7 @@
             android:layout_width="34dp"
             android:layout_height="40dp"
             android:layout_marginTop="6dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:inputType="number"
             android:textSize="14sp"
@@ -70,11 +70,11 @@
             android:layout_width="34dp"
             android:layout_height="40dp"
             android:layout_marginTop="6dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="8dp"
             android:ems="10"
             android:inputType="number"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/deleteCircuit"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -90,6 +90,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name"
             app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/addExerciseCircuit"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/shape_list_item"
+            android:src="@drawable/ic_add_black_24dp_foreground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/exercisesCircuit" />
+
+        <ImageButton
+            android:id="@+id/deleteCircuit"
+            android:layout_width="28dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_trash_super_small_black_24dp_foreground" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
