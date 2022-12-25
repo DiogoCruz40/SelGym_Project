@@ -133,7 +133,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             name = (EditText) view.findViewById(R.id.editWorkoutName);
             name.setText(workout.getName());
             type = (Spinner) view.findViewById(R.id.workoutTypeSpinner);
-            ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lowerbody", "push", "pull"));
+            ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lower body", "push", "pull"));
             typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             type.setAdapter(typeAdapter);
             if (workout.getType() == "full body") {

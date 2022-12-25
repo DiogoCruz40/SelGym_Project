@@ -7,16 +7,27 @@ public class WorkoutDTO {
     private String name_wo;
     private String observation;
     private String type;
+    private int nrOfConclusions;
     private ArrayList<Object> workoutComposition;
 
     public WorkoutDTO(){
 
     }
+
     public WorkoutDTO(String name, String observation, String type) {
         this.name_wo = name;
         this.observation = observation;
         this.type = type;
         this.workoutComposition = new ArrayList<Object>();
+        this.nrOfConclusions = 0;
+    }
+
+    public WorkoutDTO(String name, String observation, String type, int nrOfConclusions) {
+        this.name_wo = name;
+        this.observation = observation;
+        this.type = type;
+        this.workoutComposition = new ArrayList<Object>();
+        this.nrOfConclusions = nrOfConclusions;
     }
 
     public String getName() {
@@ -65,5 +76,13 @@ public class WorkoutDTO {
             this.workoutComposition = new ArrayList<Object>();
         }
         workoutComposition.add(ex);
+    }
+
+    public int getNrOfConclusions(){
+        return this.nrOfConclusions;
+    }
+
+    public void setNrOfConclusions(int nrOfConclusions) {
+        this.nrOfConclusions = nrOfConclusions;
     }
 }

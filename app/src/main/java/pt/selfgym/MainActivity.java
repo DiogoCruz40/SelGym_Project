@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
             }
         });
 
-
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 

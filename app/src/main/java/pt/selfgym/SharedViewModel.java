@@ -14,6 +14,8 @@ import com.google.gson.Gson;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -34,6 +36,15 @@ public class SharedViewModel extends AndroidViewModel {
     private final MutableLiveData<List<ExerciseDTO>> exercises = new MutableLiveData<List<ExerciseDTO>>();
     private final MutableLiveData<String> toastMessageObserver = new MutableLiveData<String>();
 
+    //TODO: ver isto melhor
+    private final MutableLiveData<List<WorkoutDTO>> workoutsTop5 = new MutableLiveData<>();
+    private final MutableLiveData<Dictionary> stats = new MutableLiveData<Dictionary>();
+    private final MutableLiveData<Integer> nrFB = new MutableLiveData<>();
+    private final MutableLiveData<Integer> nrUB = new MutableLiveData<>();
+    private final MutableLiveData<Integer> nrLB = new MutableLiveData<>();
+    private final MutableLiveData<Integer> nrPush = new MutableLiveData<>();
+    private final MutableLiveData<Integer> nrPull = new MutableLiveData<>();
+
 
     public SharedViewModel(@NonNull Application application) {
         super(application);
@@ -49,6 +60,39 @@ public class SharedViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<ExerciseDTO>> getExercises() {
         return exercises;
+    }
+
+    public MutableLiveData<List<WorkoutDTO>> getWorkoutsTop5() {
+        return this.workoutsTop5;
+    }
+
+    public MutableLiveData<Integer> getNrFB() {
+        return this.nrFB;
+    }
+
+    public MutableLiveData<Integer> getNrLB() {
+        return this.nrLB;
+    }
+
+    public MutableLiveData<Integer> getNrUB() {
+        return this.nrUB;
+    }
+
+    public MutableLiveData<Integer> getNrPush() {
+        return this.nrPush;
+    }
+
+    public MutableLiveData<Integer> getNrPull() {
+        return this.nrPull;
+    }
+
+    /*public MutableLiveData<List<Integer>> getStats() {
+        return this.stats;
+    }*/
+
+    public MutableLiveData<Dictionary> getStats() {
+        System.out.println("FUCK " + this.stats.getValue().size());
+        return this.stats;
     }
 
     public void startDB() {
@@ -83,12 +127,16 @@ public class SharedViewModel extends AndroidViewModel {
                 });
             }
         });
+
+        //insertStats();
     }
 
     /**
      * Workouts
      **/
     public void insertWorkout(WorkoutDTO workoutDTO) {
+
+        //TODO: insert statistics - MARIANA
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -112,6 +160,7 @@ public class SharedViewModel extends AndroidViewModel {
     }
 
     public void updateWorkout(WorkoutDTO workoutDTO) {
+        //TODO: update statistics - MARIANA
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -223,6 +272,188 @@ public class SharedViewModel extends AndroidViewModel {
         });
     }
     /**************************************************************************************************************************/
+
+    /**
+     * Statistics
+     **/
+    public void Top5Workouts() {
+
+        //TODO: isto não devido ser necessário
+        if(mDb == null){
+            mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
+        }
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Mapper mapper = new Mapper();
+                List<WorkoutDTO> top5Workouts = mapper.toDTOs(mDb.DAO().getTop5Workouts(), WorkoutDTO.class);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (top5Workouts == null) {
+                            workoutsTop5.setValue(new ArrayList<WorkoutDTO>());
+                        } else
+                            workoutsTop5.setValue(top5Workouts);
+                    }
+                });
+            }
+        });
+    }
+
+    public void insertStats (){
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int fb = 0, lb = 0, ub = 0, push = 0, pull = 0;
+                        for(WorkoutDTO w: Objects.requireNonNull(workouts.getValue())){
+                            switch (w.getType()){
+                                case "full body":
+                                    fb++;
+                                    break;
+                                case "upper body":
+                                    ub++;
+                                    break;
+                                case "lower body":
+                                    lb++;
+                                    break;
+                                case "pull":
+                                    pull++;
+                                    break;
+                                case "push":
+                                    push++;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        Dictionary<String, Integer> statsNrs = new Hashtable<String, Integer>();
+                        statsNrs.put("fb", fb);
+                        statsNrs.put("lb", lb);
+                        statsNrs.put("ub", ub);
+                        statsNrs.put("pull", pull);
+                        statsNrs.put("push", push);
+
+                        stats.setValue(statsNrs);
+
+                        System.out.println("TESTE1 FB: " + stats.getValue().get("fb"));
+                        stats.getValue().put("fb", (int) stats.getValue().get("fb") + 1);
+                        System.out.println("TESTE2 FB: " + stats.getValue().get("fb"));
+                    }
+                });
+            }
+        });
+
+        /*
+        int fb = 0, lb = 0, ub = 0, push = 0, pull = 0;
+        for(WorkoutDTO w: Objects.requireNonNull(workouts.getValue())){
+            switch (w.getType()){
+                case "full body":
+                    fb++;
+                    break;
+                case "upper body":
+                    ub++;
+                    break;
+                case "lower body":
+                    lb++;
+                    break;
+                case "pull":
+                    pull++;
+                    break;
+                case "push":
+                    push++;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        Dictionary<String, Integer> statsNrs = new Hashtable<String, Integer>();
+        statsNrs.put("fb", fb);
+        statsNrs.put("lb", lb);
+        statsNrs.put("ub", ub);
+        statsNrs.put("pull", pull);
+        statsNrs.put("push", push);
+
+        stats.setValue(statsNrs);
+
+        System.out.println("TESTE1 FB: " + stats.getValue().get("fb"));
+        stats.getValue().put("fb", (int) stats.getValue().get("fb") + 1);
+        System.out.println("TESTE2 FB: " + stats.getValue().get("fb"));*/
+
+
+        /*ArrayList<Integer> statsNr = new ArrayList<>();
+        statsNr.add(fb);
+        statsNr.add(ub);
+        statsNr.add(lb);
+        statsNr.add(pull);
+        statsNr.add(push);*/
+
+        /*nrFB.setValue(fb);
+        nrLB.setValue(lb);
+        nrUB.setValue(ub);
+        nrPull.setValue(pull);
+        nrPush.setValue(push);*/
+    }
+
+    public void updateStats (String old, String update){
+        //TODO: change this to dictionary
+        if (old != null){
+            try{
+                switch (old){
+                    case ("nrFB"):
+                        nrFB.setValue(nrFB.getValue()-1);
+                        break;
+                    case ("nrUB"):
+                        nrUB.setValue(nrUB.getValue()-1);
+                        break;
+                    case ("nrLB"):
+                        nrLB.setValue(nrLB.getValue()-1);
+                        break;
+                    case ("nrPull"):
+                        nrPull.setValue(nrPull.getValue()-1);
+                        break;
+                    case ("nrPush"):
+                        nrPush.setValue(nrPush.getValue()-1);
+                        break;
+                }
+            }
+            catch (NullPointerException e){
+                Log.w("updateStatsOld",e.getMessage());
+            }
+        }
+        if (update != null){
+            try{
+                switch (update){
+                    case ("nrFB"):
+                        nrFB.setValue(nrFB.getValue()+1);
+                        break;
+                    case ("nrUB"):
+                        nrUB.setValue(nrUB.getValue()+1);
+                        break;
+                    case ("nrLB"):
+                        nrLB.setValue(nrLB.getValue()+1);
+                        break;
+                    case ("nrPull"):
+                        nrPull.setValue(nrPull.getValue()+1);
+                        break;
+                    case ("nrPush"):
+                        nrPush.setValue(nrPush.getValue()+1);
+                        break;
+                }
+            }
+            catch (NullPointerException e){
+                Log.w("updateStatsUpdate",e.getMessage());
+            }
+        }
+    }
+
+
 
 //    public void deleteAllPoints() {
 //        AppExecutors.getInstance().diskIO().execute(new Runnable() {
