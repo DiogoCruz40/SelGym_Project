@@ -83,22 +83,6 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.edit_workout_fragment, container, false);
 
-        view.setFocusableInTouchMode(true);
-        view.requestFocus();
-        view.setOnKeyListener( new View.OnKeyListener()
-        {
-            @Override
-            public boolean onKey( View v, int keyCode, KeyEvent event )
-            {
-                if( keyCode == KeyEvent.KEYCODE_BACK )
-                {
-                    activityInterface.getMainActivity().changeFrag(new WorkoutFragment(),null);
-                    return true;
-                }
-                return false;
-            }
-        } );
-
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
         this.workoutViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(WorkoutViewModel.class);
 
