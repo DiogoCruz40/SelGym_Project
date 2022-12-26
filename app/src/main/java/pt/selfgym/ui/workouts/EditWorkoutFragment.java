@@ -176,12 +176,10 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                         newWorkout.setObservation(observations.getText().toString());
                         newWorkout.setType(type.getSelectedItem().toString());
 
-                        //TODO: Save the updated or new workout cause its the same
                         if (workout.getId() == null)
                             mViewModel.insertWorkout(newWorkout);
                         else {
-                            //TODO: falta corrigir update
-//                            mViewModel.updateWorkout(newWorkout);
+                            mViewModel.updateWorkout(newWorkout);
                         }
                         activityInterface.changeFrag(new WorkoutFragment(), null);
                         return false;
@@ -223,8 +221,9 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
         addCircuitOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
+                workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
                 workout.addToWorkoutComposition(new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()));
-//                workoutViewModel.addToWorkout(null, new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()), null);
                 adapter.setWorkout(workout);
                 dialog.dismiss();
             }
@@ -248,4 +247,11 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
         workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
     }
 
+    @Override
+    public void removeCircuit(int position) {
+        workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
+        workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
+        workout.getWorkoutComposition().remove(position);
+        adapter.setWorkout(workout);
+    }
 }
