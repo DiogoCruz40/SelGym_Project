@@ -32,11 +32,13 @@ import pt.selfgym.Interfaces.ButtonsInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
 import pt.selfgym.databinding.FragmentCalendarBinding;
+import pt.selfgym.dtos.CircuitDTO;
 import pt.selfgym.dtos.DateDTO;
 import pt.selfgym.dtos.EventDTO;
 import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.SetsDTO;
 import pt.selfgym.dtos.WorkoutDTO;
+import pt.selfgym.ui.workouts.AddExerciseFragment;
 import pt.selfgym.ui.workouts.ListAdapter;
 
 public class CalendarFragment extends Fragment implements ButtonsInterface {
@@ -155,7 +157,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
 
     @Override
     public void onLongItemClick(int position, View v) {
-
+        createDeleteEventPopup();
     }
 
     public void NewEventPopup() {
@@ -245,5 +247,49 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
                 dialog.dismiss();
             }
         });
+    }
+
+    public void createDeleteEventPopup() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
+        final View AddEventPopup = getLayoutInflater().inflate(R.layout.popup_delete_event, null);
+
+        Button cancel = (Button) AddEventPopup.findViewById(R.id.cancelButton);
+        Button deleteEvent = (Button) AddEventPopup.findViewById(R.id.deleteEvent);
+        Button deleteEventAll = (Button) AddEventPopup.findViewById(R.id.deleteEventAll);
+
+        dialogBuilder.setView(AddEventPopup);
+        Dialog dialog = dialogBuilder.create();
+        dialog.show();
+
+        deleteEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (EventDTO e: events) {
+                    if(selectedDate.isEqualTo(e.getDate())){
+                        //TODO: delete only the event
+                    }
+                }
+
+                dialog.dismiss();
+            }
+        });
+
+        deleteEventAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: delete all ocurrences using the counter and the value of
+                // every month every week every day to find the other ocurrences
+                // in the class dateDTO u have function to calculate the next date
+                dialog.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
     }
 }

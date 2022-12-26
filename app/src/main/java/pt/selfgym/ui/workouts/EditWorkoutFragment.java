@@ -136,15 +136,15 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lower body", "push", "pull"));
             typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             type.setAdapter(typeAdapter);
-            if (workout.getType() == "full body") {
+            if (workout.getType().equals("full body")) {
                 type.setSelection(0);
-            } else if (workout.getType() == "upper body") {
+            } else if (workout.getType().equals("upper body")) {
                 type.setSelection(1);
-            } else if (workout.getType() == "lower body") {
+            } else if (workout.getType().equals("lower body")) {
                 type.setSelection(2);
-            } else if (workout.getType() == "push") {
+            } else if (workout.getType().equals("push")) {
                 type.setSelection(3);
-            } else if (workout.getType() == "pull") {
+            } else if (workout.getType().equals("pull")) {
                 type.setSelection(4);
             }
 
