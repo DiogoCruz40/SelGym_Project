@@ -83,7 +83,6 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.edit_workout_fragment, container, false);
 
-
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
         this.workoutViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(WorkoutViewModel.class);
 
@@ -93,6 +92,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             for (WorkoutDTO workoutDTO : mViewModel.getWorkouts().getValue())
                 if (workoutDTO.getId() == id) {
                     workoutViewModel.setWorkout(workoutDTO);
+                    workout = workoutDTO;
                     break;
                 }
 
@@ -126,7 +126,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             this.workout = workout;
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
 //            Log.w("help",workout.getWorkoutComposition().toString());
-            adapter = new EditAdapter(workout, activityInterface.getMainActivity(),this, workoutViewModel);
+            adapter = new EditAdapter(workout, activityInterface.getMainActivity(), this, workoutViewModel);
             recyclerView.setNestedScrollingEnabled(false);
             recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
             recyclerView.setAdapter(adapter);
@@ -136,15 +136,15 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("full body", "upper body", "lower body", "push", "pull"));
             typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             type.setAdapter(typeAdapter);
-            if (workout.getType() == "full body") {
+            if (workout.getType().equals("full body")) {
                 type.setSelection(0);
-            } else if (workout.getType() == "upper body") {
+            } else if (workout.getType().equals("upper body")) {
                 type.setSelection(1);
-            } else if (workout.getType() == "lower body") {
+            } else if (workout.getType().equals("lower body")) {
                 type.setSelection(2);
-            } else if (workout.getType() == "push") {
+            } else if (workout.getType().equals("push")) {
                 type.setSelection(3);
-            } else if (workout.getType() == "pull") {
+            } else if (workout.getType().equals("pull")) {
                 type.setSelection(4);
             }
 
@@ -175,12 +175,10 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                         newWorkout.setObservation(observations.getText().toString());
                         newWorkout.setType(type.getSelectedItem().toString());
 
-                        //TODO: Save the updated or new workout cause its the same
                         if (workout.getId() == null)
                             mViewModel.insertWorkout(newWorkout);
                         else {
-                            //TODO: falta corrigir update
-//                            mViewModel.updateWorkout(newWorkout);
+                            mViewModel.updateWorkout(newWorkout);
                         }
                         activityInterface.changeFrag(new WorkoutFragment(), null);
                         return false;
@@ -214,6 +212,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
             public void onClick(View v) {
                 workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
                 activityInterface.changeFrag(new AddExerciseFragment(), null);
+                workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
                 dialog.dismiss();
             }
         });
@@ -221,8 +220,9 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
         addCircuitOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
+                workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
                 workout.addToWorkoutComposition(new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()));
-//                workoutViewModel.addToWorkout(null, new CircuitDTO(0, 0, new ArrayList<ExerciseWODTO>()), null);
                 adapter.setWorkout(workout);
                 dialog.dismiss();
             }
@@ -243,6 +243,14 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
         arg.putInt("circuitposition", position);
         workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
         activityInterface.changeFrag(new AddExerciseFragment(), arg);
+        workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
     }
 
+    @Override
+    public void removeCircuit(int position) {
+        workoutViewModel.updateworkoutparams(name.getText().toString(), type.getSelectedItem().toString(), observations.getText().toString());
+        workoutViewModel.setWorkout(adapter.saveWorkoutChanges(workout));
+        workout.getWorkoutComposition().remove(position);
+        adapter.setWorkout(workout);
+    }
 }

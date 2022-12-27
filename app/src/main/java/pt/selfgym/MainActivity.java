@@ -79,6 +79,20 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Fragment f = getForegroundFragment();
+        if (f instanceof EditWorkoutFragment)
+            changeFrag(new WorkoutFragment(), null);
+    }
+
+    public Fragment getForegroundFragment(){
+        Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
+        return navHostFragment == null ? null : navHostFragment.getChildFragmentManager().getFragments().get(0);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -87,15 +101,6 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        Fragment f = getSupportFragmentManager().findFragmentById(R.id.container);
-        if (f instanceof EditWorkoutFragment)
-            changeFrag(new WorkoutFragment(), null);
     }
 
     @Override

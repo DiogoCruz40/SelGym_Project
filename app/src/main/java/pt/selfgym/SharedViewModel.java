@@ -141,17 +141,19 @@ public class SharedViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 //how update a workout
-                WorkoutDTO workoutDTOwithIds = mDb.DAO().updateWorkout(workoutDTO);
+                WorkoutDTO workoutDTOwithId = mDb.DAO().updateWorkout(workoutDTO);
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        if (workoutDTOwithIds != null) {
+                        if (workoutDTOwithId != null) {
                             List<WorkoutDTO> workoutDTOList = workouts.getValue();
-                            workoutDTOList.forEach(workout -> {
-                                if (workout.getId().equals(workoutDTOwithIds.getId())) {
-                                    workout = workoutDTOwithIds;
+                            int i = 0;
+                            for (WorkoutDTO workout : workoutDTOList) {
+                                if (workout.getId().equals(workoutDTOwithId.getId())) {
+                                    workoutDTOList.set(i, workoutDTOwithId);
                                 }
-                            });
+                                i++;
+                            }
                             workouts.setValue(workoutDTOList);
                         }
                     }
