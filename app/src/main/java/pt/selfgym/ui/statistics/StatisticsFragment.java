@@ -168,20 +168,6 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
             }
 
         });*/
-
-        /*
-        mViewModel.getFlag().observe(getViewLifecycleOwner(), stats -> {
-
-            Dictionary<String, Integer> statsNrs = new Hashtable<String, Integer>();
-            statsNrs.put("fb", mViewModel.getNrFB().getValue());
-            statsNrs.put("lb", mViewModel.getNrLB().getValue());
-            statsNrs.put("ub", mViewModel.getNrUB().getValue());
-            statsNrs.put("pull", mViewModel.getNrPull().getValue());
-            statsNrs.put("push", mViewModel.getNrPush().getValue());
-
-            piePolyLineChartData(statsNrs);
-
-        });*/
     }
 
     public void barChart(){

@@ -335,7 +335,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
         deleteWorkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.deleteWorkoutbyId(id);
+                mViewModel.deleteWorkoutById(id);
                 dialog.dismiss();
             }
         });

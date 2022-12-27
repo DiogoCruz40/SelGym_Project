@@ -162,7 +162,7 @@ public class SharedViewModel extends AndroidViewModel {
         });
     }
 
-    public void deleteWorkoutbyId(Long id_workout) {
+    public void deleteWorkoutById(Long id_workout) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -173,6 +173,9 @@ public class SharedViewModel extends AndroidViewModel {
                     public void run() {
                         List<WorkoutDTO> workoutDTOList = workouts.getValue();
                         if (workoutDTOList != null) {
+                            List<WorkoutDTO> w = workoutDTOList.stream().filter(workoutDTO -> workoutDTO.getId() == id_workout).collect(Collectors.toList());
+                            updateStats(w.get(0).getType(), null);
+
                             workoutDTOList = workoutDTOList.stream().filter(workoutDTO -> workoutDTO.getId() != id_workout).collect(Collectors.toList());
                             workouts.setValue(workoutDTOList);
                         }
@@ -255,11 +258,6 @@ public class SharedViewModel extends AndroidViewModel {
      * Statistics
      **/
     public List<WorkoutDTO> Top5Workouts() {
-
-        //TODO: isto não devido ser necessário
-        if(mDb == null){
-            mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
-        }
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -406,19 +404,19 @@ public class SharedViewModel extends AndroidViewModel {
         if (update != null){
             try{
                 switch (update){
-                    case ("nrFB"):
+                    case ("full body"):
                         stats.getValue().put("Full Body", (int)stats.getValue().get("Full Body")+1);
                         break;
-                    case ("nrUB"):
+                    case ("upper body"):
                         stats.getValue().put("Upper Body", (int)stats.getValue().get("Upper Body")+1);
                         break;
-                    case ("nrLB"):
+                    case ("lower body"):
                         stats.getValue().put("Lower Body", (int)stats.getValue().get("Lower Body")+1);
                         break;
-                    case ("nrPull"):
+                    case ("pull"):
                         stats.getValue().put("Pull", (int)stats.getValue().get("Pull")+1);
                         break;
-                    case ("nrPush"):
+                    case ("push"):
                         stats.getValue().put("Push", (int)stats.getValue().get("Push")+1);
                         break;
                     default:

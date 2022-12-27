@@ -175,9 +175,13 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                         newWorkout.setObservation(observations.getText().toString());
                         newWorkout.setType(type.getSelectedItem().toString());
 
-                        if (workout.getId() == null)
+                        if (workout.getId() == null){
+                            mViewModel.updateStats(null, type.getSelectedItem().toString());
                             mViewModel.insertWorkout(newWorkout);
+                            mViewModel.Top5Workouts();
+                        }
                         else {
+                            mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString());
                             mViewModel.updateWorkout(newWorkout);
                         }
                         activityInterface.changeFrag(new WorkoutFragment(), null);
