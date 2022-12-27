@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/shape_list_item"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/name4"
+            android:layout_width="218dp"
+            android:layout_height="32dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.746"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/duration4"
+            android:layout_width="36dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:text="time"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@+id/weight4"
+            app:layout_constraintTop_toBottomOf="@+id/name4" />
+
+        <TextView
+            android:id="@+id/sets4"
+            android:layout_width="36dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:text="sets"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@+id/duration4"
+            app:layout_constraintTop_toBottomOf="@+id/name4" />
+
+        <TextView
+            android:id="@+id/weight4"
+            android:layout_width="54dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:text="weight"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@+id/rest4"
+            app:layout_constraintTop_toBottomOf="@+id/name4" />
+
+        <TextView
+            android:id="@+id/rest4"
+            android:layout_width="32dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center_vertical"
+            android:text="rest"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name4" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/setList4"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:foregroundGravity="top"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.903"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/duration4"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

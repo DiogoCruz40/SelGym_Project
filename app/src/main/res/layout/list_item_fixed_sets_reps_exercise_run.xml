@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="388dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/shape_list_item"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="218dp"
+            android:layout_height="32dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.746"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/reps"
+            android:layout_width="36dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:text="reps"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@+id/weight"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        <TextView
+            android:id="@+id/sets"
+            android:layout_width="36dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:text="sets"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@+id/reps"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        <TextView
+            android:id="@+id/weight"
+            android:layout_width="54dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:text="weight"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@+id/rest"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        <TextView
+            android:id="@+id/rest"
+            android:layout_width="32dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center_vertical"
+            android:text="rest"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        <TextView
+            android:id="@+id/repsinput"
+            android:layout_width="36dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/weightfield"
+            app:layout_constraintTop_toBottomOf="@+id/reps" />
+
+        <TextView
+            android:id="@+id/restfield"
+            android:layout_width="32dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:ems="10"
+            android:inputType="number"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rest" />
+
+        <TextView
+            android:id="@+id/setsfield"
+            android:layout_width="36dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/repsinput"
+            app:layout_constraintTop_toBottomOf="@+id/sets" />
+
+        <TextView
+            android:id="@+id/weightfield"
+            android:layout_width="54dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/restfield"
+            app:layout_constraintTop_toBottomOf="@+id/weight" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

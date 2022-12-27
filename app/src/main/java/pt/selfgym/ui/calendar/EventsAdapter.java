@@ -55,7 +55,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-
+    public ArrayList<EventDTO> getEvents() {
+        return events;
+    }
 
     public class ViewHolderEvent extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView textView,textView2, startTime;

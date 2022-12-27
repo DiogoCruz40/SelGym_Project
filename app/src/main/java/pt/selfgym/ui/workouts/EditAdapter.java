@@ -576,4 +576,3 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         });
     }
 }
-

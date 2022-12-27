@@ -13,8 +13,10 @@ import android.widget.CalendarView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.adapters.ToolbarBindingAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,6 +41,7 @@ import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.SetsDTO;
 import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.ui.workouts.AddExerciseFragment;
+import pt.selfgym.ui.workouts.EditWorkoutFragment;
 import pt.selfgym.ui.workouts.ListAdapter;
 
 public class CalendarFragment extends Fragment implements ButtonsInterface {
@@ -86,6 +89,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        selectedDate = new DateDTO(dayOfMonth, month, year);
         for (EventDTO e : events) {
             if (dayOfMonth == e.getDate().getDay() && month == e.getDate().getMonth() && year == e.getDate().getYear()) {
                 eventsDay.add(e);
@@ -127,9 +131,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
                 } else {
                     workoutString.setText("workouts");
                 }
-
-                selectedDate = new DateDTO(dayOfMonth,month + 1, year);
-
+                selectedDate = new DateDTO(dayOfMonth, month + 1, year);
             }
         });
 
@@ -152,7 +154,24 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
 
     @Override
     public void onItemClick(int position, View v) {
+        //TODO: if the workout was previously concluded don't let him open it
+        if (true) {
+            RunWorkoutFragment fr = new RunWorkoutFragment();
 
+            Long id = adapter.getEvents().get(position).getWorkoutDTO().getId();
+            Bundle arg = new Bundle();
+
+            //TODO: find out why this id comes null
+            // yes somehow the workout id comes null
+            if (id != null){
+                arg.putLong("id", id);
+            } else {
+                arg.putLong("id", 0);
+            }
+            activityInterface.changeFrag(fr, arg);
+        } else {
+            Toast.makeText(getContext(), "This workout was previously concluded!", Toast.LENGTH_SHORT);
+        }
     }
 
     @Override
@@ -264,8 +283,8 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         deleteEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (EventDTO e: events) {
-                    if(selectedDate.isEqualTo(e.getDate())){
+                for (EventDTO e : events) {
+                    if (selectedDate.isEqualTo(e.getDate())) {
                         //TODO: delete only the event
                     }
                 }

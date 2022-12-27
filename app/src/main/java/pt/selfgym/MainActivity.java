@@ -25,6 +25,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.ui.calendar.CalendarFragment;
+import pt.selfgym.ui.calendar.RunWorkoutFragment;
 import pt.selfgym.ui.workouts.AddExerciseFragment;
 import pt.selfgym.ui.workouts.EditWorkoutFragment;
 import pt.selfgym.ui.workouts.WorkoutFragment;
@@ -127,6 +129,10 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
             navController.navigate(R.id.navigation_workouts, bundle);
         else if (fr instanceof AddExerciseFragment) {
             navController.navigate(R.id.addExerciseFragment, bundle);
+        } else if (fr instanceof CalendarFragment) {
+            navController.navigate(R.id.navigation_calendar, bundle);
+        } else if (fr instanceof RunWorkoutFragment) {
+            navController.navigate(R.id.runExerciseFragment, bundle);
         }
     }
 
