@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -71,9 +73,7 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
     private SharedViewModel mViewModel;
 
-    //private Typeface tf;
-
-    private MainActivity a;
+    private ActivityInterface a;
 
     private PieChart piePolyLineChart;
     private LineChart lineChart;
@@ -82,15 +82,16 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        activityInterface = (ActivityInterface) context;
+        a = (ActivityInterface) context;
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        //a = activityInterface.getMainActivity();
 
         //this.statisticsViewModel = new ViewModelProvider(this).get(StatisticsViewModel.class);
-        this.mViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+        mViewModel = new ViewModelProvider(a.getMainActivity()).get(SharedViewModel.class);
 
         binding = FragmentStatisticsBinding.inflate(inflater, container, false);
 
@@ -102,8 +103,6 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-         a = activityInterface.getMainActivity();
 
         barChart();
         piePolyLineChart();
@@ -119,19 +118,75 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         });
 
-        /*
         mViewModel.getStats().observe(getViewLifecycleOwner(), stats -> {
 
             if(!stats.isEmpty()){
                 piePolyLineChartData(stats);
             }
+        });
+
+        /*
+        mViewModel.getWorkouts().observe(getViewLifecycleOwner(), workouts -> {
+
+            System.out.println("TESTE ENTREI OBSERVER");
+
+            barChartData(mViewModel.Top5Workouts());
+
+            if(!workouts.isEmpty()){
+
+                int fb = 0, lb = 0, ub = 0, push = 0, pull = 0;
+                for(WorkoutDTO w: workouts){
+                    switch (w.getType()){
+                        case "full body":
+                            fb++;
+                            break;
+                        case "upper body":
+                            ub++;
+                            break;
+                        case "lower body":
+                            lb++;
+                            break;
+                        case "pull":
+                            pull++;
+                            break;
+                        case "push":
+                            push++;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                Dictionary<String, Integer> statsNrs = new Hashtable<String, Integer>();
+                statsNrs.put("fb", fb);
+                statsNrs.put("lb", lb);
+                statsNrs.put("ub", ub);
+                statsNrs.put("pull", pull);
+                statsNrs.put("push", push);
+
+                //piePolyLineChartData(statsNrs);
+            }
+
+        });*/
+
+        /*
+        mViewModel.getFlag().observe(getViewLifecycleOwner(), stats -> {
+
+            Dictionary<String, Integer> statsNrs = new Hashtable<String, Integer>();
+            statsNrs.put("fb", mViewModel.getNrFB().getValue());
+            statsNrs.put("lb", mViewModel.getNrLB().getValue());
+            statsNrs.put("ub", mViewModel.getNrUB().getValue());
+            statsNrs.put("pull", mViewModel.getNrPull().getValue());
+            statsNrs.put("push", mViewModel.getNrPush().getValue());
+
+            piePolyLineChartData(statsNrs);
 
         });*/
     }
 
     public void barChart(){
 
-        BarChart chartUI = a.findViewById(R.id.barChart);
+        BarChart chartUI = a.getMainActivity().findViewById(R.id.barChart);
         chartUI.setOnChartValueSelectedListener(this);
 
         chartUI.setDrawGridBackground(false);
@@ -140,13 +195,10 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         chartUI.setDrawValueAboveBar(true);
 
-        // scaling can now only be done on x- and y-axis separately
         chartUI.setPinchZoom(false);
 
         chartUI.setDrawGridBackground(false);
         // chart.setDrawYLabels(false);
-
-        //IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(chart);
 
         XAxis xAxis = chartUI.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -166,15 +218,7 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         l.setTextSize(11f);
         l.setXEntrySpace(4f);
 
-        /*
-        XYMarkerView mv = new XYMarkerView(this, xAxisFormatter);
-        mv.setChartView(chart); // For bounds control
-        chart.setMarker(mv); // Set the marker to the chart
-        */
-
         barChart = chartUI;
-
-        //barChartData(5, 2);
 
     }
 
@@ -202,18 +246,18 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         data.setValueFormatter(new LargeValueFormatter());
 
-            /*
-            int startColor1 = ContextCompat.getColor(a, android.R.color.holo_orange_light);
-            int startColor2 = ContextCompat.getColor(a, android.R.color.holo_blue_light);
-            int startColor3 = ContextCompat.getColor(a, android.R.color.holo_orange_light);
-            int startColor4 = ContextCompat.getColor(a, android.R.color.holo_green_light);
-            int startColor5 = ContextCompat.getColor(a, android.R.color.holo_red_light);
-            int endColor1 = ContextCompat.getColor(a, android.R.color.holo_blue_dark);
-            int endColor2 = ContextCompat.getColor(a, android.R.color.holo_purple);
-            int endColor3 = ContextCompat.getColor(a, android.R.color.holo_green_dark);
-            int endColor4 = ContextCompat.getColor(a, android.R.color.holo_red_dark);
-            int endColor5 = ContextCompat.getColor(a, android.R.color.holo_orange_dark);
-            */
+        /*
+        int startColor1 = ContextCompat.getColor(a, android.R.color.holo_orange_light);
+        int startColor2 = ContextCompat.getColor(a, android.R.color.holo_blue_light);
+        int startColor3 = ContextCompat.getColor(a, android.R.color.holo_orange_light);
+        int startColor4 = ContextCompat.getColor(a, android.R.color.holo_green_light);
+        int startColor5 = ContextCompat.getColor(a, android.R.color.holo_red_light);
+        int endColor1 = ContextCompat.getColor(a, android.R.color.holo_blue_dark);
+        int endColor2 = ContextCompat.getColor(a, android.R.color.holo_purple);
+        int endColor3 = ContextCompat.getColor(a, android.R.color.holo_green_dark);
+        int endColor4 = ContextCompat.getColor(a, android.R.color.holo_red_dark);
+        int endColor5 = ContextCompat.getColor(a, android.R.color.holo_orange_dark);
+        */
 
         data.setValueTextSize(10f);
         data.setBarWidth(0.9f);
@@ -223,7 +267,7 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
     public void piePolyLineChart(){
 
-        piePolyLineChart = a.findViewById(R.id.piePolyLineChart);
+        piePolyLineChart = a.getMainActivity().findViewById(R.id.piePolyLineChart);
         piePolyLineChart.setUsePercentValues(true);
         piePolyLineChart.getDescription().setEnabled(false);
         piePolyLineChart.setExtraOffsets(5, 10, 5, 5);
@@ -263,33 +307,16 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         l.setTextColor(Color.BLACK);
         l.setDrawInside(false);
         l.setEnabled(true);
-
-        //TODO: mudar para o observer
-        //piePolyLineChartData(5, 2);
     }
 
     private void piePolyLineChartData(Dictionary stats) {
 
-        int count = 5;
-        float range = 2;
-
-        //TODO: real data
         ArrayList<PieEntry> entries = new ArrayList<>();
-        ArrayList<String> parties = new ArrayList<>();
-        parties.add("w1");
-        parties.add("w2");
-        parties.add("w3");
-        parties.add("w4");
-        parties.add("w5");
 
-        /*
-        for (int i = 0; i < count; i++) {
-            entries.add(new PieEntry((float) (Math.random() * range) + range / 5, parties.get(i % parties.size())));
-        }*/
-
-        for (Enumeration k = stats.keys(); k.hasMoreElements();) {
-            entries.add(new PieEntry((float) stats.get(k) / 5, k));
-            System.out.println("Keys in Dictionary : " + k.nextElement());
+        for (Enumeration<String> k = stats.keys(); k.hasMoreElements();) {
+            String key = k.nextElement();
+            int value = (int) stats.get(key);
+            entries.add(new PieEntry((float) value/ 5, key));
         }
 
         PieDataSet dataSet = new PieDataSet(entries, "");

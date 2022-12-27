@@ -13,8 +13,10 @@ import com.google.gson.Gson;
 
 
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 import pt.selfgym.database.AppDatabase;
 import pt.selfgym.database.entities.Exercise;
+import pt.selfgym.database.entities.Workout;
 import pt.selfgym.dtos.ExerciseDTO;
 import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.WorkoutDTO;
@@ -38,16 +41,12 @@ public class SharedViewModel extends AndroidViewModel {
 
     //TODO: ver isto melhor
     private final MutableLiveData<List<WorkoutDTO>> workoutsTop5 = new MutableLiveData<>();
-    private final MutableLiveData<Dictionary> stats = new MutableLiveData<Dictionary>();
-    private final MutableLiveData<Integer> nrFB = new MutableLiveData<>();
-    private final MutableLiveData<Integer> nrUB = new MutableLiveData<>();
-    private final MutableLiveData<Integer> nrLB = new MutableLiveData<>();
-    private final MutableLiveData<Integer> nrPush = new MutableLiveData<>();
-    private final MutableLiveData<Integer> nrPull = new MutableLiveData<>();
+    private final MutableLiveData<Dictionary<String, Integer>> stats = new MutableLiveData<>();
 
 
     public SharedViewModel(@NonNull Application application) {
         super(application);
+        stats.setValue(new Hashtable<String, Integer>());
     }
 
     public MutableLiveData<String> getToastMessageObserver() {
@@ -66,34 +65,10 @@ public class SharedViewModel extends AndroidViewModel {
         return this.workoutsTop5;
     }
 
-    public MutableLiveData<Integer> getNrFB() {
-        return this.nrFB;
-    }
-
-    public MutableLiveData<Integer> getNrLB() {
-        return this.nrLB;
-    }
-
-    public MutableLiveData<Integer> getNrUB() {
-        return this.nrUB;
-    }
-
-    public MutableLiveData<Integer> getNrPush() {
-        return this.nrPush;
-    }
-
-    public MutableLiveData<Integer> getNrPull() {
-        return this.nrPull;
-    }
-
-    /*public MutableLiveData<List<Integer>> getStats() {
-        return this.stats;
-    }*/
-
-    public MutableLiveData<Dictionary> getStats() {
-        System.out.println("FUCK " + this.stats.getValue().size());
+    public MutableLiveData<Dictionary<String, Integer>> getStats() {
         return this.stats;
     }
+
 
     public void startDB() {
         mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
@@ -114,6 +89,9 @@ public class SharedViewModel extends AndroidViewModel {
                         } else {
                             workouts.setValue(workoutDTOList);
                         }
+
+                        insertStats();
+
                         if (exerciseDTOList.isEmpty()) {
                             insertExercise(new ExerciseDTO("burpies", "", "full body"));
                             insertExercise(new ExerciseDTO("squat", "", "lower body"));
@@ -127,8 +105,6 @@ public class SharedViewModel extends AndroidViewModel {
                 });
             }
         });
-
-        //insertStats();
     }
 
     /**
@@ -276,7 +252,7 @@ public class SharedViewModel extends AndroidViewModel {
     /**
      * Statistics
      **/
-    public void Top5Workouts() {
+    public List<WorkoutDTO> Top5Workouts() {
 
         //TODO: isto não devido ser necessário
         if(mDb == null){
@@ -299,10 +275,13 @@ public class SharedViewModel extends AndroidViewModel {
                 });
             }
         });
+
+        return workoutsTop5.getValue();
     }
 
     public void insertStats (){
 
+        /*
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -328,6 +307,7 @@ public class SharedViewModel extends AndroidViewModel {
                                     push++;
                                     break;
                                 default:
+                                    Log.w("insertStats", "Reading Type failed");
                                     break;
                             }
                         }
@@ -341,15 +321,14 @@ public class SharedViewModel extends AndroidViewModel {
 
                         stats.setValue(statsNrs);
 
-                        System.out.println("TESTE1 FB: " + stats.getValue().get("fb"));
-                        stats.getValue().put("fb", (int) stats.getValue().get("fb") + 1);
-                        System.out.println("TESTE2 FB: " + stats.getValue().get("fb"));
+                        //System.out.println("TESTE1 FB: " + stats.getValue().get("fb"));
+                        //stats.getValue().put("fb", (int) stats.getValue().get("fb") + 1);
+                        //System.out.println("TESTE2 FB: " + stats.getValue().get("fb"));
                     }
                 });
             }
-        });
+        });*/
 
-        /*
         int fb = 0, lb = 0, ub = 0, push = 0, pull = 0;
         for(WorkoutDTO w: Objects.requireNonNull(workouts.getValue())){
             switch (w.getType()){
@@ -374,52 +353,46 @@ public class SharedViewModel extends AndroidViewModel {
         }
 
         Dictionary<String, Integer> statsNrs = new Hashtable<String, Integer>();
-        statsNrs.put("fb", fb);
-        statsNrs.put("lb", lb);
-        statsNrs.put("ub", ub);
-        statsNrs.put("pull", pull);
-        statsNrs.put("push", push);
+        statsNrs.put("Full Body", fb);
+        statsNrs.put("Lower Body", lb);
+        statsNrs.put("Upper Body", ub);
+        statsNrs.put("Pull", pull);
+        statsNrs.put("Push", push);
 
         stats.setValue(statsNrs);
 
-        System.out.println("TESTE1 FB: " + stats.getValue().get("fb"));
-        stats.getValue().put("fb", (int) stats.getValue().get("fb") + 1);
-        System.out.println("TESTE2 FB: " + stats.getValue().get("fb"));*/
-
-
-        /*ArrayList<Integer> statsNr = new ArrayList<>();
-        statsNr.add(fb);
-        statsNr.add(ub);
-        statsNr.add(lb);
-        statsNr.add(pull);
-        statsNr.add(push);*/
-
-        /*nrFB.setValue(fb);
-        nrLB.setValue(lb);
-        nrUB.setValue(ub);
-        nrPull.setValue(pull);
-        nrPush.setValue(push);*/
     }
 
     public void updateStats (String old, String update){
-        //TODO: change this to dictionary
+
+        if(old == null && update == null){
+            return;
+        }
+
         if (old != null){
+
+            if(old.equals(update)){
+                return;
+            }
+
             try{
                 switch (old){
-                    case ("nrFB"):
-                        nrFB.setValue(nrFB.getValue()-1);
+                    case ("full body"):
+                        stats.getValue().put("Full Body", (int)stats.getValue().get("Full Body")-1);
                         break;
-                    case ("nrUB"):
-                        nrUB.setValue(nrUB.getValue()-1);
+                    case ("upper body"):
+                        stats.getValue().put("Upper Body", (int)stats.getValue().get("Upper Body")-1);
                         break;
-                    case ("nrLB"):
-                        nrLB.setValue(nrLB.getValue()-1);
+                    case ("lower body"):
+                        stats.getValue().put("Lower Body", (int)stats.getValue().get("Lower Body")-1);
                         break;
-                    case ("nrPull"):
-                        nrPull.setValue(nrPull.getValue()-1);
+                    case ("pull"):
+                        stats.getValue().put("Pull", (int)stats.getValue().get("Pull")-1);
                         break;
-                    case ("nrPush"):
-                        nrPush.setValue(nrPush.getValue()-1);
+                    case ("push"):
+                        stats.getValue().put("Push", (int)stats.getValue().get("Push")-1);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -427,23 +400,26 @@ public class SharedViewModel extends AndroidViewModel {
                 Log.w("updateStatsOld",e.getMessage());
             }
         }
+
         if (update != null){
             try{
                 switch (update){
                     case ("nrFB"):
-                        nrFB.setValue(nrFB.getValue()+1);
+                        stats.getValue().put("Full Body", (int)stats.getValue().get("Full Body")+1);
                         break;
                     case ("nrUB"):
-                        nrUB.setValue(nrUB.getValue()+1);
+                        stats.getValue().put("Upper Body", (int)stats.getValue().get("Upper Body")+1);
                         break;
                     case ("nrLB"):
-                        nrLB.setValue(nrLB.getValue()+1);
+                        stats.getValue().put("Lower Body", (int)stats.getValue().get("Lower Body")+1);
                         break;
                     case ("nrPull"):
-                        nrPull.setValue(nrPull.getValue()+1);
+                        stats.getValue().put("Pull", (int)stats.getValue().get("Pull")+1);
                         break;
                     case ("nrPush"):
-                        nrPush.setValue(nrPush.getValue()+1);
+                        stats.getValue().put("Push", (int)stats.getValue().get("Push")+1);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -453,20 +429,14 @@ public class SharedViewModel extends AndroidViewModel {
         }
     }
 
+    public void deleteAllWorkouts() {
 
-
-//    public void deleteAllPoints() {
-//        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                // delete all notes
-//                List<Point> pointsDB = mDb.pointsDAO().getAll();
-//
-//                for (Point n : pointsDB) {
-//                    mDb.pointsDAO().delete(n);
-//                }
-//
-//            }
-//        });
-//    }
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                // delete all workouts
+                mDb.DAO().deleteAllWorkouts();
+            }
+        });
+   }
 }

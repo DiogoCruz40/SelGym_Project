@@ -203,7 +203,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         if (workout.getWorkoutComposition().get(position) instanceof ExerciseWODTO) {
             ExerciseWODTO exerciseWODTO = (ExerciseWODTO) workout.getWorkoutComposition().get(position);
@@ -214,10 +214,11 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder1.reps.setText(exerciseWODTO.getReps() + "");
                 viewHolder1.sets.setText(exerciseWODTO.getSets() + "");
                 viewHolder1.name.setText(exerciseWODTO.getExercise().getName());
+                int newPosition = position;
                 viewHolder1.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position);
+                        NewExSettingsPopup(newPosition);
                     }
                 });
                 holdersList.add(viewHolder1);
@@ -229,10 +230,11 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder2.duration.setText(exerciseWODTO.getDuration() + "");
                 viewHolder2.sets.setText(exerciseWODTO.getSets() + "");
                 viewHolder2.name.setText(exerciseWODTO.getExercise().getName());
+                int newPosition = position;
                 viewHolder2.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position);
+                        NewExSettingsPopup(newPosition);
                     }
                 });
                 holdersList.add(viewHolder2);
@@ -294,10 +296,11 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     }
                 });
+                int newPosition = position;
                 viewHolder3.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position);
+                        NewExSettingsPopup(newPosition);
                     }
                 });
 
@@ -360,10 +363,11 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     }
                 });
+                int newPosition = position;
                 viewHolder4.settings.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NewExSettingsPopup(position);
+                        NewExSettingsPopup(newPosition);
                     }
                 });
                 holdersList.add(viewHolder4);
@@ -385,10 +389,11 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             viewHolder5.exs.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
             viewHolder5.exs.setAdapter(adapter);
 
+            int newPosition = position;
             viewHolder5.addExerciseCircuit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   context.addExercisetoCircuit(position);
+                   context.addExercisetoCircuit(newPosition);
 //                    Bundle arg = new Bundle();
 //                    arg.putInt("circuitposition", position);
 //                    activityInterface.changeFrag(new AddExerciseFragment(), arg);
@@ -398,7 +403,7 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             viewHolder5.deleteCircuit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    workout.getWorkoutComposition().remove(position);
+                    workout.getWorkoutComposition().remove(newPosition);
                     workoutViewModel.setWorkout(workout);
 
                 }

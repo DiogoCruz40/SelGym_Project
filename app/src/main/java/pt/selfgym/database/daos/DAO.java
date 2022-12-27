@@ -53,8 +53,6 @@ public interface DAO {
     @Query("SELECT * FROM workouts ORDER BY nrofconclusions DESC LIMIT 5")
     List<Workout> getTop5Workouts();
 
-    //SELECT * FROM workouts ORDER BY times_completed DESC LIMIT 5;
-
     /*********************************************************************/
 
     /* @Query("SELECT * FROM Point WHERE id_note IN (:userIds)")
@@ -129,6 +127,9 @@ public interface DAO {
 
     @Query("Select * from exercise_sets where exerciseWO_id=:id_exwo ORDER BY order_set asc,exerciseSetId asc")
     List<ExerciseSet> getSetsExWO(Long id_exwo);
+
+    @Query("DELETE FROM workouts")
+    void deleteAllWorkouts();
 
     @Transaction
     default List<WorkoutDTO> getworkouts() {
@@ -321,4 +322,6 @@ public interface DAO {
         deleteeventsofwo(id_workout);
         deletewo(id_workout);
     }
+
+
 }

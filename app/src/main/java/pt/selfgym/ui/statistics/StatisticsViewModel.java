@@ -42,23 +42,6 @@ public class StatisticsViewModel extends AndroidViewModel {
         return exerciseswo.getValue();
     }
 
-    public void newWorkout() {
-        this.workout.setValue(new WorkoutDTO("", "", "full body", 0));
-        this.exerciseswo.setValue(new ArrayList<ExerciseWODTO>());
-        this.circuits.setValue(new ArrayList<CircuitDTO>());
-    }
 
-    public void updateworkoutparams(String name, String type, String obs) {
-        this.workout.getValue().setName(name);
-        this.workout.getValue().setType(type);
-        this.workout.getValue().setObservation(obs);
-    }
-
-    public List<WorkoutDTO> getTop5Workouts(){
-
-
-
-        return null;
-    }
 
 }
