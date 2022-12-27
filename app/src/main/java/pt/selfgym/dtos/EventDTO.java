@@ -51,4 +51,12 @@ public class EventDTO {
     public void setDate(DateDTO date) {
         this.date = date;
     }
+
+    public WorkoutDTO getWorkoutDTO() {
+        return workoutDTO;
+    }
+
+    public void setWorkoutDTO(WorkoutDTO workoutDTO) {
+        this.workoutDTO = workoutDTO;
+    }
 }

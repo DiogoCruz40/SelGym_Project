@@ -28,4 +28,8 @@
         android:id="@+id/addExerciseFragment"
         android:name="pt.selfgym.ui.workouts.AddExerciseFragment"
         android:label="Exercise"/>
+    <fragment
+        android:id="@+id/runExerciseFragment"
+        android:name="pt.selfgym.ui.calendar.RunWorkoutFragment"
+        android:label="Exercise"/>
 </navigation>
