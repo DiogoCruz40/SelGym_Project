@@ -6,7 +6,13 @@ public class EventDTO {
     public Long eventId;
     public DateDTO date;
     public Integer hour, minute;
+
+
     public Integer repetitionNr;
+
+    public Boolean concluded;
+
+
     public String recurrence;
 
     public WorkoutDTO workoutDTO;
@@ -20,6 +26,7 @@ public class EventDTO {
         this.date = date;
         this.hour = hour;
         this.minute = minute;
+        this.concluded = false;
         this.repetitionNr = repetitionNr;
         this.recurrence = recurrence;
     }
@@ -38,6 +45,10 @@ public class EventDTO {
 
     public void setEventId(Long eventId) {
         this.eventId = eventId;
+    }
+
+    public void setConcluded(Boolean concluded) {
+        this.concluded = concluded;
     }
 
     public Integer getHour() {
@@ -62,6 +73,13 @@ public class EventDTO {
 
     public void setDate(DateDTO date) {
         this.date = date;
+    }
+
+    public String getRecurrence() {
+        return recurrence;
+    }
+    public Integer getRepetitionNr() {
+        return repetitionNr;
     }
 
     public WorkoutDTO getWorkoutDTO() {

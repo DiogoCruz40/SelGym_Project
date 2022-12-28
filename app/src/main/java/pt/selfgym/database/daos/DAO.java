@@ -125,6 +125,9 @@ public interface DAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertEvent(Event event);
 
+    @Update
+    void updateevent(Event event);
+
     @Query("Delete from events where eventId=:id_event")
     void deleteEvent(Long id_event);
 
@@ -392,5 +395,14 @@ public interface DAO {
         event.workoutevents_id = eventDTO.getWorkoutDTO().getId();
         event.events_date = eventDTO.getDate().getDay() + "-" + eventDTO.getDate().getMonth() + "-" + eventDTO.getDate().getYear();
         return insertEvent(event);
+    }
+
+    @Transaction
+    default void updateEvent(EventDTO eventDTO) {
+
+        Event event = (new Mapper()).toEntity(eventDTO, Event.class);
+        event.workoutevents_id = eventDTO.getWorkoutDTO().getId();
+        event.events_date = eventDTO.getDate().getDay() + "-" + eventDTO.getDate().getMonth() + "-" + eventDTO.getDate().getYear();
+        updateevent(event);
     }
 }

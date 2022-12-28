@@ -70,7 +70,7 @@ public class RunWorkoutFragment extends Fragment {
     private ImageButton addExercise;
     private TextView type, name;
     private View view;
-    private Long id;
+    private Long id, id_event;
 
 
     public RunWorkoutFragment() {
@@ -95,6 +95,7 @@ public class RunWorkoutFragment extends Fragment {
 
         if (getArguments() != null) {
             id = getArguments().getLong("id");
+            id_event = getArguments().getLong("id_event");
             Log.w("id", String.valueOf(id));
             for (WorkoutDTO workoutDTO : mViewModel.getWorkouts().getValue())
                 if (workoutDTO.getId() == id) {
@@ -117,9 +118,8 @@ public class RunWorkoutFragment extends Fragment {
             type = (TextView) view.findViewById(R.id.workoutType);
             type.setText(workout.getType());
             observations = (EditText) view.findViewById(R.id.textAreaObservationsRun);
-            if(workout.getObservation() != null)
-            {
-            observations.setText(workout.getObservation());
+            if (workout.getObservation() != null) {
+                observations.setText(workout.getObservation());
             }
 
         });
@@ -163,10 +163,16 @@ public class RunWorkoutFragment extends Fragment {
         concludeEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Mark the event as concluded and
-                // increment the number of workout conclusions
-                // save the new observations to that workout
-
+                for (EventDTO e : mViewModel.getEventsCa().getValue()) {
+                    if (e.getEventId().equals(id_event)) {
+                        e.setConcluded(true);
+                        mViewModel.updateEventCalendar(e);
+                        break;
+                    }
+                }
+                workout.setNrOfConclusions(workout.getNrOfConclusions() + 1);
+                workout.setObservation(((EditText) view.findViewById(R.id.textAreaObservationsRun)).getText().toString());
+                mViewModel.updateWorkout(workout);
                 CalendarFragment fr = new CalendarFragment();
                 activityInterface.changeFrag(fr, null);
                 dialog.dismiss();
@@ -176,7 +182,8 @@ public class RunWorkoutFragment extends Fragment {
         leaveEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: save the observations
+                workout.setObservation(((EditText) view.findViewById(R.id.textAreaObservationsRun)).getText().toString());
+                mViewModel.updateWorkout(workout);
                 CalendarFragment fr = new CalendarFragment();
                 activityInterface.changeFrag(fr, null);
                 dialog.dismiss();

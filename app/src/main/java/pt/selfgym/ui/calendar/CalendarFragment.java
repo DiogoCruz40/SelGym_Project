@@ -156,20 +156,14 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
 
     @Override
     public void onItemClick(int position, View v) {
-        //TODO: if the workout was previously concluded don't let him open it
-        if (true) {
+        EventDTO eventDTO = adapter.getEvents().get(position);
+        if (!eventDTO.concluded) {
             RunWorkoutFragment fr = new RunWorkoutFragment();
 
-            Long id = adapter.getEvents().get(position).getWorkoutDTO().getId();
+            Long id = eventDTO.getWorkoutDTO().getId();
             Bundle arg = new Bundle();
-
-            //TODO: find out why this id comes null
-            // yes somehow the workout id comes null
-            if (id != null) {
-                arg.putLong("id", id);
-            } else {
-                arg.putLong("id", 0);
-            }
+            arg.putLong("id", id);
+            arg.putLong("id_event", eventDTO.eventId);
             activityInterface.changeFrag(fr, arg);
         } else {
             sharedViewModel.getToastMessageObserver().setValue("This workout was previously concluded!");
@@ -178,7 +172,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
 
     @Override
     public void onLongItemClick(int position, View v) {
-        createDeleteEventPopup();
+        createDeleteEventPopup(position);
     }
 
     public void NewEventPopup() {
@@ -205,7 +199,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         workout.setAdapter(typeAdapter);
 
         Spinner Recurrence = (Spinner) NewEventPopUp.findViewById(R.id.recurrenceSpinner);
-        ArrayAdapter<String> typeAdapter2 = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("Once", "Everyday day", "Every Week", "Every Month"));
+        ArrayAdapter<String> typeAdapter2 = new ArrayAdapter<>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, Arrays.asList("Once", "Every Day", "Every Week", "Every Month"));
         typeAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Recurrence.setAdapter(typeAdapter2);
 
@@ -233,15 +227,16 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
                     }
 
                     DateDTO dateDTO = selectedDate;
-                    for (int i = repeat - 1; i >= 0; i--) {
-//                        events.add(new EventDTO(workoutDTO, dateDTO, hour, minute, i, recurrence));
+                    for (int i = repeat; i > 0; i--) {
                         sharedViewModel.setEventCalendar(new EventDTO(workoutDTO, dateDTO, hour, minute, i, recurrence));
-                        if (recurrence == "Every Month") {
+                        if (recurrence.equals("Every Month")) {
                             dateDTO = dateDTO.addOneMonth();
-                        } else if (recurrence == "Every Week") {
+                        } else if (recurrence.equals("Every Week")) {
                             dateDTO = dateDTO.addOneWeek();
-                        } else if (recurrence == "Every Day") {
+                        } else if (recurrence.equals("Every Day")) {
                             dateDTO = dateDTO.addOneDay();
+                        } else {
+                            break;
                         }
                     }
 
@@ -277,7 +272,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         });
     }
 
-    public void createDeleteEventPopup() {
+    public void createDeleteEventPopup(int position) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
         final View AddEventPopup = getLayoutInflater().inflate(R.layout.popup_delete_event, null);
 
@@ -292,13 +287,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         deleteEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (EventDTO e : events) {
-                    if (selectedDate.isEqualTo(e.getDate())) {
-                        //TODO: delete only the event
-                        sharedViewModel.deleteEventCalendar(e.getEventId());
-                    }
-                }
-
+                sharedViewModel.deleteEventCalendar(adapter.getEvents().get(position).getEventId());
                 dialog.dismiss();
             }
         });
@@ -306,9 +295,42 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         deleteEventAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: delete all ocurrences using the counter and the value of
-                // every month every week every day to find the other ocurrences
-                // in the class dateDTO u have function to calculate the next date
+                EventDTO eventDTO = adapter.getEvents().get(position);
+                DateDTO dateDTO = eventDTO.getDate();
+                List<EventDTO> eventDTOList = sharedViewModel.getEventsCa().getValue();
+
+                for (int i = eventDTO.getRepetitionNr(); i > 0; i--) {
+                    if (eventDTO.getRecurrence().equals("Every Month")) {
+                        for (EventDTO e : eventDTOList) {
+                            if (e.getDate().isEqualTo(dateDTO) && e.getRepetitionNr() == i && e.getWorkoutDTO().getName().equalsIgnoreCase(eventDTO.getWorkoutName()) && e.getHour() == eventDTO.getHour() && e.getMinute() == eventDTO.getMinute()) {
+                                sharedViewModel.deleteEventCalendar(e.getEventId());
+                                break;
+                            }
+                        }
+                        dateDTO = dateDTO.addOneMonth();
+                    } else if (eventDTO.getRecurrence().equals("Every Week")) {
+                        for (EventDTO e : eventDTOList) {
+                            if (e.getDate().isEqualTo(dateDTO) && e.getRepetitionNr() == i && e.getWorkoutDTO().getName().equalsIgnoreCase(eventDTO.getWorkoutName()) && e.getHour() == eventDTO.getHour() && e.getMinute() == eventDTO.getMinute()) {
+                                sharedViewModel.deleteEventCalendar(e.getEventId());
+                                break;
+                            }
+                        }
+                        dateDTO = dateDTO.addOneWeek();
+                    } else if (eventDTO.getRecurrence().equals("Every Day")) {
+                        for (EventDTO e : eventDTOList) {
+                            if (e.getDate().isEqualTo(dateDTO) && e.getRepetitionNr() == i && e.getWorkoutDTO().getName().equalsIgnoreCase(eventDTO.getWorkoutName()) && e.getHour() == eventDTO.getHour() && e.getMinute() == eventDTO.getMinute()) {
+                                sharedViewModel.deleteEventCalendar(e.getEventId());
+                                break;
+                            }
+                        }
+                        dateDTO = dateDTO.addOneDay();
+                    } else {
+                        sharedViewModel.deleteEventCalendar(eventDTO.getEventId());
+                        break;
+                    }
+                }
+
+
                 dialog.dismiss();
             }
         });

@@ -326,6 +326,29 @@ public class SharedViewModel extends AndroidViewModel {
         });
     }
 
+    public void updateEventCalendar(EventDTO eventDTO) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mDb.DAO().updateEvent(eventDTO);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                            List<EventDTO> eventDTOList = events.getValue();
+                            int i = 0;
+                            for (EventDTO eDTO : eventDTOList) {
+                                if (eDTO.getEventId().equals(eventDTO.getEventId())) {
+                                    eventDTOList.set(i, eventDTO);
+                                }
+                                i++;
+                            }
+                            events.setValue(eventDTOList);
+                    }
+                });
+            }
+        });
+    }
+
     public void deleteEventCalendar(Long id_event) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override

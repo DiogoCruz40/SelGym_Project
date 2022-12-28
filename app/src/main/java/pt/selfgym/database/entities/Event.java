@@ -36,6 +36,9 @@ public class Event {
     @ColumnInfo(name = "minute")
     public Integer minute;
 
+    @ColumnInfo(name = "concluded")
+    public Boolean concluded;
+
     @ColumnInfo(name = "repetitionNr")
     public Integer repetitionNr;
 
