@@ -13,11 +13,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +59,8 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     class ViewHolderFixedSetsReps extends RecyclerView.ViewHolder {
         public TextView reps, weight, sets, rest;
         public TextView name;
+        public ImageView imageView;
+
 
         public ViewHolderFixedSetsReps(View itemView) {
             super(itemView);
@@ -64,12 +69,15 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.sets = (TextView) itemView.findViewById(R.id.setsfield);
             this.weight = (TextView) itemView.findViewById(R.id.weightfield);
             this.rest = (TextView) itemView.findViewById(R.id.restfield);
+            this.imageView = (ImageView) itemView.findViewById(R.id.imageViewPicker);
         }
     }
 
     class ViewHolderFixedSetsTime extends RecyclerView.ViewHolder {
         public TextView name;
         public TextView duration, weight, sets, rest;
+        public ImageView imageView;
+
 
         public ViewHolderFixedSetsTime(View itemView) {
             super(itemView);
@@ -78,28 +86,35 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.sets = (TextView) itemView.findViewById(R.id.setsfield2);
             this.weight = (TextView) itemView.findViewById(R.id.weightfield2);
             this.rest = (TextView) itemView.findViewById(R.id.restfield2);
+            this.imageView = (ImageView) itemView.findViewById(R.id.imageViewPicker);
         }
     }
 
     class ViewHolderVariableSetsReps extends RecyclerView.ViewHolder {
         TextView name;
         RecyclerView sets;
+        public ImageView imageView;
+
 
         public ViewHolderVariableSetsReps(View itemView) {
             super(itemView);
             this.name = (TextView) itemView.findViewById(R.id.name3);
             this.sets = (RecyclerView) itemView.findViewById(R.id.setList3);
+            this.imageView = (ImageView) itemView.findViewById(R.id.imageViewPicker);
         }
     }
 
     class ViewHolderVariableSetsTime extends RecyclerView.ViewHolder {
         TextView name;
         RecyclerView sets;
+        public ImageView imageView;
+
 
         public ViewHolderVariableSetsTime(View itemView) {
             super(itemView);
             this.name = (TextView) itemView.findViewById(R.id.name4);
             this.sets = (RecyclerView) itemView.findViewById(R.id.setList4);
+            this.imageView = (ImageView) itemView.findViewById(R.id.imageViewPicker);
         }
     }
 
@@ -189,6 +204,12 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder1.reps.setText(exerciseWODTO.getReps() + "");
                 viewHolder1.sets.setText(exerciseWODTO.getSets() + "");
                 viewHolder1.name.setText(exerciseWODTO.getExercise().getName());
+                Glide.with(layoutInflater.getContext())
+                        .load(exerciseWODTO.getExercise().getUrlImage())
+                        .placeholder(R.drawable.place_holder_foreground)
+                        .error(R.drawable.error_foreground)
+                        .centerCrop()
+                        .into(viewHolder1.imageView);
 
             } else if (exerciseWODTO.isFixedSetsTime()) {
                 ViewHolderFixedSetsTime viewHolder2 = (ViewHolderFixedSetsTime) holder;
@@ -197,11 +218,23 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder2.duration.setText(exerciseWODTO.getDuration() + "");
                 viewHolder2.sets.setText(exerciseWODTO.getSets() + "");
                 viewHolder2.name.setText(exerciseWODTO.getExercise().getName());
-                int newPosition = position;
+                Glide.with(layoutInflater.getContext())
+                        .load(exerciseWODTO.getExercise().getUrlImage())
+                        .placeholder(R.drawable.place_holder_foreground)
+                        .error(R.drawable.error_foreground)
+                        .centerCrop()
+                        .into(viewHolder2.imageView);
 
             } else if (exerciseWODTO.isVariableSetsReps()) {
                 ViewHolderVariableSetsReps viewHolder3 = (ViewHolderVariableSetsReps) holder;
                 viewHolder3.name.setText(exerciseWODTO.getExercise().getName() + "");
+
+                Glide.with(layoutInflater.getContext())
+                        .load(exerciseWODTO.getExercise().getUrlImage())
+                        .placeholder(R.drawable.place_holder_foreground)
+                        .error(R.drawable.error_foreground)
+                        .centerCrop()
+                        .into(viewHolder3.imageView);
 
                 WorkoutDTO workoutSets = new WorkoutDTO();
                 ArrayList<Object> exList = new ArrayList<Object>();
@@ -217,6 +250,12 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             } else if (exerciseWODTO.isVariableSetsTime()) {
                 ViewHolderVariableSetsTime viewHolder4 = (ViewHolderVariableSetsTime) holder;
                 viewHolder4.name.setText(exerciseWODTO.getExercise().getName() + "");
+                Glide.with(layoutInflater.getContext())
+                        .load(exerciseWODTO.getExercise().getUrlImage())
+                        .placeholder(R.drawable.place_holder_foreground)
+                        .error(R.drawable.error_foreground)
+                        .centerCrop()
+                        .into(viewHolder4.imageView);
 
                 WorkoutDTO workoutSets = new WorkoutDTO("set", "set", "set");
                 ArrayList<Object> exList = new ArrayList<Object>();

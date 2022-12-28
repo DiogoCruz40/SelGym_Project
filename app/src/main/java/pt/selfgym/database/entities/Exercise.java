@@ -17,8 +17,8 @@ public class Exercise {
     @NonNull
     public String name_exercise;
 
-    @ColumnInfo(name = "urltoimage")
-    public String urltoimage;
+    @ColumnInfo(name = "urlImage")
+    public String urlImage;
 
     @ColumnInfo(name = "type")
     @NonNull

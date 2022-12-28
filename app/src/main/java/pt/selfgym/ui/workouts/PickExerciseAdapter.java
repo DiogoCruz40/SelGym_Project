@@ -42,8 +42,12 @@ public class PickExerciseAdapter extends RecyclerView.Adapter<PickExerciseAdapte
         final ExerciseDTO exercise = exerciseList.get(position);
         holder.textView.setText(exercise.getName());
         String imageUrl = exercise.getUrlImage();
+
         Glide.with(layoutInflater.getContext())
                 .load(imageUrl)
+                .placeholder(R.drawable.place_holder_foreground)
+                .error(R.drawable.error_foreground)
+                .centerCrop()
                 .into(holder.imageView);
     }
 
