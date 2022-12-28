@@ -41,8 +41,16 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        model = new ViewModelProvider(this).get(SharedViewModel.class);
+        model.startDB();
+        //model.deleteAllWorkouts();
+        model.getToastMessageObserver().observe(this, message -> {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        });
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
 
 //        // assigning ID of the toolbar to a variable
 //        Toolbar toolbar = findViewById(R.id.toolbar);
@@ -71,13 +79,6 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-
-        model = new ViewModelProvider(this).get(SharedViewModel.class);
-        model.startDB();
-        //model.deleteAllWorkouts();
-        model.getToastMessageObserver().observe(this, message -> {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        });
     }
 
     @Override

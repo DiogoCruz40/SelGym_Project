@@ -82,7 +82,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         selectedDate = new DateDTO(dayOfMonth, month, year);
 
-        sharedViewModel.getEvents().observe(getViewLifecycleOwner(), events -> {
+        sharedViewModel.getEventsCa().observe(getViewLifecycleOwner(), events -> {
             this.events = events;
 
 

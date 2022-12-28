@@ -67,7 +67,7 @@ public class SharedViewModel extends AndroidViewModel {
         return exercises;
     }
 
-    public MutableLiveData<List<EventDTO>> getEvents() {
+    public MutableLiveData<List<EventDTO>> getEventsCa() {
         return events;
     }
 
@@ -282,7 +282,6 @@ public class SharedViewModel extends AndroidViewModel {
      * Events
      **/
     public void getEventsCalendar() {
-        mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override

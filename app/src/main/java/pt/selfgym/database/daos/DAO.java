@@ -263,7 +263,6 @@ public interface DAO {
         });
         deletexswo(workoutDTO.getId());
         deletecircuits(workoutDTO.getId());
-        deleteeventsofwo(workoutDTO.getId());
 
         workoutDTO.getWorkoutComposition().forEach(obj -> {
             if (obj instanceof ExerciseWODTO) {
