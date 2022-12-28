@@ -181,7 +181,7 @@ public interface DAO {
     default WorkoutDTO insertWorkout(WorkoutDTO workoutDTO) {
         List<Workout> workouts = getAllworkouts();
         for (Workout workout : workouts) {
-            if (workout.name_wo.toLowerCase().equals(workoutDTO.getName().toLowerCase()))
+            if (workout.name_wo.equalsIgnoreCase(workoutDTO.getName()))
                 return null;
         }
         Long id_workout = insertwo((new Mapper()).toEntity(workoutDTO, Workout.class));
@@ -236,6 +236,11 @@ public interface DAO {
 
     @Transaction
     default WorkoutDTO updateWorkout(WorkoutDTO workoutDTO) {
+        List<Workout> workouts = getAllworkouts();
+        for (Workout workout : workouts) {
+            if (workout.name_wo.equalsIgnoreCase(workoutDTO.getName()))
+                return null;
+        }
         updatewo((new Mapper()).toEntity(workoutDTO, Workout.class));
         List<ExerciseWO> exerciseWOList = getexercisesbyWorkoutId(workoutDTO.getId());
         exerciseWOList.forEach(exerciseWO -> {

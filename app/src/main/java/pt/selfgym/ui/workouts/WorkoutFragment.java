@@ -112,8 +112,6 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
                 activityInterface.changeFrag(new EditWorkoutFragment(), null);
             }
         });
-//        Toolbar toolbar = activityInterface.getMainActivity().findViewById(R.id.toolbar);
-        //TODO: FIX BUG IN MENU
         this.activityInterface.getMainActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {

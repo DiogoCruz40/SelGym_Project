@@ -5,24 +5,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,20 +25,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.Interfaces.EditWorkoutInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
 import pt.selfgym.dtos.CircuitDTO;
-import pt.selfgym.dtos.ExerciseDTO;
 import pt.selfgym.dtos.ExerciseWODTO;
-import pt.selfgym.dtos.SetsDTO;
 import pt.selfgym.dtos.WorkoutDTO;
 
 
@@ -64,7 +49,6 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
     private Spinner type;
     private View view;
     private Long id;
-
 
     public EditWorkoutFragment() {
     }
@@ -95,31 +79,6 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                     workout = workoutDTO;
                     break;
                 }
-
-            //comment this if needed
-//            workout = new WorkoutDTO("olá", "hell", "upper body");
-//            ExerciseWODTO exercise1 = new ExerciseWODTO(1, 0.0, 1, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"));
-//            ExerciseWODTO exercise2 = new ExerciseWODTO(2, 0.0, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1);
-//            SetsDTO setsDTO1 = new SetsDTO(1, 1, 1, 1);
-//            SetsDTO setsDTO2 = new SetsDTO(1, 1, 1, 2);
-//            ArrayList<SetsDTO> sets = new ArrayList<SetsDTO>();
-//            sets.add(setsDTO1);
-//            sets.add(setsDTO2);
-//            ExerciseWODTO exercise3 = new ExerciseWODTO(3, 1, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), sets);
-//            ExerciseWODTO exercise4 = new ExerciseWODTO(4, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1, sets);
-//            ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
-//            circuitComposition.add(exercise1);
-//            circuitComposition.add(exercise2);
-//            circuitComposition.add(exercise3);
-//            circuitComposition.add(exercise4);
-//            CircuitDTO circuit = new CircuitDTO(5, 0, circuitComposition);
-//            ArrayList<Object> workoutComposition = new ArrayList<Object>();
-//            workoutComposition.add(exercise1);
-//            workoutComposition.add(exercise2);
-//            workoutComposition.add(exercise3);
-//            workoutComposition.add(exercise4);
-//            workoutComposition.add(circuit);
-//            workout.setWorkoutComposition(workoutComposition);
         }
 
         workoutViewModel.getWorkout().observe(getViewLifecycleOwner(), workout -> {
@@ -175,16 +134,29 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                         newWorkout.setObservation(observations.getText().toString());
                         newWorkout.setType(type.getSelectedItem().toString());
 
-                        if (workout.getId() == null){
-                            mViewModel.updateStats(null, type.getSelectedItem().toString());
+                        if (workout.getId() == null) {
                             mViewModel.insertWorkout(newWorkout);
-                            mViewModel.Top5Workouts();
-                        }
-                        else {
-                            mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString());
+
+                            mViewModel.getGetResult().observe(getViewLifecycleOwner(), result -> {
+                                if (result.get()) {
+                                    mViewModel.updateStats(null, type.getSelectedItem().toString());
+                                    mViewModel.Top5Workouts();
+                                    activityInterface.changeFrag(new WorkoutFragment(), null);
+                                } else
+                                    mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
+                            });
+
+                        } else {
                             mViewModel.updateWorkout(newWorkout);
+
+                            mViewModel.getGetResult().observe(getViewLifecycleOwner(), result -> {
+                                if (result.get()) {
+                                    mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString());
+                                    activityInterface.changeFrag(new WorkoutFragment(), null);
+                                } else
+                                    mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
+                            });
                         }
-                        activityInterface.changeFrag(new WorkoutFragment(), null);
                         return false;
                     }
                 });
@@ -257,4 +229,5 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
         workout.getWorkoutComposition().remove(position);
         adapter.setWorkout(workout);
     }
+
 }
