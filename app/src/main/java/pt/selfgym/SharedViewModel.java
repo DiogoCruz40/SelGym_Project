@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import pt.selfgym.database.AppDatabase;
 import pt.selfgym.database.entities.Exercise;
 import pt.selfgym.database.entities.Workout;
+import pt.selfgym.dtos.EventDTO;
 import pt.selfgym.dtos.ExerciseDTO;
 import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.WorkoutDTO;
@@ -39,7 +40,9 @@ public class SharedViewModel extends AndroidViewModel {
     private AppDatabase mDb;
     private final MutableLiveData<List<WorkoutDTO>> workouts = new MutableLiveData<List<WorkoutDTO>>();
     private final MutableLiveData<List<ExerciseDTO>> exercises = new MutableLiveData<List<ExerciseDTO>>();
-    private final MutableLiveData<AtomicBoolean> getResult = new MutableLiveData<AtomicBoolean>();
+    private final MutableLiveData<List<EventDTO>> events = new MutableLiveData<List<EventDTO>>();
+    private final MutableLiveData<AtomicBoolean> getResultInsert = new MutableLiveData<AtomicBoolean>();
+    private final MutableLiveData<AtomicBoolean> getResultUpdate = new MutableLiveData<AtomicBoolean>();
     private final MutableLiveData<String> toastMessageObserver = new MutableLiveData<String>();
 
     //TODO: ver isto melhor
@@ -64,8 +67,16 @@ public class SharedViewModel extends AndroidViewModel {
         return exercises;
     }
 
-    public MutableLiveData<AtomicBoolean> getGetResult() {
-        return getResult;
+    public MutableLiveData<List<EventDTO>> getEvents() {
+        return events;
+    }
+
+    public MutableLiveData<AtomicBoolean> getGetResultInsert() {
+        return getResultInsert;
+    }
+
+    public MutableLiveData<AtomicBoolean> getGetResultUpdate() {
+        return getResultUpdate;
     }
 
     public MutableLiveData<List<WorkoutDTO>> getWorkoutsTop5() {
@@ -129,15 +140,15 @@ public class SharedViewModel extends AndroidViewModel {
                     @Override
                     public void run() {
                         if (workoutDTOwithIds == null) {
-                            getResult.setValue(new AtomicBoolean(false));
+                            getResultInsert.setValue(new AtomicBoolean(false));
                         } else {
                             List<WorkoutDTO> workoutDTOList = workouts.getValue();
                             if (workoutDTOList == null) {
                                 workoutDTOList = new ArrayList<WorkoutDTO>();
                             }
                             workoutDTOList.add(workoutDTOwithIds);
+                            getResultInsert.setValue(new AtomicBoolean(true));
                             workouts.setValue(workoutDTOList);
-                            getResult.setValue(new AtomicBoolean(true));
                         }
                     }
                 });
@@ -155,9 +166,9 @@ public class SharedViewModel extends AndroidViewModel {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        if(workoutDTOwithId == null)
-                            getResult.setValue(new AtomicBoolean(false));
-                       else {
+                        if (workoutDTOwithId == null)
+                            getResultUpdate.setValue(new AtomicBoolean(false));
+                        else {
                             List<WorkoutDTO> workoutDTOList = workouts.getValue();
                             int i = 0;
                             for (WorkoutDTO workout : workoutDTOList) {
@@ -166,8 +177,8 @@ public class SharedViewModel extends AndroidViewModel {
                                 }
                                 i++;
                             }
+                            getResultUpdate.setValue(new AtomicBoolean(true));
                             workouts.setValue(workoutDTOList);
-                            getResult.setValue(new AtomicBoolean(true));
                         }
                     }
                 });
@@ -260,6 +271,78 @@ public class SharedViewModel extends AndroidViewModel {
                             exerciseDTOList = exerciseDTOList.stream().filter(exerciseDTO -> exerciseDTO.getId() != id_exercise).collect(Collectors.toList());
                             exercises.setValue(exerciseDTOList);
                         }
+                    }
+                });
+            }
+        });
+    }
+    /**************************************************************************************************************************/
+
+    /**
+     * Events
+     **/
+    public void getEventsCalendar() {
+        mDb = AppDatabase.getInstance(getApplication().getApplicationContext());
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how to get all events
+                List<EventDTO> eventDTOList = mDb.DAO().getEvents();
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (eventDTOList == null) {
+                            events.setValue(new ArrayList<EventDTO>());
+                        } else {
+                            events.setValue(eventDTOList);
+                        }
+
+                    }
+                });
+            }
+        });
+    }
+
+    public void setEventCalendar(EventDTO eventDTO) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how to get all events
+                Mapper mapper = new Mapper();
+                eventDTO.setEventId(mDb.DAO().setEvent(eventDTO));
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<EventDTO> eventDTOList = events.getValue();
+                        if (eventDTOList == null) {
+                            eventDTOList = new ArrayList<EventDTO>();
+                        }
+                        eventDTOList.add(eventDTO);
+                        events.setValue(eventDTOList);
+                    }
+                });
+            }
+        });
+    }
+
+    public void deleteEventCalendar(Long id_event) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how to get all events
+                Mapper mapper = new Mapper();
+                mDb.DAO().deleteEvent(id_event);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<EventDTO> eventDTOList = events.getValue();
+                        if (eventDTOList != null) {
+                            eventDTOList = eventDTOList.stream().filter(eventDTO -> eventDTO.getEventId() != id_event).collect(Collectors.toList());
+                            events.setValue(eventDTOList);
+                        }
+
                     }
                 });
             }

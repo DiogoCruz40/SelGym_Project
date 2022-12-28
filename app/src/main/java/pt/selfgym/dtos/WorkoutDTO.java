@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class WorkoutDTO {
     private Long workoutId;
     private String name_wo;
-    private String observation;
+    private String observations;
     private String type;
     private int nrOfConclusions;
     private ArrayList<Object> workoutComposition;
@@ -14,17 +14,17 @@ public class WorkoutDTO {
 
     }
 
-    public WorkoutDTO(String name, String observation, String type) {
+    public WorkoutDTO(String name, String observations, String type) {
         this.name_wo = name;
-        this.observation = observation;
+        this.observations = observations;
         this.type = type;
         this.workoutComposition = new ArrayList<Object>();
         this.nrOfConclusions = 0;
     }
 
-    public WorkoutDTO(String name, String observation, String type, int nrOfConclusions) {
+    public WorkoutDTO(String name, String observations, String type, int nrOfConclusions) {
         this.name_wo = name;
-        this.observation = observation;
+        this.observations = observations;
         this.type = type;
         this.workoutComposition = new ArrayList<Object>();
         this.nrOfConclusions = nrOfConclusions;
@@ -55,11 +55,11 @@ public class WorkoutDTO {
     }
 
     public String getObservation() {
-        return observation;
+        return observations;
     }
 
-    public void setObservation(String observation) {
-        this.observation = observation;
+    public void setObservation(String observations) {
+        this.observations = observations;
     }
 
     public ArrayList<Object> getWorkoutComposition() {

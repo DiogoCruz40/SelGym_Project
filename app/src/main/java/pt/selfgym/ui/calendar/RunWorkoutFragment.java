@@ -102,34 +102,8 @@ public class RunWorkoutFragment extends Fragment {
                     workout = workoutDTO;
                     break;
                 }
-
-            //comment this if needed
-//            workout = new WorkoutDTO("olá", "hell", "upper body");
-//            ExerciseWODTO exercise1 = new ExerciseWODTO(1, 0.0, 1, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"));
-//            ExerciseWODTO exercise2 = new ExerciseWODTO(2, 0.0, 1, 0, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1);
-//            SetsDTO setsDTO1 = new SetsDTO(1, 1, 1, 1);
-//            SetsDTO setsDTO2 = new SetsDTO(1, 1, 1, 2);
-//            ArrayList<SetsDTO> sets = new ArrayList<SetsDTO>();
-//            sets.add(setsDTO1);
-//            sets.add(setsDTO2);
-//            ExerciseWODTO exercise3 = new ExerciseWODTO(3, 1, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), sets);
-//            ExerciseWODTO exercise4 = new ExerciseWODTO(4, new ExerciseDTO("hell", "sodqodmpaod", "sidno"), 1, sets);
-//            ArrayList<ExerciseWODTO> circuitComposition = new ArrayList<ExerciseWODTO>();
-//            circuitComposition.add(exercise1);
-//            circuitComposition.add(exercise2);
-//            circuitComposition.add(exercise3);
-//            circuitComposition.add(exercise4);
-//            CircuitDTO circuit = new CircuitDTO(5, 0, circuitComposition);
-//            ArrayList<Object> workoutComposition = new ArrayList<Object>();
-//            workoutComposition.add(exercise1);
-//            workoutComposition.add(exercise2);
-//            workoutComposition.add(exercise3);
-//            workoutComposition.add(exercise4);
-//            workoutComposition.add(circuit);
-//            workout.setWorkoutComposition(workoutComposition);
         }
 
-        //TODO: Ele n tá a ir buscar o workout
         workoutViewModel.getWorkout().observe(getViewLifecycleOwner(), workout -> {
             this.workout = workout;
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
@@ -142,8 +116,11 @@ public class RunWorkoutFragment extends Fragment {
             name.setText(workout.getName());
             type = (TextView) view.findViewById(R.id.workoutType);
             type.setText(workout.getType());
-            observations = (EditText) view.findViewById(R.id.textAreaObservations);
+            observations = (EditText) view.findViewById(R.id.textAreaObservationsRun);
+            if(workout.getObservation() != null)
+            {
             observations.setText(workout.getObservation());
+            }
 
         });
 

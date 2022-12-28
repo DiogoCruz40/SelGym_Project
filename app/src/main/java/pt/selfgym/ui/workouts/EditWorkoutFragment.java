@@ -6,8 +6,10 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +29,7 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.Interfaces.EditWorkoutInterface;
@@ -83,6 +86,7 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
 
         workoutViewModel.getWorkout().observe(getViewLifecycleOwner(), workout -> {
             this.workout = workout;
+//            mViewModel.setResult(new AtomicBoolean(false));
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
 //            Log.w("help",workout.getWorkoutComposition().toString());
             adapter = new EditAdapter(workout, activityInterface.getMainActivity(), this, workoutViewModel);
@@ -137,19 +141,22 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                         if (workout.getId() == null) {
                             mViewModel.insertWorkout(newWorkout);
 
-                            mViewModel.getGetResult().observe(getViewLifecycleOwner(), result -> {
-                                if (result.get()) {
-                                    mViewModel.updateStats(null, type.getSelectedItem().toString());
-                                    mViewModel.Top5Workouts();
-                                    activityInterface.changeFrag(new WorkoutFragment(), null);
-                                } else
-                                    mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
+                            mViewModel.getGetResultInsert().observe(getViewLifecycleOwner(), new Observer<AtomicBoolean>() {
+                                @Override
+                                public void onChanged(AtomicBoolean atomicBoolean) {
+                                    if (atomicBoolean.get()) {
+                                        mViewModel.updateStats(null, type.getSelectedItem().toString());
+                                        mViewModel.Top5Workouts();
+                                        activityInterface.changeFrag(new WorkoutFragment(), null);
+                                    } else
+                                        mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
+                                }
                             });
 
                         } else {
                             mViewModel.updateWorkout(newWorkout);
 
-                            mViewModel.getGetResult().observe(getViewLifecycleOwner(), result -> {
+                            mViewModel.getGetResultUpdate().observe(getViewLifecycleOwner(), result -> {
                                 if (result.get()) {
                                     mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString());
                                     activityInterface.changeFrag(new WorkoutFragment(), null);
