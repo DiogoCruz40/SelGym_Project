@@ -3,29 +3,52 @@ package pt.selfgym.dtos;
 import java.util.Date;
 
 public class EventDTO {
-    public WorkoutDTO workoutDTO;
+    public Long eventId;
     public DateDTO date;
     public Integer hour, minute;
-    public long id;
+
+
     public Integer repetitionNr;
+
+    public Boolean concluded;
+
+
     public String recurrence;
 
+    public WorkoutDTO workoutDTO;
 
-    public EventDTO(WorkoutDTO workoutDTO, DateDTO date, Integer hour, Integer minute , Integer repetitionNr, String recurrence) {
+    public EventDTO() {
+
+    }
+
+    public EventDTO(WorkoutDTO workoutDTO, DateDTO date, Integer hour, Integer minute, Integer repetitionNr, String recurrence) {
         this.workoutDTO = workoutDTO;
         this.date = date;
         this.hour = hour;
         this.minute = minute;
+        this.concluded = false;
         this.repetitionNr = repetitionNr;
         this.recurrence = recurrence;
     }
 
-    public String getWorkoutName(){
+    public String getWorkoutName() {
         return workoutDTO.getName();
     }
 
-    public String getWorkoutType(){
+    public String getWorkoutType() {
         return workoutDTO.getType();
+    }
+
+    public Long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
+    }
+
+    public void setConcluded(Boolean concluded) {
+        this.concluded = concluded;
     }
 
     public Integer getHour() {
@@ -50,6 +73,13 @@ public class EventDTO {
 
     public void setDate(DateDTO date) {
         this.date = date;
+    }
+
+    public String getRecurrence() {
+        return recurrence;
+    }
+    public Integer getRepetitionNr() {
+        return repetitionNr;
     }
 
     public WorkoutDTO getWorkoutDTO() {

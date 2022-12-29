@@ -20,16 +20,19 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import pt.selfgym.database.AppDatabase;
 import pt.selfgym.database.entities.Exercise;
 import pt.selfgym.database.entities.Workout;
+import pt.selfgym.dtos.EventDTO;
 import pt.selfgym.dtos.ExerciseDTO;
 import pt.selfgym.dtos.ExerciseWODTO;
 import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.mappers.Mapper;
 import pt.selfgym.services.AppExecutors;
+import pt.selfgym.ui.workouts.EditWorkoutFragment;
 
 
 public class SharedViewModel extends AndroidViewModel {
@@ -37,6 +40,9 @@ public class SharedViewModel extends AndroidViewModel {
     private AppDatabase mDb;
     private final MutableLiveData<List<WorkoutDTO>> workouts = new MutableLiveData<List<WorkoutDTO>>();
     private final MutableLiveData<List<ExerciseDTO>> exercises = new MutableLiveData<List<ExerciseDTO>>();
+    private final MutableLiveData<List<EventDTO>> events = new MutableLiveData<List<EventDTO>>();
+    private final MutableLiveData<AtomicBoolean> getResultInsert = new MutableLiveData<AtomicBoolean>();
+    private final MutableLiveData<AtomicBoolean> getResultUpdate = new MutableLiveData<AtomicBoolean>();
     private final MutableLiveData<String> toastMessageObserver = new MutableLiveData<String>();
 
     //TODO: ver isto melhor
@@ -59,6 +65,18 @@ public class SharedViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<ExerciseDTO>> getExercises() {
         return exercises;
+    }
+
+    public MutableLiveData<List<EventDTO>> getEventsCa() {
+        return events;
+    }
+
+    public MutableLiveData<AtomicBoolean> getGetResultInsert() {
+        return getResultInsert;
+    }
+
+    public MutableLiveData<AtomicBoolean> getGetResultUpdate() {
+        return getResultUpdate;
     }
 
     public MutableLiveData<List<WorkoutDTO>> getWorkoutsTop5() {
@@ -121,12 +139,15 @@ public class SharedViewModel extends AndroidViewModel {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        if (workoutDTOwithIds != null) {
+                        if (workoutDTOwithIds == null) {
+                            getResultInsert.setValue(new AtomicBoolean(false));
+                        } else {
                             List<WorkoutDTO> workoutDTOList = workouts.getValue();
                             if (workoutDTOList == null) {
                                 workoutDTOList = new ArrayList<WorkoutDTO>();
                             }
                             workoutDTOList.add(workoutDTOwithIds);
+                            getResultInsert.setValue(new AtomicBoolean(true));
                             workouts.setValue(workoutDTOList);
                         }
                     }
@@ -145,7 +166,9 @@ public class SharedViewModel extends AndroidViewModel {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        if (workoutDTOwithId != null) {
+                        if (workoutDTOwithId == null)
+                            getResultUpdate.setValue(new AtomicBoolean(false));
+                        else {
                             List<WorkoutDTO> workoutDTOList = workouts.getValue();
                             int i = 0;
                             for (WorkoutDTO workout : workoutDTOList) {
@@ -154,6 +177,7 @@ public class SharedViewModel extends AndroidViewModel {
                                 }
                                 i++;
                             }
+                            getResultUpdate.setValue(new AtomicBoolean(true));
                             workouts.setValue(workoutDTOList);
                         }
                     }
@@ -255,6 +279,100 @@ public class SharedViewModel extends AndroidViewModel {
     /**************************************************************************************************************************/
 
     /**
+     * Events
+     **/
+    public void getEventsCalendar() {
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how to get all events
+                List<EventDTO> eventDTOList = mDb.DAO().getEvents();
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (eventDTOList == null) {
+                            events.setValue(new ArrayList<EventDTO>());
+                        } else {
+                            events.setValue(eventDTOList);
+                        }
+
+                    }
+                });
+            }
+        });
+    }
+
+    public void setEventCalendar(EventDTO eventDTO) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how to get all events
+                Mapper mapper = new Mapper();
+                eventDTO.setEventId(mDb.DAO().setEvent(eventDTO));
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<EventDTO> eventDTOList = events.getValue();
+                        if (eventDTOList == null) {
+                            eventDTOList = new ArrayList<EventDTO>();
+                        }
+                        eventDTOList.add(eventDTO);
+                        events.setValue(eventDTOList);
+                    }
+                });
+            }
+        });
+    }
+
+    public void updateEventCalendar(EventDTO eventDTO) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mDb.DAO().updateEvent(eventDTO);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                            List<EventDTO> eventDTOList = events.getValue();
+                            int i = 0;
+                            for (EventDTO eDTO : eventDTOList) {
+                                if (eDTO.getEventId().equals(eventDTO.getEventId())) {
+                                    eventDTOList.set(i, eventDTO);
+                                }
+                                i++;
+                            }
+                            events.setValue(eventDTOList);
+                    }
+                });
+            }
+        });
+    }
+
+    public void deleteEventCalendar(Long id_event) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                //how to get all events
+                Mapper mapper = new Mapper();
+                mDb.DAO().deleteEvent(id_event);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<EventDTO> eventDTOList = events.getValue();
+                        if (eventDTOList != null) {
+                            eventDTOList = eventDTOList.stream().filter(eventDTO -> eventDTO.getEventId() != id_event).collect(Collectors.toList());
+                            events.setValue(eventDTOList);
+                        }
+
+                    }
+                });
+            }
+        });
+    }
+    /**************************************************************************************************************************/
+
+    /**
      * Statistics
      **/
     public List<WorkoutDTO> Top5Workouts() {
@@ -279,7 +397,7 @@ public class SharedViewModel extends AndroidViewModel {
         return workoutsTop5.getValue();
     }
 
-    public void insertStats (){
+    public void insertStats() {
 
         /*
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -330,8 +448,8 @@ public class SharedViewModel extends AndroidViewModel {
         });*/
 
         int fb = 0, lb = 0, ub = 0, push = 0, pull = 0;
-        for(WorkoutDTO w: Objects.requireNonNull(workouts.getValue())){
-            switch (w.getType()){
+        for (WorkoutDTO w : Objects.requireNonNull(workouts.getValue())) {
+            switch (w.getType()) {
                 case "full body":
                     fb++;
                     break;
@@ -363,68 +481,66 @@ public class SharedViewModel extends AndroidViewModel {
 
     }
 
-    public void updateStats (String old, String update){
+    public void updateStats(String old, String update) {
 
-        if(old == null && update == null){
+        if (old == null && update == null) {
             return;
         }
 
-        if (old != null){
+        if (old != null) {
 
-            if(old.equals(update)){
+            if (old.equals(update)) {
                 return;
             }
 
-            try{
-                switch (old){
+            try {
+                switch (old) {
                     case ("full body"):
-                        stats.getValue().put("Full Body", (int)stats.getValue().get("Full Body")-1);
+                        stats.getValue().put("Full Body", (int) stats.getValue().get("Full Body") - 1);
                         break;
                     case ("upper body"):
-                        stats.getValue().put("Upper Body", (int)stats.getValue().get("Upper Body")-1);
+                        stats.getValue().put("Upper Body", (int) stats.getValue().get("Upper Body") - 1);
                         break;
                     case ("lower body"):
-                        stats.getValue().put("Lower Body", (int)stats.getValue().get("Lower Body")-1);
+                        stats.getValue().put("Lower Body", (int) stats.getValue().get("Lower Body") - 1);
                         break;
                     case ("pull"):
-                        stats.getValue().put("Pull", (int)stats.getValue().get("Pull")-1);
+                        stats.getValue().put("Pull", (int) stats.getValue().get("Pull") - 1);
                         break;
                     case ("push"):
-                        stats.getValue().put("Push", (int)stats.getValue().get("Push")-1);
+                        stats.getValue().put("Push", (int) stats.getValue().get("Push") - 1);
                         break;
                     default:
                         break;
                 }
-            }
-            catch (NullPointerException e){
-                Log.w("updateStatsOld",e.getMessage());
+            } catch (NullPointerException e) {
+                Log.w("updateStatsOld", e.getMessage());
             }
         }
 
-        if (update != null){
-            try{
-                switch (update){
+        if (update != null) {
+            try {
+                switch (update) {
                     case ("full body"):
-                        stats.getValue().put("Full Body", (int)stats.getValue().get("Full Body")+1);
+                        stats.getValue().put("Full Body", (int) stats.getValue().get("Full Body") + 1);
                         break;
                     case ("upper body"):
-                        stats.getValue().put("Upper Body", (int)stats.getValue().get("Upper Body")+1);
+                        stats.getValue().put("Upper Body", (int) stats.getValue().get("Upper Body") + 1);
                         break;
                     case ("lower body"):
-                        stats.getValue().put("Lower Body", (int)stats.getValue().get("Lower Body")+1);
+                        stats.getValue().put("Lower Body", (int) stats.getValue().get("Lower Body") + 1);
                         break;
                     case ("pull"):
-                        stats.getValue().put("Pull", (int)stats.getValue().get("Pull")+1);
+                        stats.getValue().put("Pull", (int) stats.getValue().get("Pull") + 1);
                         break;
                     case ("push"):
-                        stats.getValue().put("Push", (int)stats.getValue().get("Push")+1);
+                        stats.getValue().put("Push", (int) stats.getValue().get("Push") + 1);
                         break;
                     default:
                         break;
                 }
-            }
-            catch (NullPointerException e){
-                Log.w("updateStatsUpdate",e.getMessage());
+            } catch (NullPointerException e) {
+                Log.w("updateStatsUpdate", e.getMessage());
             }
         }
     }
@@ -438,5 +554,7 @@ public class SharedViewModel extends AndroidViewModel {
                 mDb.DAO().deleteAllWorkouts();
             }
         });
-   }
+    }
+
+
 }

@@ -11,6 +11,8 @@ import androidx.room.PrimaryKey;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import pt.selfgym.dtos.DateDTO;
+
 @Entity(tableName = "events", foreignKeys = @ForeignKey(entity = Workout.class,
         parentColumns = "workoutId",
         childColumns = "workoutevents_id",
@@ -24,17 +26,23 @@ public class Event {
     @NonNull
     public Long workoutevents_id;
 
-    @ColumnInfo(name = "starts")
+    @ColumnInfo(name = "events_date")
     @NonNull
-    public String starts;
+    public String events_date;
 
-    @ColumnInfo(name = "event_date")
-    @NonNull
-    public String event_date;
+    @ColumnInfo(name = "hour")
+    public Integer hour;
 
-    @ColumnInfo(name = "repeat")
-    public String repeat;
+    @ColumnInfo(name = "minute")
+    public Integer minute;
 
-    @ColumnInfo(name = "until")
-    public String until;
+    @ColumnInfo(name = "concluded")
+    public Boolean concluded;
+
+    @ColumnInfo(name = "repetitionNr")
+    public Integer repetitionNr;
+
+    @ColumnInfo(name = "recurrence")
+    public String recurrence;
 }
+
