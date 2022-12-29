@@ -1,8 +1,11 @@
 package pt.selfgym.ui.calendar;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.IntentService;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -21,6 +24,8 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.CountDownTimer;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,8 +38,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -71,6 +78,7 @@ public class RunWorkoutFragment extends Fragment {
     private TextView type, name;
     private View view;
     private Long id, id_event;
+    private boolean timerRunning = false;
 
 
     public RunWorkoutFragment() {
@@ -129,11 +137,19 @@ public class RunWorkoutFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.run_workout_menu, menu);
                 MenuItem concludeItem = menu.findItem(R.id.concludemenu);
+                MenuItem timerItem = menu.findItem(R.id.timermenu);
 
                 concludeItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
                         createConcludeEventPopup();
+                        return false;
+                    }
+                });
+                timerItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                        createTimerPopup();
                         return false;
                     }
                 });
@@ -198,4 +214,146 @@ public class RunWorkoutFragment extends Fragment {
         });
 
     }
+
+    public void createTimerPopup(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
+        final View timerPopup = getLayoutInflater().inflate(R.layout.popup_timer, null);
+
+        NumberPicker minutesPicker = (NumberPicker) timerPopup.findViewById(R.id.minutes_picker);
+        minutesPicker.setMinValue(00);
+        minutesPicker.setMaxValue(59);
+        minutesPicker.setDisplayedValues(new String[]{"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"});
+        minutesPicker.setWrapSelectorWheel(true);
+        minutesPicker.setFormatter(new NumberPicker.Formatter() {
+            @Override
+            public String format(int value) {
+                return String.format("%02d", value);
+            }
+        });
+
+        NumberPicker secondsPicker = (NumberPicker) timerPopup.findViewById(R.id.seconds_picker);
+        secondsPicker.setMinValue(00);
+        secondsPicker.setMaxValue(59);
+        secondsPicker.setDisplayedValues(new String[]{"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"});
+        secondsPicker.setWrapSelectorWheel(true);
+        secondsPicker.setFormatter(new NumberPicker.Formatter() {
+            @Override
+            public String format(int value) {
+                return String.format("%02d", value);
+            }
+        });
+
+        Button cancel = (Button) timerPopup.findViewById(R.id.cancelButton);
+        ImageButton startPause = (ImageButton) timerPopup.findViewById(R.id.playAndPauseButton);
+        ImageButton reset = (ImageButton) timerPopup.findViewById(R.id.refreshTimerButton);
+
+        dialogBuilder.setView(timerPopup);
+        Dialog dialog = dialogBuilder.create();
+        dialog.show();
+
+        class TimerThread extends Thread {
+            private static final int DELAY = 1000; // 1 second
+            private boolean running = true;
+            private long time;
+
+            public long getTime() {
+                return time;
+            }
+
+            public void setTime(long time) {
+                this.time = time;
+            }
+
+            @Override
+            public void run() {
+                while (running) {
+                    if(time > 0){
+                        ((Activity) getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                minutesPicker.setValue((int) (time / 60));
+                                secondsPicker.setValue((int) (time % 60));
+                            }
+                        });
+                        try {
+                            Thread.sleep(DELAY);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        time--;
+                    } else if (time == 0){
+                        //warn the user
+                        ((Activity) getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                startPause.setImageResource(R.drawable.play_foreground);
+                                Toast.makeText(getContext(),"pipipi", Toast.LENGTH_SHORT).show();
+                                minutesPicker.setEnabled(true);
+                                minutesPicker.setValue((int) (time / 60));
+                                secondsPicker.setEnabled(true);
+                                secondsPicker.setValue((int) (time % 60));
+                            }
+                        });
+                        time--;
+                    }
+                }
+            }
+
+            public void pauseTimer() {
+                running = false;
+            }
+
+            public void continueTimer() {
+                running = true;
+            }
+        }
+
+        TimerThread thread = new TimerThread();
+        thread.setTime(-1);
+        thread.start();
+
+        startPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!timerRunning){
+                    if (minutesPicker.getValue()!=0 || secondsPicker.getValue() !=0) {
+                        minutesPicker.setEnabled(false);
+                        secondsPicker.setEnabled(false);
+                        startPause.setImageResource(R.drawable.pause_foreground);
+                        thread.setTime(minutesPicker.getValue() * 60 +  secondsPicker.getValue());
+                        System.out.println("");
+                        thread.continueTimer();
+                        timerRunning=!timerRunning;
+                    }
+                } else {
+                    startPause.setImageResource(R.drawable.play_foreground);
+                    thread.pauseTimer();
+                    timerRunning=!timerRunning;
+                }
+
+            }
+        });
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                minutesPicker.setValue(0);
+                minutesPicker.setEnabled(true);
+                secondsPicker.setValue(0);
+                secondsPicker.setEnabled(true);
+                thread.pauseTimer();
+                thread.setTime(-1);
+                startPause.setImageResource(R.drawable.play_foreground);
+                timerRunning = false;
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
 }
+
