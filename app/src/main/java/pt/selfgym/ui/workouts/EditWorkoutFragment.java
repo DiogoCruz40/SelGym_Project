@@ -145,8 +145,8 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                                 @Override
                                 public void onChanged(AtomicBoolean atomicBoolean) {
                                     if (atomicBoolean.get()) {
-                                        mViewModel.updateStats(null, type.getSelectedItem().toString());
-                                        mViewModel.Top5Workouts();
+                                        mViewModel.updateStats(null, type.getSelectedItem().toString(), workout.getNrOfConclusions());
+                                        mViewModel.top5Workouts();
                                         activityInterface.changeFrag(new WorkoutFragment(), null);
                                     } else
                                         mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
@@ -158,7 +158,8 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
 
                             mViewModel.getGetResultUpdate().observe(getViewLifecycleOwner(), result -> {
                                 if (result.get()) {
-                                    mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString());
+                                    mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString(), workout.getNrOfConclusions());
+                                    mViewModel.top5Workouts();
                                     activityInterface.changeFrag(new WorkoutFragment(), null);
                                 } else
                                     mViewModel.getToastMessageObserver().setValue("This name of workout already exists");

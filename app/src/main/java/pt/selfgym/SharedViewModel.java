@@ -109,6 +109,7 @@ public class SharedViewModel extends AndroidViewModel {
                         }
 
                         insertStats();
+                        top5Workouts();
 
                         if (exerciseDTOList.isEmpty()) {
                             insertExercise(new ExerciseDTO("burpies", "https://img.freepik.com/premium-vector/burpees-exercise-woman-workout-fitness-aerobic-exercises_476141-1406.jpg?w=826", "full body"));
@@ -198,7 +199,7 @@ public class SharedViewModel extends AndroidViewModel {
                         List<WorkoutDTO> workoutDTOList = workouts.getValue();
                         if (workoutDTOList != null) {
                             List<WorkoutDTO> w = workoutDTOList.stream().filter(workoutDTO -> workoutDTO.getId() == id_workout).collect(Collectors.toList());
-                            updateStats(w.get(0).getType(), null);
+                            updateStats(w.get(0).getType(), null, w.get(0).getNrOfConclusions());
 
                             workoutDTOList = workoutDTOList.stream().filter(workoutDTO -> workoutDTO.getId() != id_workout).collect(Collectors.toList());
                             workouts.setValue(workoutDTOList);
@@ -375,7 +376,7 @@ public class SharedViewModel extends AndroidViewModel {
     /**
      * Statistics
      **/
-    public List<WorkoutDTO> Top5Workouts() {
+    public List<WorkoutDTO> top5Workouts() {
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -399,71 +400,23 @@ public class SharedViewModel extends AndroidViewModel {
 
     public void insertStats() {
 
-        /*
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        int fb = 0, lb = 0, ub = 0, push = 0, pull = 0;
-                        for(WorkoutDTO w: Objects.requireNonNull(workouts.getValue())){
-                            switch (w.getType()){
-                                case "full body":
-                                    fb++;
-                                    break;
-                                case "upper body":
-                                    ub++;
-                                    break;
-                                case "lower body":
-                                    lb++;
-                                    break;
-                                case "pull":
-                                    pull++;
-                                    break;
-                                case "push":
-                                    push++;
-                                    break;
-                                default:
-                                    Log.w("insertStats", "Reading Type failed");
-                                    break;
-                            }
-                        }
-
-                        Dictionary<String, Integer> statsNrs = new Hashtable<String, Integer>();
-                        statsNrs.put("fb", fb);
-                        statsNrs.put("lb", lb);
-                        statsNrs.put("ub", ub);
-                        statsNrs.put("pull", pull);
-                        statsNrs.put("push", push);
-
-                        stats.setValue(statsNrs);
-
-                        //System.out.println("TESTE1 FB: " + stats.getValue().get("fb"));
-                        //stats.getValue().put("fb", (int) stats.getValue().get("fb") + 1);
-                        //System.out.println("TESTE2 FB: " + stats.getValue().get("fb"));
-                    }
-                });
-            }
-        });*/
-
         int fb = 0, lb = 0, ub = 0, push = 0, pull = 0;
         for (WorkoutDTO w : Objects.requireNonNull(workouts.getValue())) {
             switch (w.getType()) {
                 case "full body":
-                    fb++;
+                    fb+=w.getNrOfConclusions();
                     break;
                 case "upper body":
-                    ub++;
+                    ub+=w.getNrOfConclusions();
                     break;
                 case "lower body":
-                    lb++;
+                    lb+=w.getNrOfConclusions();
                     break;
                 case "pull":
-                    pull++;
+                    pull+=w.getNrOfConclusions();
                     break;
                 case "push":
-                    push++;
+                    push+=w.getNrOfConclusions();
                     break;
                 default:
                     break;
@@ -481,7 +434,7 @@ public class SharedViewModel extends AndroidViewModel {
 
     }
 
-    public void updateStats(String old, String update) {
+    public void updateStats(String old, String update, int oldNr) {
 
         if (old == null && update == null) {
             return;
@@ -496,19 +449,19 @@ public class SharedViewModel extends AndroidViewModel {
             try {
                 switch (old) {
                     case ("full body"):
-                        stats.getValue().put("Full Body", (int) stats.getValue().get("Full Body") - 1);
+                        stats.getValue().put("Full Body", (int) stats.getValue().get("Full Body") - oldNr);
                         break;
                     case ("upper body"):
-                        stats.getValue().put("Upper Body", (int) stats.getValue().get("Upper Body") - 1);
+                        stats.getValue().put("Upper Body", (int) stats.getValue().get("Upper Body") - oldNr);
                         break;
                     case ("lower body"):
-                        stats.getValue().put("Lower Body", (int) stats.getValue().get("Lower Body") - 1);
+                        stats.getValue().put("Lower Body", (int) stats.getValue().get("Lower Body") - oldNr);
                         break;
                     case ("pull"):
-                        stats.getValue().put("Pull", (int) stats.getValue().get("Pull") - 1);
+                        stats.getValue().put("Pull", (int) stats.getValue().get("Pull") - oldNr);
                         break;
                     case ("push"):
-                        stats.getValue().put("Push", (int) stats.getValue().get("Push") - 1);
+                        stats.getValue().put("Push", (int) stats.getValue().get("Push") - oldNr);
                         break;
                     default:
                         break;
@@ -522,19 +475,19 @@ public class SharedViewModel extends AndroidViewModel {
             try {
                 switch (update) {
                     case ("full body"):
-                        stats.getValue().put("Full Body", (int) stats.getValue().get("Full Body") + 1);
+                        stats.getValue().put("Full Body", (int) stats.getValue().get("Full Body") + oldNr);
                         break;
                     case ("upper body"):
-                        stats.getValue().put("Upper Body", (int) stats.getValue().get("Upper Body") + 1);
+                        stats.getValue().put("Upper Body", (int) stats.getValue().get("Upper Body") + oldNr);
                         break;
                     case ("lower body"):
-                        stats.getValue().put("Lower Body", (int) stats.getValue().get("Lower Body") + 1);
+                        stats.getValue().put("Lower Body", (int) stats.getValue().get("Lower Body") + oldNr);
                         break;
                     case ("pull"):
-                        stats.getValue().put("Pull", (int) stats.getValue().get("Pull") + 1);
+                        stats.getValue().put("Pull", (int) stats.getValue().get("Pull") + oldNr);
                         break;
                     case ("push"):
-                        stats.getValue().put("Push", (int) stats.getValue().get("Push") + 1);
+                        stats.getValue().put("Push", (int) stats.getValue().get("Push") + oldNr);
                         break;
                     default:
                         break;

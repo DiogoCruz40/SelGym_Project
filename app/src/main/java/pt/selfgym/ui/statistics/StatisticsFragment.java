@@ -107,9 +107,6 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         barChart();
         piePolyLineChart();
 
-        //TODO: repensar isto
-        mViewModel.Top5Workouts();
-
         mViewModel.getWorkoutsTop5().observe(getViewLifecycleOwner(), top5 -> {
 
             if(!top5.isEmpty()){
@@ -125,49 +122,6 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
             }
         });
 
-        /*
-        mViewModel.getWorkouts().observe(getViewLifecycleOwner(), workouts -> {
-
-            System.out.println("TESTE ENTREI OBSERVER");
-
-            barChartData(mViewModel.Top5Workouts());
-
-            if(!workouts.isEmpty()){
-
-                int fb = 0, lb = 0, ub = 0, push = 0, pull = 0;
-                for(WorkoutDTO w: workouts){
-                    switch (w.getType()){
-                        case "full body":
-                            fb++;
-                            break;
-                        case "upper body":
-                            ub++;
-                            break;
-                        case "lower body":
-                            lb++;
-                            break;
-                        case "pull":
-                            pull++;
-                            break;
-                        case "push":
-                            push++;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                Dictionary<String, Integer> statsNrs = new Hashtable<String, Integer>();
-                statsNrs.put("fb", fb);
-                statsNrs.put("lb", lb);
-                statsNrs.put("ub", ub);
-                statsNrs.put("pull", pull);
-                statsNrs.put("push", push);
-
-                //piePolyLineChartData(statsNrs);
-            }
-
-        });*/
     }
 
     public void barChart(){
@@ -220,8 +174,7 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
             workout = top5.get(i);
 
             values = new ArrayList<>();
-            //TODO: tirar +1
-            values.add(new BarEntry(i,workout.getNrOfConclusions() + 1));
+            values.add(new BarEntry(i,workout.getNrOfConclusions()));
 
             set = new BarDataSet(values, workout.getName());
             set.setColor(colors[ i%colors.length ]);
@@ -279,12 +232,10 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         piePolyLineChart.animateY(1400, Easing.EaseInOutQuad);
 
-        //TODO: perceber como o texto funciona
         piePolyLineChart.setDrawCenterText(true);
-        piePolyLineChart.setDrawEntryLabels(false); // colocar true se quisermos a legenda dentro da pie
+        piePolyLineChart.setDrawEntryLabels(false);
         piePolyLineChart.setCenterText("Workout Distribution");
         piePolyLineChart.setCenterTextColor(Color.BLACK);
-
 
         Legend l = piePolyLineChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
@@ -323,7 +274,6 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         data.setValueTextColor(Color.WHITE);
 
         piePolyLineChart.setData(data);
-        //piePolyLineChart.highlightValues(null);
         piePolyLineChart.invalidate();
     }
 
