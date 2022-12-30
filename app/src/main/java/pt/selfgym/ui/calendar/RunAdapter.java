@@ -271,8 +271,13 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (workout.getWorkoutComposition().get(position) instanceof CircuitDTO) {
             CircuitDTO circuitDTO = (CircuitDTO) workout.getWorkoutComposition().get(position);
             ViewHolderCircuit viewHolder5 = (ViewHolderCircuit) holder;
+            try {
             viewHolder5.laps.setText(circuitDTO.getLaps() + "");
             viewHolder5.rest.setText(circuitDTO.getRest() + "");
+            }
+            catch (Exception e) {
+                Log.w("error",e.getMessage());
+            };
 
             WorkoutDTO workoutCircuit = new WorkoutDTO("circuit", "circuit", "circuit");
             ArrayList<Object> exList = new ArrayList<Object>();

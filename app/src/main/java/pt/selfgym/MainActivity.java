@@ -1,12 +1,10 @@
 package pt.selfgym;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +23,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.notifications.NotificationService;
 import pt.selfgym.ui.calendar.CalendarFragment;
 import pt.selfgym.ui.calendar.RunWorkoutFragment;
 import pt.selfgym.ui.workouts.AddExerciseFragment;
@@ -36,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     private ActivityMainBinding binding;
     private SharedViewModel model;
     private NavController navController;
+    Intent mServiceIntent;
+    private NotificationService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         model.getToastMessageObserver().observe(this, message -> {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         });
+
+        mService = new NotificationService();
+        mServiceIntent = new Intent(this, mService.getClass());
+        if (!NotificationService.IS_SERVICE_RUNNING) {
+            startService(mServiceIntent);
+        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -90,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
             changeFrag(new WorkoutFragment(), null);
     }
 
-    public Fragment getForegroundFragment(){
+    public Fragment getForegroundFragment() {
         Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         return navHostFragment == null ? null : navHostFragment.getChildFragmentManager().getFragments().get(0);
     }
@@ -108,12 +115,17 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
 
     @Override
     protected void onResume() {
+        model.startDB();
         super.onResume();
-        //model.startDB();
     }
 
     @Override
     protected void onDestroy() {
+        //stopService(mServiceIntent);
+//        Intent broadcastIntent = new Intent();
+//        broadcastIntent.setAction("restartservice");
+//        broadcastIntent.setClass(this, Restarter.class);
+//        this.sendBroadcast(broadcastIntent);
         super.onDestroy();
     }
 
