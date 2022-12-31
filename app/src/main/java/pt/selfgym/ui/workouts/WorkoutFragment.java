@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -22,19 +23,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.Interfaces.ButtonsInterface;
@@ -57,6 +62,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
     private AlertDialog dialog;
     private Spinner spinnermqttpopup, spinnertopicshare;
     private EditText newWorkoutName;
+    private EditText newNoteName, subscribetopic, topicname;
     private Button deleteWorkout, saveNewName, cancel, subscribe, unsubscribe, addtopic, removetopic, sharenote;
     private Long id;
     private WorkoutFilter workoutFilters = new WorkoutFilter();
@@ -118,6 +124,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
                 menuInflater.inflate(R.menu.menu_workouts, menu);
                 MenuItem menuItem = menu.findItem(R.id.searchbar);
                 MenuItem filterItem = menu.findItem(R.id.filtermenu);
+                MenuItem mqttItem = menu.findItem(R.id.mqttmenu);
                 SearchView searchView = (SearchView) menuItem.getActionView();
                 searchView.setQueryHint("Type here to search");
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -177,6 +184,13 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
                         return false;
                     }
                 });
+                mqttItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem item) {
+                        mqttPopUp();
+                        return false;
+                    }
+                });
             }
 
             @Override
@@ -184,7 +198,7 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
 
                 return false;
             }
-        },getViewLifecycleOwner());
+        }, getViewLifecycleOwner());
 
         return view;
     }
@@ -319,12 +333,80 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
         dialog.show();
     }
 
+    public void mqttPopUp() {
+        dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
+        final View mqttPopUp = getLayoutInflater().inflate(R.layout.mqtt_popup, null);
+        cancel = (Button) mqttPopUp.findViewById(R.id.cancelbuttonmqtt);
+        Switch switchmqtt = mqttPopUp.findViewById(R.id.switchmqtt);
+        if (mViewModel.checkStatemqtt()) {
+            switchmqtt.setChecked(true);
+        }
+        subscribe = (Button) mqttPopUp.findViewById(R.id.subscribebuttonmqtt);
+        unsubscribe = (Button) mqttPopUp.findViewById(R.id.unsubbuttonmqtt);
+        spinnermqttpopup = (Spinner) mqttPopUp.findViewById(R.id.spinnermqtt);
+
+        mViewModel.getTopics().observe(activityInterface.getMainActivity(), topics -> {
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, topics);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnermqttpopup.setAdapter(adapter);
+        });
+        dialogBuilder.setView(mqttPopUp);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        switchmqtt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (switchmqtt.isChecked()) {
+                    mViewModel.connmqtt(activityInterface.getMainActivity());
+                } else {
+                    mViewModel.setTopics(new ArrayList<String>());
+                    mViewModel.disconmqtt();
+                }
+            }
+        });
+        subscribe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                subscribetopic = (EditText) mqttPopUp.findViewById(R.id.subscribemqtt);
+                if (subscribetopic.getText().toString().isBlank())
+                    Toast.makeText(activityInterface.getMainActivity(), "Write a topic", Toast.LENGTH_SHORT).show();
+                else if (mViewModel.subscribeToTopic(subscribetopic.getText().toString()))
+                    subscribetopic.setText("");
+                else
+                    Toast.makeText(activityInterface.getMainActivity(), "Already subscribed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        unsubscribe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (spinnermqttpopup.getSelectedItem() != null)
+                    mViewModel.unsubscribeToTopic(spinnermqttpopup.getSelectedItem().toString());
+                else
+                    Toast.makeText(activityInterface.getMainActivity(), "Nothing to unsubscribe", Toast.LENGTH_SHORT).show();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
     public void createDeleteWorkoutPopUp() {
         dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
         final View DeleteWorkoutPopUp = getLayoutInflater().inflate(R.layout.popup_delete_workout, null);
 
         deleteWorkout = (Button) DeleteWorkoutPopUp.findViewById(R.id.deleteButton);
         cancel = (Button) DeleteWorkoutPopUp.findViewById(R.id.cancelButton);
+        addtopic = (Button) DeleteWorkoutPopUp.findViewById(R.id.addtopicbtn3);
+        removetopic = (Button) DeleteWorkoutPopUp.findViewById(R.id.removetopicbtn3);
+        sharenote = (Button) DeleteWorkoutPopUp.findViewById(R.id.sharenotebtn3);
+        topicname = (EditText) DeleteWorkoutPopUp.findViewById(R.id.topicnameeditid3);
+        spinnertopicshare = (Spinner) DeleteWorkoutPopUp.findViewById(R.id.spinnersharemqtt3);
+        List<String> topics = new ArrayList<String>();
 
         dialogBuilder.setView(DeleteWorkoutPopUp);
         dialog = dialogBuilder.create();
@@ -337,7 +419,55 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
                 dialog.dismiss();
             }
         });
+        addtopic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (topics.contains(topicname.getText().toString()))
+                    Toast.makeText(activityInterface.getMainActivity(), "Already added", Toast.LENGTH_SHORT).show();
+                else if (topicname.getText().toString().isBlank())
+                    Toast.makeText(activityInterface.getMainActivity(), "Write a topic", Toast.LENGTH_SHORT).show();
+                else {
+                    topics.add(topicname.getText().toString());
+                    topicname.setText("");
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, topics);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnertopicshare.setAdapter(adapter);
+                }
+            }
+        });
 
+        removetopic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (topics.size() > 0) {
+                    topics.remove(spinnertopicshare.getSelectedItem().toString());
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(activityInterface.getMainActivity(), android.R.layout.simple_spinner_item, topics);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnertopicshare.setAdapter(adapter);
+                } else
+                    Toast.makeText(activityInterface.getMainActivity(), "There are no topics", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sharenote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (topics.size() > 0) {
+                    WorkoutDTO workoutDTO;
+                    for (WorkoutDTO wo : Objects.requireNonNull(mViewModel.getWorkouts().getValue())) {
+                        if (wo.getId() == id) {
+                            workoutDTO = wo;
+                            topics.forEach(topic -> {
+                                mViewModel.publishMessage(workoutDTO, topic);
+                            });
+                            break;
+                        }
+                    }
+                    dialog.dismiss();
+                } else
+                    Toast.makeText(activityInterface.getMainActivity(), "Add a topic first", Toast.LENGTH_SHORT).show();
+            }
+        });
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

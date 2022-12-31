@@ -2,6 +2,8 @@ package pt.selfgym;
 
 import static androidx.core.app.NotificationCompat.PRIORITY_HIGH;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -9,6 +11,9 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,11 +31,15 @@ import androidx.navigation.ui.NavigationUI;
 import pt.selfgym.databinding.ActivityMainBinding;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
 
+
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.Date;
 
 import pt.selfgym.Interfaces.ActivityInterface;
+import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.services.NotificationService;
 import pt.selfgym.ui.calendar.CalendarFragment;
 import pt.selfgym.ui.calendar.RunWorkoutFragment;
@@ -59,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         model.getToastMessageObserver().observe(this, message -> {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         });
-
         mService = new NotificationService();
         mServiceIntent = new Intent(this, mService.getClass());
         if (!NotificationService.IS_SERVICE_RUNNING) {
@@ -161,6 +169,37 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
                 .build();
         notificationManager.notify((int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE), notification);
     }
+
+    @Override
+    public void msgmqttpopup(String topic, MqttMessage message){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final View mqttmesagePopUp = getLayoutInflater().inflate(R.layout.mqtt_message_popup, null);
+        Button confirm = (Button) mqttmesagePopUp.findViewById(R.id.confirmmsgbtnmqtt);
+        Button cancel = (Button) mqttmesagePopUp.findViewById(R.id.cancelmsgbtnmqtt2);
+        TextView topico = (TextView) mqttmesagePopUp.findViewById(R.id.topicmsgmqtt);
+        TextView titulo = (TextView) mqttmesagePopUp.findViewById(R.id.titlemsgmqtt);
+        WorkoutDTO workoutDTO = new Gson().fromJson(message.toString(), WorkoutDTO.class);
+        topico.setText(topic);
+        titulo.setText(workoutDTO.getName());
+        dialogBuilder.setView(mqttmesagePopUp);
+        Dialog dialog = dialogBuilder.create();
+        dialog.show();
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                model.insertWorkout(workoutDTO);
+                dialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
 
     @Override
     public void changeFrag(Fragment fr, Bundle bundle) {

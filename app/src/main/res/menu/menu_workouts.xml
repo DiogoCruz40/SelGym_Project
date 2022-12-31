@@ -15,4 +15,10 @@
         android:icon="@drawable/ic_filter_white_24dp_foreground"
         android:title="@string/filter_menu"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/mqttmenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="MQTT"
+        app:showAsAction="ifRoom|withText" />
 </menu>
