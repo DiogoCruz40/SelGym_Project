@@ -1,4 +1,4 @@
-package pt.selfgym.notifications;
+package pt.selfgym.utils;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,7 +9,7 @@ public class NotificationUtil {
 
     private static NotificationUtil NOTIFICATIONUTIL;
 
-    static NotificationUtil getNotificationUtil() {
+    public static NotificationUtil getNotificationUtil() {
 
         if(NOTIFICATIONUTIL == null)
         {
@@ -18,11 +18,9 @@ public class NotificationUtil {
         return NOTIFICATIONUTIL;
     }
 
-    public String createNotificationChannel(NotificationManager notificationManager) {
-        String channelId = "MyNotificationChannelId";
-        String channelName = "My Notification service";
+    public String createNotificationChannel(NotificationManager notificationManager, String channelId, String channelName) {
         NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
-        channel.setImportance(NotificationManager.IMPORTANCE_NONE);
+        channel.setImportance(NotificationManager.IMPORTANCE_HIGH);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
         notificationManager.createNotificationChannel(channel);
         return channelId;

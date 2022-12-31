@@ -2,6 +2,7 @@ package pt.selfgym.mappers;
 
 
 import pt.selfgym.Interfaces.MapperInterface;
+import pt.selfgym.utils.MapperUtil;
 
 import org.modelmapper.ModelMapper;
 

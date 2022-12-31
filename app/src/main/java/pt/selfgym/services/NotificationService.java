@@ -1,10 +1,8 @@
-package pt.selfgym.notifications;
+package pt.selfgym.services;
 
 import static androidx.core.app.NotificationCompat.PRIORITY_HIGH;
-import static androidx.core.app.NotificationCompat.PRIORITY_MIN;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
@@ -18,7 +16,6 @@ import androidx.core.app.NotificationCompat;
 
 import org.joda.time.DateTime;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -27,6 +24,7 @@ import java.util.TimerTask;
 import pt.selfgym.R;
 import pt.selfgym.database.AppDatabase;
 import pt.selfgym.dtos.EventDTO;
+import pt.selfgym.utils.NotificationUtil;
 
 public class NotificationService extends Service {
 
@@ -50,7 +48,7 @@ public class NotificationService extends Service {
         super.onCreate();
         IS_SERVICE_RUNNING = true;
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        channelId = NotificationUtil.getNotificationUtil().createNotificationChannel(notificationManager);
+        channelId = NotificationUtil.getNotificationUtil().createNotificationChannel(notificationManager,"MyNotificationChannelId","Notification");
         notificationBuilder = new NotificationCompat.Builder(this, channelId);
         startTasks();
     }

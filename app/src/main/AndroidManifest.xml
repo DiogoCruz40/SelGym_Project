@@ -36,7 +36,7 @@
                 android:value="" />
         </activity>
         <service
-            android:name=".notifications.NotificationService"
+            android:name=".services.NotificationService"
             android:enabled="true" />
     </application>
 

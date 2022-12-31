@@ -1,5 +1,9 @@
 package pt.selfgym;
 
+import static androidx.core.app.NotificationCompat.PRIORITY_HIGH;
+
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -9,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -22,13 +27,16 @@ import pt.selfgym.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
+import java.util.Date;
+
 import pt.selfgym.Interfaces.ActivityInterface;
-import pt.selfgym.notifications.NotificationService;
+import pt.selfgym.services.NotificationService;
 import pt.selfgym.ui.calendar.CalendarFragment;
 import pt.selfgym.ui.calendar.RunWorkoutFragment;
 import pt.selfgym.ui.workouts.AddExerciseFragment;
 import pt.selfgym.ui.workouts.EditWorkoutFragment;
 import pt.selfgym.ui.workouts.WorkoutFragment;
+import pt.selfgym.utils.NotificationUtil;
 
 public class MainActivity extends AppCompatActivity implements ActivityInterface {
 
@@ -37,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     private NavController navController;
     Intent mServiceIntent;
     private NotificationService mService;
+    private NotificationManager notificationManager;
+    private NotificationCompat.Builder notificationBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +142,20 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
     @Override
     public MainActivity getMainActivity() {
         return this;
+    }
+
+    @Override
+    public void sendNotification(String title, @Nullable String msg) {
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationBuilder = new NotificationCompat.Builder(this, "MyNotificationChannelId");
+        Notification notification = notificationBuilder
+                .setContentTitle(title)
+                .setContentText(msg)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setPriority(PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build();
+        notificationManager.notify((int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE), notification);
     }
 
     @Override

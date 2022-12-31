@@ -1,9 +1,13 @@
 package pt.selfgym.ui.calendar;
 
+import static androidx.core.app.NotificationCompat.PRIORITY_HIGH;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +16,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
@@ -50,6 +55,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 import pt.selfgym.Interfaces.ActivityInterface;
@@ -64,6 +70,7 @@ import pt.selfgym.dtos.SetsDTO;
 import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.ui.workouts.EditWorkoutFragment;
 import pt.selfgym.ui.workouts.WorkoutViewModel;
+import pt.selfgym.utils.NotificationUtil;
 
 
 public class RunWorkoutFragment extends Fragment {
@@ -97,7 +104,6 @@ public class RunWorkoutFragment extends Fragment {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_run, container, false);
-
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
         this.workoutViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(WorkoutViewModel.class);
 
@@ -215,7 +221,7 @@ public class RunWorkoutFragment extends Fragment {
 
     }
 
-    public void createTimerPopup(){
+    public void createTimerPopup() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
         final View timerPopup = getLayoutInflater().inflate(R.layout.popup_timer, null);
 
@@ -267,8 +273,8 @@ public class RunWorkoutFragment extends Fragment {
             @Override
             public void run() {
                 while (running) {
-                    if(time > 0){
-                        ((Activity) getContext()).runOnUiThread(new Runnable() {
+                    if (time > 0) {
+                        activityInterface.getMainActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 minutesPicker.setValue((int) (time / 60));
@@ -281,13 +287,14 @@ public class RunWorkoutFragment extends Fragment {
                             e.printStackTrace();
                         }
                         time--;
-                    } else if (time == 0){
+                    } else if (time == 0) {
                         //warn the user
-                        ((Activity) getContext()).runOnUiThread(new Runnable() {
+                        activityInterface.getMainActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 startPause.setImageResource(R.drawable.play_foreground);
-                                Toast.makeText(getContext(),"pipipi", Toast.LENGTH_SHORT).show();
+                                activityInterface.getMainActivity().sendNotification("TIMES UP",null);
+//                                Toast.makeText(getContext(), "pipipi", Toast.LENGTH_SHORT).show();
                                 minutesPicker.setEnabled(true);
                                 minutesPicker.setValue((int) (time / 60));
                                 secondsPicker.setEnabled(true);
@@ -315,20 +322,20 @@ public class RunWorkoutFragment extends Fragment {
         startPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!timerRunning){
-                    if (minutesPicker.getValue()!=0 || secondsPicker.getValue() !=0) {
+                if (!timerRunning) {
+                    if (minutesPicker.getValue() != 0 || secondsPicker.getValue() != 0) {
                         minutesPicker.setEnabled(false);
                         secondsPicker.setEnabled(false);
                         startPause.setImageResource(R.drawable.pause_foreground);
-                        thread.setTime(minutesPicker.getValue() * 60 +  secondsPicker.getValue());
+                        thread.setTime(minutesPicker.getValue() * 60 + secondsPicker.getValue());
                         System.out.println("");
                         thread.continueTimer();
-                        timerRunning=!timerRunning;
+                        timerRunning = !timerRunning;
                     }
                 } else {
                     startPause.setImageResource(R.drawable.play_foreground);
                     thread.pauseTimer();
-                    timerRunning=!timerRunning;
+                    timerRunning = !timerRunning;
                 }
 
             }
