@@ -461,7 +461,6 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         WorkoutDTO newWorkout = new WorkoutDTO(workout.getName(), workout.getObservation(), workout.getType());
         if (workoutDTO.getId() != null)
             newWorkout.setId(workoutDTO.getId());
-        if (holdersList.size() > 0) {
 //            Log.w("help", String.valueOf(holdersList.size()));
             for (int i = 0; i < holdersList.size(); i++) {
                 try {
@@ -542,7 +541,6 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     Log.w("error",e.getMessage());
                 }
             }
-        }
         return newWorkout;
     }
 
