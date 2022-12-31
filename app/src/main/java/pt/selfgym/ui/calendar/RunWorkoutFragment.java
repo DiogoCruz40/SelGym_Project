@@ -283,7 +283,7 @@ public class RunWorkoutFragment extends Fragment {
                                     Ringtone ringtone = RingtoneManager.getRingtone(getContext(), ringtoneUri);
                                     ringtone.play();
 
-                                    activityInterface.getMainActivity().sendNotification("Times Up!!",null);
+                                    activityInterface.getMainActivity().sendNotification("Times Up!",null);
 
                                     minutesPicker.setEnabled(true);
                                     minutesPicker.setValue(0);
