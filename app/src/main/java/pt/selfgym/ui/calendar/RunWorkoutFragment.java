@@ -1,76 +1,46 @@
 package pt.selfgym.ui.calendar;
 
-import static androidx.core.app.NotificationCompat.PRIORITY_HIGH;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.IntentService;
-import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.CountDownTimer;
-import android.os.Looper;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.stream.Collectors;
 
 import pt.selfgym.Interfaces.ActivityInterface;
-import pt.selfgym.Interfaces.EditWorkoutInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
-import pt.selfgym.dtos.CircuitDTO;
 import pt.selfgym.dtos.EventDTO;
-import pt.selfgym.dtos.ExerciseDTO;
-import pt.selfgym.dtos.ExerciseWODTO;
-import pt.selfgym.dtos.SetsDTO;
 import pt.selfgym.dtos.WorkoutDTO;
-import pt.selfgym.ui.workouts.EditWorkoutFragment;
 import pt.selfgym.ui.workouts.WorkoutViewModel;
-import pt.selfgym.utils.NotificationUtil;
 
 
 public class RunWorkoutFragment extends Fragment {
@@ -86,6 +56,9 @@ public class RunWorkoutFragment extends Fragment {
     private View view;
     private Long id, id_event;
     private boolean timerRunning = false;
+    private Thread timerThread;
+    private View timerPopup;
+    private Dialog dialog;
 
 
     public RunWorkoutFragment() {
@@ -104,6 +77,7 @@ public class RunWorkoutFragment extends Fragment {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_run, container, false);
+
         this.mViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(SharedViewModel.class);
         this.workoutViewModel = new ViewModelProvider(activityInterface.getMainActivity()).get(WorkoutViewModel.class);
 
@@ -223,7 +197,9 @@ public class RunWorkoutFragment extends Fragment {
 
     public void createTimerPopup() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activityInterface.getMainActivity());
-        final View timerPopup = getLayoutInflater().inflate(R.layout.popup_timer, null);
+        if (timerPopup == null){
+            timerPopup = getLayoutInflater().inflate(R.layout.popup_timer, null);
+        }
 
         NumberPicker minutesPicker = (NumberPicker) timerPopup.findViewById(R.id.minutes_picker);
         minutesPicker.setMinValue(00);
@@ -253,13 +229,16 @@ public class RunWorkoutFragment extends Fragment {
         ImageButton startPause = (ImageButton) timerPopup.findViewById(R.id.playAndPauseButton);
         ImageButton reset = (ImageButton) timerPopup.findViewById(R.id.refreshTimerButton);
 
-        dialogBuilder.setView(timerPopup);
-        Dialog dialog = dialogBuilder.create();
+        if (dialog == null) {
+            dialogBuilder.setView(timerPopup);
+            dialog = dialogBuilder.create();
+        }
+
         dialog.show();
 
         class TimerThread extends Thread {
             private static final int DELAY = 1000; // 1 second
-            private boolean running = true;
+            private boolean running;
             private long time;
 
             public long getTime() {
@@ -270,38 +249,50 @@ public class RunWorkoutFragment extends Fragment {
                 this.time = time;
             }
 
+            public boolean isRunning() {
+                return running;
+            }
+
             @Override
             public void run() {
-                while (running) {
-                    if (time > 0) {
-                        activityInterface.getMainActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                minutesPicker.setValue((int) (time / 60));
-                                secondsPicker.setValue((int) (time % 60));
+                while (true) {
+                    if (running) {
+                        if (time > 0) {
+                            ((Activity) getContext()).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    minutesPicker.setValue((int) (time / 60));
+                                    secondsPicker.setValue((int) (time % 60));
+                                }
+                            });
+                            try {
+                                Thread.sleep(DELAY);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                        });
-                        try {
-                            Thread.sleep(DELAY);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            time--;
+                        } else if (time == 0) {
+                            running = false;
+                            //warn the user
+                            ((Activity) getContext()).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startPause.setImageResource(R.drawable.play_foreground);
+//                                    Toast.makeText(getContext(), "Timer has ended", Toast.LENGTH_SHORT).show();
+                                    Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                                    Ringtone ringtone = RingtoneManager.getRingtone(getContext(), ringtoneUri);
+                                    ringtone.play();
+
+                                    activityInterface.getMainActivity().sendNotification("Times Up!!",null);
+
+                                    minutesPicker.setEnabled(true);
+                                    minutesPicker.setValue(0);
+                                    secondsPicker.setEnabled(true);
+                                    secondsPicker.setValue(0);
+                                }
+                            });
+                            time--;
                         }
-                        time--;
-                    } else if (time == 0) {
-                        //warn the user
-                        activityInterface.getMainActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                startPause.setImageResource(R.drawable.play_foreground);
-                                activityInterface.getMainActivity().sendNotification("TIMES UP",null);
-//                                Toast.makeText(getContext(), "pipipi", Toast.LENGTH_SHORT).show();
-                                minutesPicker.setEnabled(true);
-                                minutesPicker.setValue((int) (time / 60));
-                                secondsPicker.setEnabled(true);
-                                secondsPicker.setValue((int) (time % 60));
-                            }
-                        });
-                        time--;
                     }
                 }
             }
@@ -315,9 +306,11 @@ public class RunWorkoutFragment extends Fragment {
             }
         }
 
-        TimerThread thread = new TimerThread();
-        thread.setTime(-1);
-        thread.start();
+        if (timerThread == null) {
+            timerThread = new TimerThread();
+            ((TimerThread) timerThread).setTime(-1);
+            timerThread.start();
+        }
 
         startPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -327,14 +320,13 @@ public class RunWorkoutFragment extends Fragment {
                         minutesPicker.setEnabled(false);
                         secondsPicker.setEnabled(false);
                         startPause.setImageResource(R.drawable.pause_foreground);
-                        thread.setTime(minutesPicker.getValue() * 60 + secondsPicker.getValue());
-                        System.out.println("");
-                        thread.continueTimer();
+                        ((TimerThread) timerThread).setTime(minutesPicker.getValue() * 60 + secondsPicker.getValue());
+                        ((TimerThread) timerThread).continueTimer();
                         timerRunning = !timerRunning;
                     }
                 } else {
                     startPause.setImageResource(R.drawable.play_foreground);
-                    thread.pauseTimer();
+                    ((TimerThread) timerThread).pauseTimer();
                     timerRunning = !timerRunning;
                 }
 
@@ -348,8 +340,8 @@ public class RunWorkoutFragment extends Fragment {
                 minutesPicker.setEnabled(true);
                 secondsPicker.setValue(0);
                 secondsPicker.setEnabled(true);
-                thread.pauseTimer();
-                thread.setTime(-1);
+                ((TimerThread) timerThread).pauseTimer();
+                ((TimerThread) timerThread).setTime(-1);
                 startPause.setImageResource(R.drawable.play_foreground);
                 timerRunning = false;
             }
@@ -363,4 +355,3 @@ public class RunWorkoutFragment extends Fragment {
         });
     }
 }
-
