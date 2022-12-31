@@ -52,6 +52,10 @@ public class ExerciseWO {
     @NonNull
     public Integer duration;
 
+    @ColumnInfo(name = "variable")
+    @NonNull
+    public Boolean variable;
+
     @ColumnInfo(name = "weight")
     @NonNull
     public Double weight;
@@ -59,5 +63,6 @@ public class ExerciseWO {
     @ColumnInfo(name = "order_exwo")
     @NonNull
     public Long order_exwo;
+
 
 }

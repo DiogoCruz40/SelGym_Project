@@ -134,36 +134,48 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
                         WorkoutDTO newWorkout = adapter.saveWorkoutChanges(workout);
-                        newWorkout.setName(name.getText().toString());
-                        newWorkout.setObservation(observations.getText().toString());
-                        newWorkout.setType(type.getSelectedItem().toString());
+                        boolean trigger = false;
+                        for (Object obj : newWorkout.getWorkoutComposition()) {
+                            if (obj instanceof CircuitDTO) {
+                                if (((CircuitDTO) obj).getExerciseList().isEmpty())
+                                    trigger = true;
+                            }
+                        }
+                        if (trigger) {
+                            mViewModel.getToastMessageObserver().setValue("Your circuits can't be empty");
 
-                        if (workout.getId() == null) {
-                            mViewModel.insertWorkout(newWorkout);
+                        } else {
+                            newWorkout.setName(name.getText().toString());
+                            newWorkout.setObservation(observations.getText().toString());
+                            newWorkout.setType(type.getSelectedItem().toString());
 
-                            mViewModel.getGetResultInsert().observe(getViewLifecycleOwner(), new Observer<AtomicBoolean>() {
-                                @Override
-                                public void onChanged(AtomicBoolean atomicBoolean) {
-                                    if (atomicBoolean.get()) {
-                                        mViewModel.updateStats(null, type.getSelectedItem().toString(), workout.getNrOfConclusions());
+                            if (workout.getId() == null) {
+                                mViewModel.insertWorkout(newWorkout);
+
+                                mViewModel.getGetResultInsert().observe(getViewLifecycleOwner(), new Observer<AtomicBoolean>() {
+                                    @Override
+                                    public void onChanged(AtomicBoolean atomicBoolean) {
+                                        if (atomicBoolean.get()) {
+                                            mViewModel.updateStats(null, type.getSelectedItem().toString(), workout.getNrOfConclusions());
+                                            mViewModel.top5Workouts();
+                                            activityInterface.changeFrag(new WorkoutFragment(), null);
+                                        } else
+                                            mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
+                                    }
+                                });
+
+                            } else {
+                                mViewModel.updateWorkout(newWorkout);
+
+                                mViewModel.getGetResultUpdate().observe(getViewLifecycleOwner(), result -> {
+                                    if (result.get()) {
+                                        mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString(), workout.getNrOfConclusions());
                                         mViewModel.top5Workouts();
                                         activityInterface.changeFrag(new WorkoutFragment(), null);
                                     } else
                                         mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
-                                }
-                            });
-
-                        } else {
-                            mViewModel.updateWorkout(newWorkout);
-
-                            mViewModel.getGetResultUpdate().observe(getViewLifecycleOwner(), result -> {
-                                if (result.get()) {
-                                    mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString(), workout.getNrOfConclusions());
-                                    mViewModel.top5Workouts();
-                                    activityInterface.changeFrag(new WorkoutFragment(), null);
-                                } else
-                                    mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
-                            });
+                                });
+                            }
                         }
                         return false;
                     }

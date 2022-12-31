@@ -5,6 +5,7 @@ import static androidx.core.app.NotificationCompat.PRIORITY_HIGH;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -151,8 +152,11 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
         Notification notification = notificationBuilder
                 .setContentTitle(title)
                 .setContentText(msg)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_clock_small_black_24dp_round)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.mipmap.ic_clock_small_black_24dp_round))
                 .setPriority(PRIORITY_HIGH)
+//                .setSound()
                 .setAutoCancel(true)
                 .build();
         notificationManager.notify((int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE), notification);

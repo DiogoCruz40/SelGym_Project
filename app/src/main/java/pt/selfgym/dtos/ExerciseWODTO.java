@@ -11,6 +11,7 @@ public class ExerciseWODTO {
     private int reps;
     private int rest;
     private int duration;
+    private boolean variable;
     private ExerciseDTO exercise;
     private List<SetsDTO> setsList;
 
@@ -28,6 +29,7 @@ public class ExerciseWODTO {
         this.duration = 0;
         this.exercise = exercise;
         this.setsList = null;
+        this.variable = false;
     }
 
     public ExerciseWODTO( int order, double weight, int sets, int rest, ExerciseDTO exercise, int duration) {
@@ -41,6 +43,7 @@ public class ExerciseWODTO {
         this.duration = duration;
         this.exercise = exercise;
         this.setsList = null;
+        this.variable = false;
     }
 
     public ExerciseWODTO( int order,int reps, ExerciseDTO exercise, ArrayList<SetsDTO> setsList) {
@@ -54,6 +57,7 @@ public class ExerciseWODTO {
         this.duration = 0;
         this.exercise = exercise;
         this.setsList = setsList;
+        this.variable = true;
     }
 
     public ExerciseWODTO( int order, ExerciseDTO exercise, int duration, ArrayList<SetsDTO> setsList) {
@@ -67,10 +71,11 @@ public class ExerciseWODTO {
         this.duration = -1;
         this.exercise = exercise;
         this.setsList = setsList;
+        this.variable = true;
     }
 
     public boolean isFixedSetsReps(){
-        if(setsList == null && duration == 0){
+        if(!variable && duration == 0){
             return true;
         } else {
             return false;
@@ -78,7 +83,7 @@ public class ExerciseWODTO {
     }
 
     public boolean isFixedSetsTime(){
-        if(setsList == null && reps == 0){
+        if(!variable  && reps == 0){
             return true;
         } else {
             return false;
@@ -86,7 +91,7 @@ public class ExerciseWODTO {
     }
 
     public boolean isVariableSetsReps(){
-        if(sets == 0 && duration == 0){
+        if(variable && duration == 0){
             return true;
         } else {
             return false;
@@ -94,7 +99,7 @@ public class ExerciseWODTO {
     }
 
     public boolean isVariableSetsTime(){
-        if(sets == 0 && reps == 0){
+        if(variable && reps == 0){
             return true;
         } else {
             return false;

@@ -281,8 +281,11 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             WorkoutDTO workoutCircuit = new WorkoutDTO("circuit", "circuit", "circuit");
             ArrayList<Object> exList = new ArrayList<Object>();
+            if(((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList() != null)
+            {
             for (ExerciseWODTO e : ((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList()) {
                 exList.add(e);
+            }
             }
             workoutCircuit.setWorkoutComposition(exList);
 
