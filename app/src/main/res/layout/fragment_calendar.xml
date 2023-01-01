@@ -39,6 +39,7 @@
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:text="workouts"
+            android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/addNewEventButton"
@@ -51,6 +52,7 @@
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:text="0"
+            android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/workoutString"
@@ -58,18 +60,18 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/eventList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_circuit"
+            android:layout_height="0dp"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="506dp" />
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

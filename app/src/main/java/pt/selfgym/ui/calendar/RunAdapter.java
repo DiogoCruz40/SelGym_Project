@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -289,6 +290,13 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             workoutCircuit.setWorkoutComposition(exList);
 
+            RecyclerView.ItemDecoration itemDecoration = new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.bottom = 15;
+                }
+            };
+            viewHolder5.exs.addItemDecoration(itemDecoration);
             RunAdapter adapter = new RunAdapter(workoutCircuit, activityInterface);
             viewHolder5.exs.setLayoutManager(new LinearLayoutManager(layoutInflater.getContext()));
             viewHolder5.exs.setAdapter(adapter);

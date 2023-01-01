@@ -3,6 +3,7 @@ package pt.selfgym.ui.calendar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,9 +94,16 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
                     eventsDay.add(e);
                 }
             }
+
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.eventList);
+            RecyclerView.ItemDecoration itemDecoration = new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.bottom = 15;
+                }
+            };
+            recyclerView.addItemDecoration(itemDecoration);
             adapter = new EventsAdapter(eventsDay, this);
-            //recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
             recyclerView.setAdapter(adapter);
             //não sei porquê mas sem isto aqui não coloca a lista na recycler view
