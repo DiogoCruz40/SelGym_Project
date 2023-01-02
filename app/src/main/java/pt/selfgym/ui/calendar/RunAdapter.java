@@ -66,7 +66,7 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public ViewHolderFixedSetsReps(View itemView) {
             super(itemView);
             this.name = (TextView) itemView.findViewById(R.id.name);
-            this.reps = (TextView) itemView.findViewById(R.id.restfield);
+            this.reps = (TextView) itemView.findViewById(R.id.repsinput);
             this.sets = (TextView) itemView.findViewById(R.id.setsfield);
             this.weight = (TextView) itemView.findViewById(R.id.weightfield);
             this.rest = (TextView) itemView.findViewById(R.id.restfield);

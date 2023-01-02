@@ -219,53 +219,61 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
             @Override
             public void onClick(View aview) {
                 try {
-                    Integer hour = Integer.parseInt(time.getText().toString().split(":")[0]);
-                    Integer minute = Integer.parseInt(time.getText().toString().split(":")[1]);
-                    Integer repeat = Integer.parseInt(nrOfRepetitions.getText().toString());
-                    String recurrence = Recurrence.getSelectedItem().toString();
-                    if (recurrence == "Once") {
-                        repeat = 1;
-                    }
-                    String workoutName = workout.getSelectedItem().toString();
-                    WorkoutDTO workoutDTO = new WorkoutDTO();
-                    for (WorkoutDTO wo : sharedViewModel.getWorkouts().getValue()) {
-                        if (wo.getName().equalsIgnoreCase(workoutName)) {
-                            workoutDTO = wo;
-                        }
-                    }
-
-                    DateDTO dateDTO = selectedDate;
-                    for (int i = repeat; i > 0; i--) {
-                        sharedViewModel.setEventCalendar(new EventDTO(workoutDTO, dateDTO, hour, minute, i, recurrence));
-                        if (recurrence.equals("Every Month")) {
-                            dateDTO = dateDTO.addOneMonth();
-                        } else if (recurrence.equals("Every Week")) {
-                            dateDTO = dateDTO.addOneWeek();
-                        } else if (recurrence.equals("Every Day")) {
-                            dateDTO = dateDTO.addOneDay();
-                        } else {
-                            break;
-                        }
-                    }
-
-                    //update views
-                    ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
-                    for (EventDTO e : events) {
-                        if (selectedDate.getDay() == e.getDate().getDay() && selectedDate.getMonth() == e.getDate().getMonth() && selectedDate.getYear() == e.getDate().getYear()) {
-                            eventsDay.add(e);
-                        }
-                    }
-                    adapter.setEvents(eventsDay);
-                    TextView workoutNr = (TextView) view.findViewById(R.id.workoutNr);
-                    workoutNr.setText(eventsDay.size() + "");
-                    TextView workoutString = (TextView) view.findViewById(R.id.workoutString);
-                    if (eventsDay.size() == 1) {
-                        workoutString.setText("workout");
+                    if (workout.getSelectedItem() == null) {
+                        sharedViewModel.getToastMessageObserver().setValue("You don't have a workout selected");
+                    } else if (time.getText().length() != 5 || time.getText().toString().charAt(2) != ':') {
+                        sharedViewModel.getToastMessageObserver().setValue("Please right a correct Hours format");
+                    } else if (nrOfRepetitions.getText().length() == 0 || Integer.parseInt(nrOfRepetitions.getText().toString()) == 0) {
+                        sharedViewModel.getToastMessageObserver().setValue("Repetitions must be greater than 0");
                     } else {
-                        workoutString.setText("workouts");
-                    }
+                        Integer hour = Integer.parseInt(time.getText().toString().split(":")[0]);
+                        Integer minute = Integer.parseInt(time.getText().toString().split(":")[1]);
+                        Integer repeat = Integer.parseInt(nrOfRepetitions.getText().toString());
+                        String recurrence = Recurrence.getSelectedItem().toString();
+                        if (recurrence == "Once") {
+                            repeat = 1;
+                        }
+                        String workoutName = workout.getSelectedItem().toString();
+                        WorkoutDTO workoutDTO = new WorkoutDTO();
+                        for (WorkoutDTO wo : sharedViewModel.getWorkouts().getValue()) {
+                            if (wo.getName().equalsIgnoreCase(workoutName)) {
+                                workoutDTO = wo;
+                            }
+                        }
 
-                    dialog.dismiss();
+                        DateDTO dateDTO = selectedDate;
+                        for (int i = repeat; i > 0; i--) {
+                            sharedViewModel.setEventCalendar(new EventDTO(workoutDTO, dateDTO, hour, minute, i, recurrence));
+                            if (recurrence.equals("Every Month")) {
+                                dateDTO = dateDTO.addOneMonth();
+                            } else if (recurrence.equals("Every Week")) {
+                                dateDTO = dateDTO.addOneWeek();
+                            } else if (recurrence.equals("Every Day")) {
+                                dateDTO = dateDTO.addOneDay();
+                            } else {
+                                break;
+                            }
+                        }
+
+                        //update views
+                        ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
+                        for (EventDTO e : events) {
+                            if (selectedDate.getDay() == e.getDate().getDay() && selectedDate.getMonth() == e.getDate().getMonth() && selectedDate.getYear() == e.getDate().getYear()) {
+                                eventsDay.add(e);
+                            }
+                        }
+                        adapter.setEvents(eventsDay);
+                        TextView workoutNr = (TextView) view.findViewById(R.id.workoutNr);
+                        workoutNr.setText(eventsDay.size() + "");
+                        TextView workoutString = (TextView) view.findViewById(R.id.workoutString);
+                        if (eventsDay.size() == 1) {
+                            workoutString.setText("workout");
+                        } else {
+                            workoutString.setText("workouts");
+                        }
+
+                        dialog.dismiss();
+                    }
                 } catch (Exception e) {
                     dialog.dismiss();
                 }

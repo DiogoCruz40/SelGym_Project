@@ -48,6 +48,10 @@ public class ExerciseWO {
     @NonNull
     public Integer sets;
 
+    @ColumnInfo(name = "reps")
+    @NonNull
+    public Integer reps;
+
     @ColumnInfo(name = "duration")
     @NonNull
     public Integer duration;

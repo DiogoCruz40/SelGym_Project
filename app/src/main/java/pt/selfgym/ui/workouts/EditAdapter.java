@@ -416,11 +416,10 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             WorkoutDTO workoutCircuit = new WorkoutDTO("circuit", "circuit", "circuit");
             ArrayList<Object> exList = new ArrayList<Object>();
-            if(((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList() != null)
-            {
-            for (ExerciseWODTO e : ((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList()) {
-                exList.add(e);
-            }
+            if (((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList() != null) {
+                for (ExerciseWODTO e : ((CircuitDTO) workout.getWorkoutComposition().get(position)).getExerciseList()) {
+                    exList.add(e);
+                }
             }
             workoutCircuit.setWorkoutComposition(exList);
 
@@ -469,86 +468,84 @@ public class EditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         WorkoutDTO newWorkout = new WorkoutDTO(workout.getName(), workout.getObservation(), workout.getType());
         if (workoutDTO.getId() != null)
             newWorkout.setId(workoutDTO.getId());
-//            Log.w("help", String.valueOf(holdersList.size()));
-            for (int i = 0; i < holdersList.size(); i++) {
-                try {
-                    if (holdersList.get(i) instanceof ViewHolderFixedSetsReps) {
-                        int order = ((ExerciseWODTO) composition.get(i)).getOrder();
-                        double weight = Double.parseDouble(((ViewHolderFixedSetsReps) holdersList.get(i)).weight.getText().toString());
-                        int sets = Integer.parseInt(((ViewHolderFixedSetsReps) holdersList.get(i)).sets.getText().toString());
-                        int reps = Integer.parseInt(((ViewHolderFixedSetsReps) holdersList.get(i)).reps.getText().toString());
-                        int rest = Integer.parseInt(((ViewHolderFixedSetsReps) holdersList.get(i)).rest.getText().toString());
-                        ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
-                        ExerciseWODTO ex = new ExerciseWODTO(order, weight, sets, reps, rest, exercise);
-                        newWorkout.addToWorkoutComposition(ex);
+        for (int i = 0; i < holdersList.size(); i++) {
+            try {
+                if (holdersList.get(i) instanceof ViewHolderFixedSetsReps) {
+                    int order = ((ExerciseWODTO) composition.get(i)).getOrder();
+                    double weight = Double.parseDouble(((ViewHolderFixedSetsReps) holdersList.get(i)).weight.getText().toString());
+                    int sets = Integer.parseInt(((ViewHolderFixedSetsReps) holdersList.get(i)).sets.getText().toString());
+                    int reps = Integer.parseInt(((ViewHolderFixedSetsReps) holdersList.get(i)).reps.getText().toString());
+                    int rest = Integer.parseInt(((ViewHolderFixedSetsReps) holdersList.get(i)).rest.getText().toString());
+                    ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
+                    ExerciseWODTO ex = new ExerciseWODTO(order, weight, sets, reps, rest, exercise);
+                    newWorkout.addToWorkoutComposition(ex);
 
-                    } else if (holdersList.get(i) instanceof ViewHolderFixedSetsTime) {
-                        int order = ((ExerciseWODTO) composition.get(i)).getOrder();
-                        double weight = Double.parseDouble(((ViewHolderFixedSetsTime) holdersList.get(i)).weight.getText().toString());
-                        int sets = Integer.parseInt(((ViewHolderFixedSetsTime) holdersList.get(i)).sets.getText().toString());
-                        int rest = Integer.parseInt(((ViewHolderFixedSetsTime) holdersList.get(i)).rest.getText().toString());
-                        ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
-                        int duration = Integer.parseInt(((ViewHolderFixedSetsTime) holdersList.get(i)).duration.getText().toString());
-                        ExerciseWODTO ex = new ExerciseWODTO(order, weight, sets, rest, exercise, duration);
-                        newWorkout.addToWorkoutComposition(ex);
+                } else if (holdersList.get(i) instanceof ViewHolderFixedSetsTime) {
+                    int order = ((ExerciseWODTO) composition.get(i)).getOrder();
+                    double weight = Double.parseDouble(((ViewHolderFixedSetsTime) holdersList.get(i)).weight.getText().toString());
+                    int sets = Integer.parseInt(((ViewHolderFixedSetsTime) holdersList.get(i)).sets.getText().toString());
+                    int rest = Integer.parseInt(((ViewHolderFixedSetsTime) holdersList.get(i)).rest.getText().toString());
+                    ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
+                    int duration = Integer.parseInt(((ViewHolderFixedSetsTime) holdersList.get(i)).duration.getText().toString());
+                    ExerciseWODTO ex = new ExerciseWODTO(order, weight, sets, rest, exercise, duration);
+                    newWorkout.addToWorkoutComposition(ex);
 
-                    } else if (holdersList.get(i) instanceof ViewHolderVariableSetsReps) {
-                        int order = ((ExerciseWODTO) composition.get(i)).getOrder();
-                        int reps = ((ExerciseWODTO) composition.get(i)).getReps();
-                        ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
-                        EditAdapter setsAdapter = (EditAdapter) ((ViewHolderVariableSetsReps) holdersList.get(i)).sets.getAdapter();
-                        WorkoutDTO setsWorkout = setsAdapter.saveWorkoutChanges(workoutDTO);
-                        ArrayList<SetsDTO> setsList = new ArrayList<SetsDTO>();
-                        for (Object o : setsWorkout.getWorkoutComposition()) {
-                            SetsDTO s = (SetsDTO) o;
+                } else if (holdersList.get(i) instanceof ViewHolderVariableSetsReps) {
+                    int order = ((ExerciseWODTO) composition.get(i)).getOrder();
+                    int reps = ((ExerciseWODTO) composition.get(i)).getReps();
+                    ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
+                    EditAdapter setsAdapter = (EditAdapter) ((ViewHolderVariableSetsReps) holdersList.get(i)).sets.getAdapter();
+                    WorkoutDTO setsWorkout = setsAdapter.saveWorkoutChanges(workoutDTO);
+                    ArrayList<SetsDTO> setsList = new ArrayList<SetsDTO>();
+                    for (Object o : setsWorkout.getWorkoutComposition()) {
+                        SetsDTO s = (SetsDTO) o;
 
-                            setsList.add(s);
-                        }
-                        ExerciseWODTO ex = new ExerciseWODTO(order, reps, exercise, setsList);
-                        newWorkout.addToWorkoutComposition(ex);
-
-                    } else if (holdersList.get(i) instanceof ViewHolderVariableSetsTime) {
-                        int order = ((ExerciseWODTO) composition.get(i)).getOrder();
-                        int duration = ((ExerciseWODTO) composition.get(i)).getDuration();
-                        ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
-                        EditAdapter setsAdapter = (EditAdapter) ((ViewHolderVariableSetsTime) holdersList.get(i)).sets.getAdapter();
-                        WorkoutDTO setsWorkout = setsAdapter.saveWorkoutChanges(workoutDTO);
-                        ArrayList<SetsDTO> setsList = new ArrayList<SetsDTO>();
-                        for (Object o : setsWorkout.getWorkoutComposition()) {
-                            SetsDTO s = (SetsDTO) o;
-
-                            setsList.add(s);
-                        }
-                        ExerciseWODTO ex = new ExerciseWODTO(order, exercise, duration, setsList);
-                        newWorkout.addToWorkoutComposition(ex);
-
-                    } else if (holdersList.get(i) instanceof ViewHolderCircuit) {
-                        int rest = Integer.parseInt(((ViewHolderCircuit) holdersList.get(i)).rest.getText().toString());
-                        int laps = Integer.parseInt(((ViewHolderCircuit) holdersList.get(i)).laps.getText().toString());
-                        EditAdapter exsAdapter = (EditAdapter) ((ViewHolderCircuit) holdersList.get(i)).exs.getAdapter();
-                        WorkoutDTO exsWorkout = exsAdapter.saveWorkoutChanges(workoutDTO);
-                        ArrayList<ExerciseWODTO> exerciseList = new ArrayList<ExerciseWODTO>();
-                        for (Object o : exsWorkout.getWorkoutComposition()) {
-                            ExerciseWODTO e = (ExerciseWODTO) o;
-                            exerciseList.add(e);
-                        }
-
-                        CircuitDTO ex = new CircuitDTO(laps, rest, exerciseList);
-                        newWorkout.addToWorkoutComposition(ex);
-
-                    } else {
-                        int order = ((SetsDTO) composition.get(i)).getOrder_set();
-                        double weight = Double.parseDouble(((ViewHolderSet) holdersList.get(i)).weight.getText().toString());
-                        int rest = Integer.parseInt(((ViewHolderSet) holdersList.get(i)).rest.getText().toString());
-                        int variable = Integer.parseInt(((ViewHolderSet) holdersList.get(i)).variable.getText().toString());
-                        SetsDTO set = new SetsDTO(variable, rest, weight, order);
-                        newWorkout.addToWorkoutComposition(set);
+                        setsList.add(s);
                     }
-                }catch (Exception e)
-                {
-                    Log.w("error",e.getMessage());
+                    ExerciseWODTO ex = new ExerciseWODTO(order, reps, exercise, setsList);
+                    newWorkout.addToWorkoutComposition(ex);
+
+                } else if (holdersList.get(i) instanceof ViewHolderVariableSetsTime) {
+                    int order = ((ExerciseWODTO) composition.get(i)).getOrder();
+                    int duration = ((ExerciseWODTO) composition.get(i)).getDuration();
+                    ExerciseDTO exercise = ((ExerciseWODTO) composition.get(i)).getExercise();
+                    EditAdapter setsAdapter = (EditAdapter) ((ViewHolderVariableSetsTime) holdersList.get(i)).sets.getAdapter();
+                    WorkoutDTO setsWorkout = setsAdapter.saveWorkoutChanges(workoutDTO);
+                    ArrayList<SetsDTO> setsList = new ArrayList<SetsDTO>();
+                    for (Object o : setsWorkout.getWorkoutComposition()) {
+                        SetsDTO s = (SetsDTO) o;
+
+                        setsList.add(s);
+                    }
+                    ExerciseWODTO ex = new ExerciseWODTO(order, exercise, duration, setsList);
+                    newWorkout.addToWorkoutComposition(ex);
+
+                } else if (holdersList.get(i) instanceof ViewHolderCircuit) {
+                    int rest = Integer.parseInt(((ViewHolderCircuit) holdersList.get(i)).rest.getText().toString());
+                    int laps = Integer.parseInt(((ViewHolderCircuit) holdersList.get(i)).laps.getText().toString());
+                    EditAdapter exsAdapter = (EditAdapter) ((ViewHolderCircuit) holdersList.get(i)).exs.getAdapter();
+                    WorkoutDTO exsWorkout = exsAdapter.saveWorkoutChanges(workoutDTO);
+                    ArrayList<ExerciseWODTO> exerciseList = new ArrayList<ExerciseWODTO>();
+                    for (Object o : exsWorkout.getWorkoutComposition()) {
+                        ExerciseWODTO e = (ExerciseWODTO) o;
+                        exerciseList.add(e);
+                    }
+
+                    CircuitDTO ex = new CircuitDTO(laps, rest, exerciseList);
+                    newWorkout.addToWorkoutComposition(ex);
+
+                } else {
+                    int order = ((SetsDTO) composition.get(i)).getOrder_set();
+                    double weight = Double.parseDouble(((ViewHolderSet) holdersList.get(i)).weight.getText().toString());
+                    int rest = Integer.parseInt(((ViewHolderSet) holdersList.get(i)).rest.getText().toString());
+                    int variable = Integer.parseInt(((ViewHolderSet) holdersList.get(i)).variable.getText().toString());
+                    SetsDTO set = new SetsDTO(variable, rest, weight, order);
+                    newWorkout.addToWorkoutComposition(set);
                 }
+            } catch (Exception e) {
+                Log.w("error", e.getMessage());
             }
+        }
         return newWorkout;
     }
 
