@@ -51,7 +51,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
     private FragmentCalendarBinding binding;
     private ActivityInterface activityInterface;
     private EventsAdapter adapter;
-    private List<EventDTO> events;
+//    private List<EventDTO> events;
     private SharedViewModel sharedViewModel;
     private CalendarView calendarView;
     private View view;
@@ -72,10 +72,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
 
         sharedViewModel.getEventsCalendar();
         calendarView = view.findViewById(R.id.calendar);
-
-
         long millis = calendarView.getDate();
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(millis);
         int year = calendar.get(Calendar.YEAR);
@@ -84,13 +81,36 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         selectedDate = new DateDTO(dayOfMonth, month, year);
 
         sharedViewModel.getEventsCa().observe(getViewLifecycleOwner(), events -> {
-            this.events = events;
 
+            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                @Override
+                public void onSelectedDayChange(@NonNull CalendarView cview, int year, int month, int dayOfMonth) {
+
+                    ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
+                    for (EventDTO e : events) {
+                        if (dayOfMonth == e.getDate().getDay() && (month + 1) == e.getDate().getMonth() && year == e.getDate().getYear()) {
+                            eventsDay.add(e);
+                        }
+                    }
+                    adapter.setEvents(eventsDay);
+                    TextView workoutNr = (TextView) view.findViewById(R.id.workoutNr);
+                    workoutNr.setText(eventsDay.size() + "");
+                    TextView workoutString = (TextView) view.findViewById(R.id.workoutString);
+                    if (eventsDay.size() == 1) {
+                        workoutString.setText("workout");
+                    } else {
+                        workoutString.setText("workouts");
+                    }
+
+                    selectedDate = new DateDTO(dayOfMonth, month + 1, year);
+
+                }
+            });
 
             ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
 
             for (EventDTO e : events) {
-                if (dayOfMonth == e.getDate().getDay() && month == e.getDate().getMonth() && year == e.getDate().getYear()) {
+                if (selectedDate.getDay() == e.getDate().getDay() && selectedDate.getMonth() == e.getDate().getMonth() && selectedDate.getYear() == e.getDate().getYear()) {
                     eventsDay.add(e);
                 }
             }
@@ -118,30 +138,6 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
             } else {
                 workoutString.setText("workouts");
             }
-            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-                @Override
-                public void onSelectedDayChange(@NonNull CalendarView cview, int year, int month, int dayOfMonth) {
-
-                    ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
-                    for (EventDTO e : events) {
-                        if (dayOfMonth == e.getDate().getDay() && (month + 1) == e.getDate().getMonth() && year == e.getDate().getYear()) {
-                            eventsDay.add(e);
-                        }
-                    }
-                    adapter.setEvents(eventsDay);
-                    TextView workoutNr = (TextView) view.findViewById(R.id.workoutNr);
-                    workoutNr.setText(eventsDay.size() + "");
-                    TextView workoutString = (TextView) view.findViewById(R.id.workoutString);
-                    if (eventsDay.size() == 1) {
-                        workoutString.setText("workout");
-                    } else {
-                        workoutString.setText("workouts");
-                    }
-
-                    selectedDate = new DateDTO(dayOfMonth, month + 1, year);
-
-                }
-            });
         });
 
 
@@ -253,23 +249,6 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
                             } else {
                                 break;
                             }
-                        }
-
-                        //update views
-                        ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
-                        for (EventDTO e : events) {
-                            if (selectedDate.getDay() == e.getDate().getDay() && selectedDate.getMonth() == e.getDate().getMonth() && selectedDate.getYear() == e.getDate().getYear()) {
-                                eventsDay.add(e);
-                            }
-                        }
-                        adapter.setEvents(eventsDay);
-                        TextView workoutNr = (TextView) view.findViewById(R.id.workoutNr);
-                        workoutNr.setText(eventsDay.size() + "");
-                        TextView workoutString = (TextView) view.findViewById(R.id.workoutString);
-                        if (eventsDay.size() == 1) {
-                            workoutString.setText("workout");
-                        } else {
-                            workoutString.setText("workouts");
                         }
 
                         dialog.dismiss();

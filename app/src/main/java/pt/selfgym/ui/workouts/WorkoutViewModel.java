@@ -69,12 +69,6 @@ public class WorkoutViewModel extends AndroidViewModel {
             exerciseswo.setValue(exercisewoDTOList);
 
         } else {
-//            AtomicBoolean trigger = new AtomicBoolean(false);
-//            exercisewoDTOList.forEach(exwo -> {
-//                if (exwo.getExercise().getId() == exerciseDTO.getId())
-//                    trigger.set(true);
-//            });
-//            if (!trigger.get()) {
             exerciseWODTO = new ExerciseWODTO(exerciseswo.getValue().size() + 1, 0, 0, 0, 0, exerciseDTO);
             exercisewoDTOList.add(exerciseWODTO);
             if (position != null) {
