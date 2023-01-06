@@ -1,5 +1,6 @@
 package pt.selfgym.dtos;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -68,7 +69,6 @@ public class DateDTO {
         return new DateDTO(updatedDay, updatedMonth, updatedYear);
     }
 
-
     public DateDTO addOneDay() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, day);
@@ -83,6 +83,36 @@ public class DateDTO {
 
         // Create and return a new DateDTO object with the updated date
         return new DateDTO(updatedDay, updatedMonth, updatedYear);
+    }
+
+    public int compareDate(DateDTO date) {
+
+        Calendar actual = Calendar.getInstance();
+        actual.set(Calendar.DAY_OF_MONTH, this.day);
+        actual.set(Calendar.MONTH, this.month - 1);
+        actual.set(Calendar.YEAR, this.year);
+
+        Calendar other = Calendar.getInstance();
+        other.set(Calendar.DAY_OF_MONTH, date.getDay());
+        other.set(Calendar.MONTH, date.getMonth() - 1);
+        other.set(Calendar.YEAR, date.getYear());
+
+        return actual.compareTo(other);
+    }
+
+    public int difDays(DateDTO date) {
+
+        Calendar actual = Calendar.getInstance();
+        actual.set(Calendar.DAY_OF_MONTH, this.day);
+        actual.set(Calendar.MONTH, this.month - 1);
+        actual.set(Calendar.YEAR, this.year);
+
+        Calendar other = Calendar.getInstance();
+        other.set(Calendar.DAY_OF_MONTH, date.getDay());
+        other.set(Calendar.MONTH, date.getMonth() - 1);
+        other.set(Calendar.YEAR, date.getYear());
+
+        return actual.get(Calendar.DAY_OF_YEAR) - other.get(Calendar.DAY_OF_YEAR);
     }
 
     public boolean isEqualTo(DateDTO other) {

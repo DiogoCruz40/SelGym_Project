@@ -47,6 +47,7 @@ import java.security.Key;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -61,6 +62,8 @@ import pt.selfgym.MainActivity;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
 import pt.selfgym.databinding.FragmentStatisticsBinding;
+import pt.selfgym.dtos.DateDTO;
+import pt.selfgym.dtos.EventDTO;
 import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.ui.workouts.WorkoutViewModel;
 
@@ -78,6 +81,10 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
     private PieChart piePolyLineChart;
     private LineChart lineChart;
     private BarChart barChart;
+
+    private  DateDTO firstDate, lastDate, trimester;
+
+    Dictionary<String, Integer> eventsPerWeek = new Hashtable<String, Integer>();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -122,6 +129,57 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
             }
         });
 
+        mViewModel.getEventsCa().observe(getViewLifecycleOwner(), events -> {
+
+            List<EventDTO> eventsTrimester = new ArrayList<EventDTO>();
+
+            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+
+            trimester = trimester(events.get(events.size()-1).getDate());
+
+            eventsPerWeek = new Hashtable<String, Integer>();
+
+            if(!events.isEmpty()){
+
+                for(EventDTO e: events){
+
+                    String key = week(e.getDate());
+                    Integer value = eventsPerWeek.get(key);
+
+                    if(value==null){
+                        eventsPerWeek.put(week(e.getDate()), 1);
+                    }
+                    else{
+                        eventsPerWeek.put(week(e.getDate()), value + 1);
+                    }
+                }
+
+                lineChartData();
+            }
+        });
+
+    }
+
+    public String week(DateDTO date){
+
+        String[] monthsArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        String[] weeksArray = {"1", "2", "3", "4"};
+
+        return weeksArray[date.getDay()%4] + monthsArray[date.getMonth()%12] + date.getYear();
+
+    }
+
+    public DateDTO trimester(DateDTO date){
+
+        if(date.getMonth() < 2){
+            return new DateDTO(1, 11, date.getYear()-1);
+        }
+
+        if(date.getMonth() < 3){
+            return new DateDTO(1, 10, date.getYear()-1);
+        }
+
+        return new DateDTO(1, date.getMonth()-2, date.getYear());
     }
 
     public void barChart(){
@@ -186,17 +244,17 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         data.setValueFormatter(new LargeValueFormatter());
 
         /*
-        int startColor1 = ContextCompat.getColor(a, android.R.color.holo_orange_light);
+        int startColor1 = ContextCompat.getColor(a.getMainActivity(), android.R.color.holo_orange_light);
         int startColor2 = ContextCompat.getColor(a, android.R.color.holo_blue_light);
-        int startColor3 = ContextCompat.getColor(a, android.R.color.holo_orange_light);
+        int startColor3 = ContextCompat.getColor(a.getMainActivity(), android.R.color.holo_orange_light);
         int startColor4 = ContextCompat.getColor(a, android.R.color.holo_green_light);
         int startColor5 = ContextCompat.getColor(a, android.R.color.holo_red_light);
         int endColor1 = ContextCompat.getColor(a, android.R.color.holo_blue_dark);
         int endColor2 = ContextCompat.getColor(a, android.R.color.holo_purple);
         int endColor3 = ContextCompat.getColor(a, android.R.color.holo_green_dark);
         int endColor4 = ContextCompat.getColor(a, android.R.color.holo_red_dark);
-        int endColor5 = ContextCompat.getColor(a, android.R.color.holo_orange_dark);
-        */
+        int endColor5 = ContextCompat.getColor(a, android.R.color.holo_orange_dark);*/
+
 
         data.setValueTextSize(10f);
         data.setBarWidth(0.9f);
@@ -275,6 +333,61 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         piePolyLineChart.setData(data);
         piePolyLineChart.invalidate();
+    }
+
+    public void lineChart(){
+
+        LineChart chartUI;
+
+        chartUI = a.getMainActivity().findViewById(R.id.lineChart);
+
+        chartUI.setOnChartValueSelectedListener(this);
+
+        chartUI.setDrawGridBackground(false);
+        chartUI.getDescription().setEnabled(false);
+        chartUI.setDrawBorders(false);
+
+        chartUI.getAxisLeft().setEnabled(false);
+        chartUI.getAxisRight().setDrawAxisLine(false);
+        chartUI.getAxisRight().setDrawGridLines(false);
+        chartUI.getXAxis().setDrawAxisLine(false);
+        chartUI.getXAxis().setDrawGridLines(false);
+        chartUI.getXAxis().setLabelRotationAngle(-9f);
+        chartUI.getXAxis().setAvoidFirstLastClipping(true);
+        chartUI.setTouchEnabled(true);
+        chartUI.setDragEnabled(true);
+        chartUI.setScaleEnabled(true);
+
+        chartUI.setPinchZoom(false);
+
+        Legend l = chartUI.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setDrawInside(false);
+        l.setYOffset(10f);
+        l.setTextSize(15);
+        l.setTextColor(Color.rgb(0, 0, 0));
+
+        chartUI.setVisibleXRangeMaximum(60);
+
+        chartUI.getXAxis().setCenterAxisLabels(true);
+        chartUI.getXAxis().setGranularity(10f); // 10 seconds
+        chartUI.getXAxis().setValueFormatter(new IndexAxisValueFormatter() {
+
+            private final SimpleDateFormat mFormat = new SimpleDateFormat("dd/MM/yy");
+
+            @Override
+            public String getFormattedValue(float value) {
+
+                long millis = TimeUnit.DAYS.toMillis((long) value);
+                long actualDate = (long) millis;// + firstDate*1000; //TODO: aqui
+                return mFormat.format(new Date(actualDate));
+            }
+        });
+
+        lineChart  = chartUI;
+
     }
 
     public void lineChartData(){
