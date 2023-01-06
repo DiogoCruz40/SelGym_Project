@@ -19,11 +19,12 @@
 
         <ImageView
             android:id="@+id/imageViewPicker"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toStartOf="@+id/name2"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/setsfield2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,13 +39,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.746"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/duration2"
             android:layout_width="65dp"
             android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:gravity="center_horizontal|center_vertical"
             android:text="time"
             android:textColor="@color/black"
@@ -57,7 +59,7 @@
             android:id="@+id/sets2"
             android:layout_width="36dp"
             android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:text="sets"
             android:textColor="@color/black"
@@ -70,7 +72,7 @@
             android:id="@+id/weight2"
             android:layout_width="54dp"
             android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:text="weight"
             android:textColor="@color/black"
@@ -83,7 +85,7 @@
             android:id="@+id/rest2"
             android:layout_width="32dp"
             android:layout_height="24dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="28dp"
             android:gravity="center_vertical"
             android:text="rest"
             android:textColor="@color/black"
@@ -93,12 +95,26 @@
             app:layout_constraintTop_toBottomOf="@+id/name2" />
 
         <TextView
+            android:id="@+id/restfield2"
+            android:layout_width="32dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="28dp"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rest2" />
+
+        <TextView
             android:id="@+id/setsfield2"
             android:layout_width="36dp"
             android:layout_height="40dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
             android:ems="10"
+            android:gravity="center"
             android:inputType="number"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/durationfield2"
@@ -108,33 +124,23 @@
             android:id="@+id/weightfield2"
             android:layout_width="54dp"
             android:layout_height="40dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
             android:ems="10"
+            android:gravity="center"
             android:inputType="numberDecimal"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/restfield2"
             app:layout_constraintTop_toBottomOf="@+id/weight2" />
 
         <TextView
-            android:id="@+id/restfield2"
-            android:layout_width="32dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
-            android:ems="10"
-            android:inputType="numberDecimal"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rest2" />
-
-        <TextView
             android:id="@+id/durationfield2"
             android:layout_width="65dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
             android:ems="10"
+            android:gravity="center"
             android:inputType="numberDecimal"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/weightfield2"

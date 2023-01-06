@@ -2,6 +2,7 @@ package pt.selfgym.ui.workouts;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -91,6 +92,13 @@ public class WorkoutFragment extends Fragment implements WorkoutsInterface, Butt
 
 //                Log.w("id", ((ExerciseWODTO) workouts.get(1).getWorkoutComposition().get(0)).getId().toString());
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.workouts);
+            RecyclerView.ItemDecoration itemDecoration = new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.bottom = 15;
+                }
+            };
+            recyclerView.addItemDecoration(itemDecoration);
             adapter = new ListAdapter(workouts, this);
             recyclerView.setNestedScrollingEnabled(false);
             recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));

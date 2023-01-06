@@ -134,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements ActivityInterface
 
     @Override
     protected void onResume() {
-        model.startDB();
         super.onResume();
     }
 

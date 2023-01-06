@@ -3,6 +3,7 @@ package pt.selfgym.ui.calendar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +51,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
     private FragmentCalendarBinding binding;
     private ActivityInterface activityInterface;
     private EventsAdapter adapter;
-    private List<EventDTO> events;
+//    private List<EventDTO> events;
     private SharedViewModel sharedViewModel;
     private CalendarView calendarView;
     private View view;
@@ -71,10 +72,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
 
         sharedViewModel.getEventsCalendar();
         calendarView = view.findViewById(R.id.calendar);
-
-
         long millis = calendarView.getDate();
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(millis);
         int year = calendar.get(Calendar.YEAR);
@@ -83,33 +81,7 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
         selectedDate = new DateDTO(dayOfMonth, month, year);
 
         sharedViewModel.getEventsCa().observe(getViewLifecycleOwner(), events -> {
-            this.events = events;
 
-
-            ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
-
-            for (EventDTO e : events) {
-                if (dayOfMonth == e.getDate().getDay() && month == e.getDate().getMonth() && year == e.getDate().getYear()) {
-                    eventsDay.add(e);
-                }
-            }
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.eventList);
-            adapter = new EventsAdapter(eventsDay, this);
-            //recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-            recyclerView.setAdapter(adapter);
-            //não sei porquê mas sem isto aqui não coloca a lista na recycler view
-            adapter.setEvents(eventsDay);
-
-
-            TextView workoutNr = (TextView) view.findViewById(R.id.workoutNr);
-            workoutNr.setText(eventsDay.size() + "");
-            TextView workoutString = (TextView) view.findViewById(R.id.workoutString);
-            if (eventsDay.size() == 1) {
-                workoutString.setText("workout");
-            } else {
-                workoutString.setText("workouts");
-            }
             calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
                 @Override
                 public void onSelectedDayChange(@NonNull CalendarView cview, int year, int month, int dayOfMonth) {
@@ -134,6 +106,38 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
 
                 }
             });
+
+            ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
+
+            for (EventDTO e : events) {
+                if (selectedDate.getDay() == e.getDate().getDay() && selectedDate.getMonth() == e.getDate().getMonth() && selectedDate.getYear() == e.getDate().getYear()) {
+                    eventsDay.add(e);
+                }
+            }
+
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.eventList);
+            RecyclerView.ItemDecoration itemDecoration = new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.bottom = 15;
+                }
+            };
+            recyclerView.addItemDecoration(itemDecoration);
+            adapter = new EventsAdapter(eventsDay, this);
+            recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+            recyclerView.setAdapter(adapter);
+            //não sei porquê mas sem isto aqui não coloca a lista na recycler view
+            adapter.setEvents(eventsDay);
+
+
+            TextView workoutNr = (TextView) view.findViewById(R.id.workoutNr);
+            workoutNr.setText(eventsDay.size() + "");
+            TextView workoutString = (TextView) view.findViewById(R.id.workoutString);
+            if (eventsDay.size() == 1) {
+                workoutString.setText("workout");
+            } else {
+                workoutString.setText("workouts");
+            }
         });
 
 
@@ -211,53 +215,44 @@ public class CalendarFragment extends Fragment implements ButtonsInterface {
             @Override
             public void onClick(View aview) {
                 try {
-                    Integer hour = Integer.parseInt(time.getText().toString().split(":")[0]);
-                    Integer minute = Integer.parseInt(time.getText().toString().split(":")[1]);
-                    Integer repeat = Integer.parseInt(nrOfRepetitions.getText().toString());
-                    String recurrence = Recurrence.getSelectedItem().toString();
-                    if (recurrence == "Once") {
-                        repeat = 1;
-                    }
-                    String workoutName = workout.getSelectedItem().toString();
-                    WorkoutDTO workoutDTO = new WorkoutDTO();
-                    for (WorkoutDTO wo : sharedViewModel.getWorkouts().getValue()) {
-                        if (wo.getName().equalsIgnoreCase(workoutName)) {
-                            workoutDTO = wo;
-                        }
-                    }
-
-                    DateDTO dateDTO = selectedDate;
-                    for (int i = repeat; i > 0; i--) {
-                        sharedViewModel.setEventCalendar(new EventDTO(workoutDTO, dateDTO, hour, minute, i, recurrence));
-                        if (recurrence.equals("Every Month")) {
-                            dateDTO = dateDTO.addOneMonth();
-                        } else if (recurrence.equals("Every Week")) {
-                            dateDTO = dateDTO.addOneWeek();
-                        } else if (recurrence.equals("Every Day")) {
-                            dateDTO = dateDTO.addOneDay();
-                        } else {
-                            break;
-                        }
-                    }
-
-                    //update views
-                    ArrayList<EventDTO> eventsDay = new ArrayList<EventDTO>();
-                    for (EventDTO e : events) {
-                        if (selectedDate.getDay() == e.getDate().getDay() && selectedDate.getMonth() == e.getDate().getMonth() && selectedDate.getYear() == e.getDate().getYear()) {
-                            eventsDay.add(e);
-                        }
-                    }
-                    adapter.setEvents(eventsDay);
-                    TextView workoutNr = (TextView) view.findViewById(R.id.workoutNr);
-                    workoutNr.setText(eventsDay.size() + "");
-                    TextView workoutString = (TextView) view.findViewById(R.id.workoutString);
-                    if (eventsDay.size() == 1) {
-                        workoutString.setText("workout");
+                    if (workout.getSelectedItem() == null) {
+                        sharedViewModel.getToastMessageObserver().setValue("You don't have a workout selected");
+                    } else if (time.getText().length() != 5 || time.getText().toString().charAt(2) != ':') {
+                        sharedViewModel.getToastMessageObserver().setValue("Please right a correct Hours format");
+                    } else if (nrOfRepetitions.getText().length() == 0 || Integer.parseInt(nrOfRepetitions.getText().toString()) == 0) {
+                        sharedViewModel.getToastMessageObserver().setValue("Repetitions must be greater than 0");
                     } else {
-                        workoutString.setText("workouts");
-                    }
+                        Integer hour = Integer.parseInt(time.getText().toString().split(":")[0]);
+                        Integer minute = Integer.parseInt(time.getText().toString().split(":")[1]);
+                        Integer repeat = Integer.parseInt(nrOfRepetitions.getText().toString());
+                        String recurrence = Recurrence.getSelectedItem().toString();
+                        if (recurrence == "Once") {
+                            repeat = 1;
+                        }
+                        String workoutName = workout.getSelectedItem().toString();
+                        WorkoutDTO workoutDTO = new WorkoutDTO();
+                        for (WorkoutDTO wo : sharedViewModel.getWorkouts().getValue()) {
+                            if (wo.getName().equalsIgnoreCase(workoutName)) {
+                                workoutDTO = wo;
+                            }
+                        }
 
-                    dialog.dismiss();
+                        DateDTO dateDTO = selectedDate;
+                        for (int i = repeat; i > 0; i--) {
+                            sharedViewModel.setEventCalendar(new EventDTO(workoutDTO, dateDTO, hour, minute, i, recurrence));
+                            if (recurrence.equals("Every Month")) {
+                                dateDTO = dateDTO.addOneMonth();
+                            } else if (recurrence.equals("Every Week")) {
+                                dateDTO = dateDTO.addOneWeek();
+                            } else if (recurrence.equals("Every Day")) {
+                                dateDTO = dateDTO.addOneDay();
+                            } else {
+                                break;
+                            }
+                        }
+
+                        dialog.dismiss();
+                    }
                 } catch (Exception e) {
                     dialog.dismiss();
                 }

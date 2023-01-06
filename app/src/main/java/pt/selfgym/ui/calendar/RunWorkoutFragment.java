@@ -10,6 +10,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -97,6 +98,13 @@ public class RunWorkoutFragment extends Fragment {
             this.workout = workout;
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
 //            Log.w("help",workout.getWorkoutComposition().toString());
+            RecyclerView.ItemDecoration itemDecoration = new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.bottom = 15;
+                }
+            };
+            recyclerView.addItemDecoration(itemDecoration);
             adapter = new RunAdapter(workout, activityInterface.getMainActivity());
             recyclerView.setNestedScrollingEnabled(false);
             recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));

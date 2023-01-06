@@ -3,6 +3,7 @@ package pt.selfgym.ui.workouts;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -35,8 +36,11 @@ import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.Interfaces.EditWorkoutInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
+import pt.selfgym.database.entities.ExerciseSet;
+import pt.selfgym.database.entities.ExerciseWO;
 import pt.selfgym.dtos.CircuitDTO;
 import pt.selfgym.dtos.ExerciseWODTO;
+import pt.selfgym.dtos.SetsDTO;
 import pt.selfgym.dtos.WorkoutDTO;
 
 
@@ -89,6 +93,13 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
 //            mViewModel.setResult(new AtomicBoolean(false));
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.exercises);
 //            Log.w("help",workout.getWorkoutComposition().toString());
+            RecyclerView.ItemDecoration itemDecoration = new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.bottom = 15;
+                }
+            };
+            recyclerView.addItemDecoration(itemDecoration);
             adapter = new EditAdapter(workout, activityInterface.getMainActivity(), this, workoutViewModel);
             recyclerView.setNestedScrollingEnabled(false);
             recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
@@ -134,48 +145,95 @@ public class EditWorkoutFragment extends Fragment implements EditWorkoutInterfac
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
                         WorkoutDTO newWorkout = adapter.saveWorkoutChanges(workout);
-                        boolean trigger = false;
-                        for (Object obj : newWorkout.getWorkoutComposition()) {
-                            if (obj instanceof CircuitDTO) {
-                                if (((CircuitDTO) obj).getExerciseList().isEmpty())
-                                    trigger = true;
-                            }
-                        }
-                        if (trigger) {
-                            mViewModel.getToastMessageObserver().setValue("Your circuits can't be empty");
+                        newWorkout.setName(name.getText().toString());
+                        newWorkout.setObservation(observations.getText().toString());
+                        newWorkout.setType(type.getSelectedItem().toString());
 
+                        if (newWorkout.getName().isEmpty()) {
+                            mViewModel.getToastMessageObserver().setValue("Your Workout name can't be empty");
                         } else {
-                            newWorkout.setName(name.getText().toString());
-                            newWorkout.setObservation(observations.getText().toString());
-                            newWorkout.setType(type.getSelectedItem().toString());
+                            boolean trigger = false;
+                            boolean trigger2 = false;
+                            boolean trigger3 = false;
+                            boolean trigger4 = false;
+                            for (Object obj : newWorkout.getWorkoutComposition()) {
+                                if (obj instanceof CircuitDTO) {
+                                    if (((CircuitDTO) obj).getExerciseList().isEmpty()) {
+                                        trigger = true;
+                                        break;
+                                    } else {
+                                        for (ExerciseWODTO exerciseWODTO : ((CircuitDTO) obj).getExerciseList()) {
+                                            if ((exerciseWODTO.isVariableSetsReps() || exerciseWODTO.isVariableSetsTime()) && exerciseWODTO.getSetsList().isEmpty()) {
+                                                trigger2 = true;
+                                                break;
+                                            } else if ((exerciseWODTO.isFixedSetsReps() || exerciseWODTO.isFixedSetsTime()) && exerciseWODTO.getDuration() == 0 && exerciseWODTO.getReps() == 0) {
+                                                trigger3 = true;
+                                                break;
+                                            } else if (exerciseWODTO.getSetsList() != null) {
+                                                for (SetsDTO setsDTO : exerciseWODTO.getSetsList()) {
+                                                    if (setsDTO.getVariable() == 0) {
+                                                        trigger3 = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (trigger3)
+                                                    break;
+                                            }
+                                        }
+                                        if (trigger2 || trigger3) {
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    if (((ExerciseWODTO) obj).getReps() == 0 && ((ExerciseWODTO) obj).getDuration() == 0) {
+                                        trigger3 = true;
+                                        break;
+                                    } else if (((ExerciseWODTO) obj).getSets() == 0) {
+                                        trigger4 = true;
+                                        break;
+                                    }
+                                }
+                            }
 
-                            if (workout.getId() == null) {
-                                mViewModel.insertWorkout(newWorkout);
+                            if (trigger) {
+                                mViewModel.getToastMessageObserver().setValue("Your circuits can't be empty");
 
-                                mViewModel.getGetResultInsert().observe(getViewLifecycleOwner(), new Observer<AtomicBoolean>() {
-                                    @Override
-                                    public void onChanged(AtomicBoolean atomicBoolean) {
-                                        if (atomicBoolean.get()) {
-                                            mViewModel.updateStats(null, type.getSelectedItem().toString(), workout.getNrOfConclusions());
+                            } else if (trigger2) {
+                                mViewModel.getToastMessageObserver().setValue("You cant have empty sets");
+                            } else if (trigger3) {
+                                mViewModel.getToastMessageObserver().setValue("Time/Reps must be greater than 0");
+                            } else if (trigger4) {
+                                mViewModel.getToastMessageObserver().setValue("Sets must be greater than 0");
+                            } else {
+                                if (workout.getId() == null) {
+                                    mViewModel.insertWorkout(newWorkout);
+
+                                    mViewModel.getGetResultInsert().observe(getViewLifecycleOwner(), new Observer<AtomicBoolean>() {
+                                        @Override
+                                        public void onChanged(AtomicBoolean atomicBoolean) {
+                                            if (atomicBoolean.get()) {
+                                                mViewModel.updateStats(null, type.getSelectedItem().toString(), workout.getNrOfConclusions());
+                                                mViewModel.top5Workouts();
+                                                activityInterface.changeFrag(new WorkoutFragment(), null);
+                                            } else
+                                                mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
+                                        }
+                                    });
+
+                                } else {
+                                    mViewModel.updateWorkout(newWorkout);
+
+                                    mViewModel.getGetResultUpdate().observe(getViewLifecycleOwner(), result -> {
+                                        if (result.get()) {
+                                            mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString(), workout.getNrOfConclusions());
                                             mViewModel.top5Workouts();
                                             activityInterface.changeFrag(new WorkoutFragment(), null);
                                         } else
                                             mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
-                                    }
-                                });
-
-                            } else {
-                                mViewModel.updateWorkout(newWorkout);
-
-                                mViewModel.getGetResultUpdate().observe(getViewLifecycleOwner(), result -> {
-                                    if (result.get()) {
-                                        mViewModel.updateStats(workout.getType(), type.getSelectedItem().toString(), workout.getNrOfConclusions());
-                                        mViewModel.top5Workouts();
-                                        activityInterface.changeFrag(new WorkoutFragment(), null);
-                                    } else
-                                        mViewModel.getToastMessageObserver().setValue("This name of workout already exists");
-                                });
+                                    });
+                                }
                             }
+
                         }
                         return false;
                     }

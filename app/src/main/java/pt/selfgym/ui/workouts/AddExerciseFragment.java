@@ -3,6 +3,7 @@ package pt.selfgym.ui.workouts;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -95,6 +96,14 @@ public class AddExerciseFragment extends Fragment implements ButtonsInterface {
             //exerciseDTOS.add(new ExerciseDTO("bicep curl","https://www.google.com/imgres?imgurl=https%3A%2F%2Fs3-us-west-1.amazonaws.com%2Fcontentlab.studiod%2Fgetty%2F5d0a3fd0c11b431790f6707b8cdb42d6.jpg&imgrefurl=https%3A%2F%2Fwww.livestrong.com%2Farticle%2F13722123-biceps-curl-mistakes%2F&tbnid=q6_xv7KoM8nacM&vet=12ahUKEwjatv_GmI38AhWIgycCHWHqAboQMygQegUIARDrAQ..i&docid=EjPjPjjMWnKSsM&w=5000&h=3333&q=bicep%20curl%20image&ved=2ahUKEwjatv_GmI38AhWIgycCHWHqAboQMygQegUIARDrAQ","pull"));
 
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewExercise);
+            RecyclerView.ItemDecoration itemDecoration = new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.bottom = 10;
+                    outRect.right = 10;
+                }
+            };
+            recyclerView.addItemDecoration(itemDecoration);
             adapter = new PickExerciseAdapter(exerciseDTOS, this);
             recyclerView.setNestedScrollingEnabled(false);
             recyclerView.setLayoutManager(new GridLayoutManager(inflater.getContext(), 2));
@@ -127,7 +136,7 @@ public class AddExerciseFragment extends Fragment implements ButtonsInterface {
 
             tabs.getTabAt(0).select();
             View customView = tabs.getTabAt(0).getCustomView();
-            ((TextView) customView).setTextColor(Color.parseColor("#9B30FF"));
+            ((TextView) customView).setTextColor(Color.parseColor("#FA920F"));
 
             tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
@@ -145,7 +154,7 @@ public class AddExerciseFragment extends Fragment implements ButtonsInterface {
                     }
 
                     View customView = tab.getCustomView();
-                    ((TextView) customView).setTextColor(Color.parseColor("#9B30FF"));
+                    ((TextView) customView).setTextColor(Color.parseColor("#FA920F"));
                 }
 
                 @Override
