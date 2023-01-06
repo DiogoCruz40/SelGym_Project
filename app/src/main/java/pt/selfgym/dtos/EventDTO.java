@@ -78,6 +78,7 @@ public class EventDTO {
     public String getRecurrence() {
         return recurrence;
     }
+
     public Integer getRepetitionNr() {
         return repetitionNr;
     }

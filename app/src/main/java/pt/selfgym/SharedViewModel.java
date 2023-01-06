@@ -95,6 +95,7 @@ public class SharedViewModel extends AndroidViewModel {
     public void setTopics(List<String> topicslist) {
         topics.setValue(topicslist);
     }
+
     public MutableLiveData<List<WorkoutDTO>> getWorkoutsTop5() {
         return this.workoutsTop5;
     }

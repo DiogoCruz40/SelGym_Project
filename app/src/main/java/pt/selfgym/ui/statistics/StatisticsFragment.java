@@ -95,15 +95,10 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        //a = activityInterface.getMainActivity();
-
-        //this.statisticsViewModel = new ViewModelProvider(this).get(StatisticsViewModel.class);
         mViewModel = new ViewModelProvider(a.getMainActivity()).get(SharedViewModel.class);
 
         binding = FragmentStatisticsBinding.inflate(inflater, container, false);
 
-        //final TextView textView = binding.textNotifications;
-        //statisticsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return binding.getRoot();
     }
 
@@ -132,14 +127,15 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         mViewModel.getEventsCa().observe(getViewLifecycleOwner(), events -> {
 
             List<EventDTO> eventsTrimester = new ArrayList<EventDTO>();
-
             final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 
-            trimester = trimester(events.get(events.size()-1).getDate());
+            if(events.isEmpty()){
+                //trimester = trimester(df.getCalendar());
+            }
+            else{
+                trimester = trimester(events.get(events.size()-1).getDate());
 
-            eventsPerWeek = new Hashtable<String, Integer>();
-
-            if(!events.isEmpty()){
+                eventsPerWeek = new Hashtable<String, Integer>();
 
                 for(EventDTO e: events){
 
@@ -153,9 +149,10 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
                         eventsPerWeek.put(week(e.getDate()), value + 1);
                     }
                 }
-
                 lineChartData();
+
             }
+
         });
 
     }
@@ -243,19 +240,6 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         data.setValueFormatter(new LargeValueFormatter());
 
-        /*
-        int startColor1 = ContextCompat.getColor(a.getMainActivity(), android.R.color.holo_orange_light);
-        int startColor2 = ContextCompat.getColor(a, android.R.color.holo_blue_light);
-        int startColor3 = ContextCompat.getColor(a.getMainActivity(), android.R.color.holo_orange_light);
-        int startColor4 = ContextCompat.getColor(a, android.R.color.holo_green_light);
-        int startColor5 = ContextCompat.getColor(a, android.R.color.holo_red_light);
-        int endColor1 = ContextCompat.getColor(a, android.R.color.holo_blue_dark);
-        int endColor2 = ContextCompat.getColor(a, android.R.color.holo_purple);
-        int endColor3 = ContextCompat.getColor(a, android.R.color.holo_green_dark);
-        int endColor4 = ContextCompat.getColor(a, android.R.color.holo_red_dark);
-        int endColor5 = ContextCompat.getColor(a, android.R.color.holo_orange_dark);*/
-
-
         data.setValueTextSize(10f);
         data.setBarWidth(0.9f);
 
@@ -311,7 +295,9 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         for (Enumeration<String> k = stats.keys(); k.hasMoreElements();) {
             String key = k.nextElement();
             int value = (int) stats.get(key);
-            entries.add(new PieEntry((float) value/ 5, key));
+            if(!(value==0)){
+                entries.add(new PieEntry((float) value/ 5, key));
+            }
         }
 
         PieDataSet dataSet = new PieDataSet(entries, "");

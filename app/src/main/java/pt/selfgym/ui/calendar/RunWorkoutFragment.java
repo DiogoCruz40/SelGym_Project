@@ -170,6 +170,8 @@ public class RunWorkoutFragment extends Fragment {
                 for (EventDTO e : mViewModel.getEventsCa().getValue()) {
                     if (e.getEventId().equals(id_event)) {
                         e.setConcluded(true);
+                        e.getWorkoutDTO().addConclusion(); //TODO: verificar se isto é correto
+                        mViewModel.top5Workouts();
                         mViewModel.updateEventCalendar(e);
                         break;
                     }

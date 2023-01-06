@@ -85,4 +85,8 @@ public class WorkoutDTO {
     public void setNrOfConclusions(int nrOfConclusions) {
         this.nrOfConclusions = nrOfConclusions;
     }
+
+    public void addConclusion() {
+        this.nrOfConclusions++;
+    }
 }
