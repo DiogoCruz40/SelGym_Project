@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,6 +42,7 @@ import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -51,6 +54,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -68,17 +73,14 @@ import pt.selfgym.databinding.FragmentStatisticsBinding;
 import pt.selfgym.dtos.DateDTO;
 import pt.selfgym.dtos.EventDTO;
 import pt.selfgym.dtos.WorkoutDTO;
+import pt.selfgym.ui.workouts.EditWorkoutFragment;
 import pt.selfgym.ui.workouts.WorkoutViewModel;
 
 public class StatisticsFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener {
 
-    private FragmentStatisticsBinding binding;
-    private ActivityInterface activityInterface;
-    private View view;
-
-    private SharedViewModel mViewModel;
-
     private ActivityInterface a;
+    private FragmentStatisticsBinding binding;
+    private SharedViewModel mViewModel;
 
     private PieChart piePolyLineChart;
     private LineChart lineChart;
@@ -89,6 +91,10 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
     private Dictionary<String, Integer> eventsPerWeek = new Hashtable<String, Integer>();
 
+    DateDTO firstDate, lastDate;
+
+    TextView trimesterText;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -98,11 +104,71 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        mViewModel = new ViewModelProvider(a.getMainActivity()).get(SharedViewModel.class);
-
         binding = FragmentStatisticsBinding.inflate(inflater, container, false);
 
-        return binding.getRoot();
+        View view = binding.getRoot();
+
+        mViewModel = new ViewModelProvider(a.getMainActivity()).get(SharedViewModel.class);
+
+        Calendar c = Calendar.getInstance();
+        trimester = new DateDTO(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR));
+        trimesterWeek = week(trimester(trimester));
+
+        TextView titleTop5 = (TextView) view.findViewById(R.id.titleTop5);
+        titleTop5.setText("Top 5 Concluded Workouts");
+
+        trimesterText = (TextView) view.findViewById(R.id.trimesterText);
+        String labelLineChart = trimesterNumber(trimester) + " trimester " + trimester.getYear();
+        trimesterText.setText(labelLineChart);
+
+        ImageButton addLeftButton = (ImageButton) view.findViewById(R.id.swipeLeft);
+        ImageButton addRightButton = (ImageButton) view.findViewById(R.id.swipeRight);
+
+        addRightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                trimester = addTrimester(trimester, true);
+                trimesterWeek = week(trimester(trimester));
+                lineChartData();
+
+                String labelLineChart = trimesterNumber(trimester) + " trimester " + trimester.getYear();
+                trimesterText.setText(labelLineChart);
+
+                updateLineChartAxis();
+
+                addLeftButton.setEnabled(true);
+                addLeftButton.setBackgroundColor(Color.rgb(250,146,15));
+
+                if(trimesterNumber(lastDate) == trimesterNumber(trimester) && lastDate.getYear()==trimester.getYear()){
+                    addRightButton.setEnabled(false);
+                    addRightButton.setBackgroundColor(Color.rgb(227,239,242));
+                }
+            }
+        });
+
+        addLeftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                trimester = addTrimester(trimester, false);
+                trimesterWeek = week(trimester(trimester));
+                lineChartData();
+
+                String labelLineChart = trimesterNumber(trimester) + " trimester " + trimester.getYear();
+                trimesterText.setText(labelLineChart);
+
+                updateLineChartAxis();
+
+                addRightButton.setEnabled(true);
+                addRightButton.setBackgroundColor(Color.rgb(250,146,15));
+
+                if(trimesterNumber(firstDate) == trimesterNumber(trimester) && firstDate.getYear()==trimester.getYear()){
+                    addLeftButton.setEnabled(false);
+                    addLeftButton.setBackgroundColor(Color.rgb(227,239,242));
+                }
+            }
+        });
+
+        return view;
     }
 
     @Override
@@ -130,18 +196,27 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         mViewModel.getEventsCa().observe(getViewLifecycleOwner(), events -> {
 
-            if(events.isEmpty()){
-                DateDTO today = new DateDTO(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
-                trimesterWeek = week(trimester(today));
-            }
-            else{
-                trimesterWeek = week(trimester(events.get(events.size()-1).getDate()));
+            if(!events.isEmpty()){
 
-                eventsPerWeek = new Hashtable<String, Integer>();
+                firstDate = events.get(0).getDate();
+                lastDate = events.get(0).getDate();
+
+                Calendar c = Calendar.getInstance();
+                trimester = new DateDTO(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR));
+                trimesterWeek = week(trimester(trimester));
 
                 for(EventDTO e: events){
 
-                    int week = week(e.getDate());
+                    DateDTO auxDate = e.getDate();
+
+                    if(auxDate.compareDate(firstDate)<0){
+                        firstDate=auxDate;
+                    }
+                    else if(auxDate.compareDate(lastDate)>0){
+                        lastDate=auxDate;
+                    }
+
+                    int week = week(auxDate);
                     String key = week + "_" + e.getDate().getYear();
                     Integer value = eventsPerWeek.get(key);
 
@@ -153,7 +228,17 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
                     }
                 }
 
-                //lineChartData();
+                for(DateDTO i=firstDate; i.compareDate(lastDate)<=0; i=i.addOneWeek()){
+                    int week = week(i);
+                    String key = week + "_" + i.getYear();
+                    Integer value = eventsPerWeek.get(key);
+
+                    if(value==null){
+                        eventsPerWeek.put(key, 0);
+                    }
+                }
+
+                lineChartData();
 
             }
 
@@ -189,6 +274,39 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         }
     }
 
+    public String trimesterNumber(DateDTO date){
+
+        int month = date.getMonth();
+
+        if (month >= Calendar.JANUARY && month <= Calendar.MARCH) {
+            return "1st";
+        } else if (month >= Calendar.APRIL && month <= Calendar.JUNE) {
+            return "2nd";
+        } else if (month >= Calendar.JULY && month <= Calendar.SEPTEMBER) {
+            return "3rd";
+        } else {
+            return "4th";
+        }
+    }
+
+    public DateDTO addTrimester(DateDTO date, boolean add){
+
+        int month = date.getMonth();
+
+        if(month <= 3 && !add){
+            return new DateDTO(1, 10, date.getYear() - 1);
+        }
+        else if(!add){
+            return new DateDTO(1, month - 3, date.getYear());
+        }
+        else if(month <10){
+            return new DateDTO(1, month + 3, date.getYear());
+        }
+        else{
+            return new DateDTO(1, 1, date.getYear() + 1);
+        }
+    }
+
     public void barChart(){
 
         BarChart chartUI = a.getMainActivity().findViewById(R.id.barChart);
@@ -203,10 +321,10 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         chartUI.setPinchZoom(false);
 
         chartUI.setDrawGridBackground(false);
-        // chart.setDrawYLabels(false);
 
         XAxis xAxis = chartUI.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1);
         xAxis.setDrawGridLines(false);
         xAxis.setLabelCount(5);
 
@@ -331,6 +449,55 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         piePolyLineChart.invalidate();
     }
 
+    public void updateLineChartAxis(){
+
+        XAxis xAxis = lineChart.getXAxis();
+
+        xAxis.setGranularity(4f); // 4 weeks
+        xAxis.setValueFormatter(new IndexAxisValueFormatter() {
+
+            @Override
+            public String getFormattedValue(float value) {
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.WEEK_OF_YEAR, (int) value);
+
+                int month = calendar.get(Calendar.MONTH);
+                int year = trimester.getYear();
+
+                return getMonthName(month) + " " + year;
+            }
+        });
+    }
+
+    private String getMonthName(int month) {
+        switch (month) {
+            case Calendar.JANUARY:
+                return "JAN";
+            case Calendar.FEBRUARY:
+                return "FEB";
+            case Calendar.MARCH:
+                return "MAR";
+            case Calendar.APRIL:
+                return "APR";
+            case Calendar.MAY:
+                return "MAY";
+            case Calendar.JUNE:
+                return "JUN";
+            case Calendar.JULY:
+                return "JUL";
+            case Calendar.AUGUST:
+                return "AUG";
+            case Calendar.SEPTEMBER:
+                return "SEP";
+            case Calendar.OCTOBER:
+                return "OCT";
+            case Calendar.NOVEMBER:
+                return "NOV";
+        }
+        return "DEC";
+    }
+
     public void lineChart(){
 
         LineChart chartUI;
@@ -344,43 +511,27 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         chartUI.setDrawBorders(false);
 
         chartUI.getAxisLeft().setEnabled(false);
+        chartUI.getAxisRight().setGranularity(1);
         chartUI.getAxisRight().setDrawAxisLine(false);
         chartUI.getAxisRight().setDrawGridLines(false);
         chartUI.getXAxis().setDrawAxisLine(false);
         chartUI.getXAxis().setDrawGridLines(false);
-        chartUI.getXAxis().setAvoidFirstLastClipping(true);
+        chartUI.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chartUI.getXAxis().setGranularity(1);
+        chartUI.getXAxis().setLabelCount(13);
+
         chartUI.setTouchEnabled(true);
         chartUI.setDragEnabled(true);
         chartUI.setScaleEnabled(true);
 
         chartUI.setPinchZoom(false);
 
-        Legend l = chartUI.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-        l.setYOffset(10f);
-        l.setTextSize(15);
-        l.setTextColor(Color.rgb(0, 0, 0));
+        chartUI.getLegend().setEnabled(false);
 
-        chartUI.getXAxis().setCenterAxisLabels(true);
-        //chartUI.getXAxis().setGranularity(1f);
-        /*
-        chartUI.getXAxis().setValueFormatter(new IndexAxisValueFormatter() {
-
-            private final SimpleDateFormat mFormat = new SimpleDateFormat("dd/MM/yy");
-
-            @Override
-            public String getFormattedValue(float value) {
-
-                long millis = TimeUnit.DAYS.toMillis((long) value);
-                long actualDate = (long) millis;// + firstDate*1000;
-                return mFormat.format(new Date(actualDate));
-            }
-        });*/
 
         lineChart  = chartUI;
+
+        updateLineChartAxis();
 
     }
 
@@ -391,28 +542,31 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         for (Enumeration<String> k = eventsPerWeek.keys(); k.hasMoreElements();) {
             String key = k.nextElement();
             int value = (int) eventsPerWeek.get(key);
-            int week;
+            int week, year;
 
-            if(key.length() == 6){
-                week = Character.getNumericValue(key.charAt(0));
-            }
-            else{
-                week = Character.getNumericValue(key.charAt(0))*10 + Character.getNumericValue(key.charAt(1));
-            }
+            week = Integer.parseInt(key.substring(0, key.length() - 5));
+            year = Integer.parseInt(key.substring(key.length() - 4));
 
             if(trimesterWeek>50){
                 trimesterWeek = 0;
             }
 
-            if(week >= trimesterWeek && week < trimesterWeek + 12){
-                weeks.add(new Entry((float) week, (float) value));
+            if(week >= trimesterWeek && week < trimesterWeek + 13 && year==trimester.getYear()){
+                weeks.add(new Entry(week, (float) value));
             }
         }
 
-        LineDataSet line = new LineDataSet(weeks, "OI");
+        Collections.sort(weeks, new Comparator<Entry>() {
+            @Override
+            public int compare(Entry entry1, Entry entry2) {
+                return Float.compare(entry1.getX(), entry2.getX());
+            }
+        });
 
-        line.setLineWidth(2f);
-        line.setCircleRadius(3f);
+        LineDataSet line = new LineDataSet(weeks, "");
+
+        line.setLineWidth(3f);
+        line.setCircleRadius(5f);
         line.setColor(colors[2]);
         line.setCircleColor(colors[2]);
         line.setDrawValues(false);
@@ -431,16 +585,30 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
     }
 
     private final int[] colors = new int[] {
+
+            /*
+            ColorTemplate.LIBERTY_COLORS[0],
+            ColorTemplate.LIBERTY_COLORS[1],
+            ColorTemplate.LIBERTY_COLORS[2],
+            ColorTemplate.LIBERTY_COLORS[3],
+            ColorTemplate.LIBERTY_COLORS[4]*/
+            /*
+            ColorTemplate.JOYFUL_COLORS[0],
+            ColorTemplate.JOYFUL_COLORS[1],
+            ColorTemplate.JOYFUL_COLORS[2],
+            ColorTemplate.JOYFUL_COLORS[3],
+            ColorTemplate.JOYFUL_COLORS[4]*/
+
             ColorTemplate.VORDIPLOM_COLORS[0],
             ColorTemplate.VORDIPLOM_COLORS[1],
-            ColorTemplate.VORDIPLOM_COLORS[2],
+            ColorTemplate.VORDIPLOM_COLORS[2], //este
             ColorTemplate.VORDIPLOM_COLORS[3],
             ColorTemplate.VORDIPLOM_COLORS[4]
+            //d37200 e07d00 ed8700 fa920f ff9d21 ffa82e ffb33b
+            //Color.rgb(207, 248, 246)
             //more colors
             //ColorTemplate.JOYFUL_COLORS
-            //ColorTemplate.COLORFUL_COLORS
             //ColorTemplate.LIBERTY_COLORS
-            // ColorTemplate.PASTEL_COLORS
     };
 
     @Override

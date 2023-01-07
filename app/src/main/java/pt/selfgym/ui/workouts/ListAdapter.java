@@ -39,7 +39,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         final WorkoutDTO workouts = filteredWorkouts.get(position);
         holder.textView.setText(workouts.getName());
-        holder.textView2.setText("(" + workouts.getType() + ")");
+        holder.textView2.setText('\u27A4' +" " + workouts.getType());
+
     }
 
     @Override

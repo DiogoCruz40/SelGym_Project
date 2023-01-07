@@ -25,16 +25,23 @@
             android:id="@+id/addWorkoutButton"
             android:layout_width="94dp"
             android:layout_height="94dp"
-            android:layout_marginBottom="75dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/add_button_shape"
             android:src="@drawable/add_button1"
             app:circularflow_angles="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/workouts"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@+id/workouts" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="409dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="60dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addWorkoutButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

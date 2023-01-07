@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,9 +38,15 @@ import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+
+import java.io.IOException;
+import java.util.Calendar;
+
 import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.R;
 import pt.selfgym.SharedViewModel;
+import pt.selfgym.dtos.DateDTO;
 import pt.selfgym.dtos.EventDTO;
 import pt.selfgym.dtos.WorkoutDTO;
 import pt.selfgym.ui.workouts.WorkoutViewModel;
@@ -164,15 +172,29 @@ public class RunWorkoutFragment extends Fragment {
         Dialog dialog = dialogBuilder.create();
         dialog.show();
 
+        DateTime dateTime = new DateTime();
+
         concludeEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 for (EventDTO e : mViewModel.getEventsCa().getValue()) {
                     if (e.getEventId().equals(id_event)) {
-                        e.setConcluded(true);
-                        e.getWorkoutDTO().addConclusion(); //TODO: verificar se isto é correto
-                        mViewModel.top5Workouts();
-                        mViewModel.updateEventCalendar(e);
+
+                        DateDTO d = e.getDate();
+
+                        DateTime dateEvent = new DateTime(d.getYear(), d.getMonth(), d.getDay(),
+                                e.getHour(), e.getMinute());
+
+                        if(dateEvent.isBefore(dateTime)){
+                            e.setConcluded(true);
+                            e.getWorkoutDTO().addConclusion();
+                            mViewModel.top5Workouts();
+                            mViewModel.updateEventCalendar(e);
+                        }
+                        else{
+                            mViewModel.getToastMessageObserver().setValue("You can't conclude future event");
+                        }
                         break;
                     }
                 }
@@ -288,10 +310,17 @@ public class RunWorkoutFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     startPause.setImageResource(R.drawable.play_foreground);
-//                                    Toast.makeText(getContext(), "Timer has ended", Toast.LENGTH_SHORT).show();
                                     Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
                                     Ringtone ringtone = RingtoneManager.getRingtone(getContext(), ringtoneUri);
-                                    ringtone.play();
+
+                                    new CountDownTimer(6100, 1000) {
+                                        public void onTick(long millisUntilFinished) {
+                                            ringtone.play();
+                                        }
+                                        public void onFinish() {
+                                            ringtone.stop();
+                                        }
+                                    }.start();
 
                                     activityInterface.getMainActivity().sendNotification("Times Up!",null);
 
