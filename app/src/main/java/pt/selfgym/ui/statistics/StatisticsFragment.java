@@ -29,6 +29,8 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -48,6 +50,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -71,7 +74,6 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
     private FragmentStatisticsBinding binding;
     private ActivityInterface activityInterface;
-    //private StatisticsViewModel statisticsViewModel;
     private View view;
 
     private SharedViewModel mViewModel;
@@ -82,9 +84,10 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
     private LineChart lineChart;
     private BarChart barChart;
 
-    private  DateDTO firstDate, lastDate, trimester;
+    private  DateDTO trimester;
+    private int trimesterWeek;
 
-    Dictionary<String, Integer> eventsPerWeek = new Hashtable<String, Integer>();
+    private Dictionary<String, Integer> eventsPerWeek = new Hashtable<String, Integer>();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -108,6 +111,7 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         barChart();
         piePolyLineChart();
+        lineChart();
 
         mViewModel.getWorkoutsTop5().observe(getViewLifecycleOwner(), top5 -> {
 
@@ -126,30 +130,30 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
         mViewModel.getEventsCa().observe(getViewLifecycleOwner(), events -> {
 
-            List<EventDTO> eventsTrimester = new ArrayList<EventDTO>();
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-
             if(events.isEmpty()){
-                //trimester = trimester(df.getCalendar());
+                DateDTO today = new DateDTO(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
+                trimesterWeek = week(trimester(today));
             }
             else{
-                trimester = trimester(events.get(events.size()-1).getDate());
+                trimesterWeek = week(trimester(events.get(events.size()-1).getDate()));
 
                 eventsPerWeek = new Hashtable<String, Integer>();
 
                 for(EventDTO e: events){
 
-                    String key = week(e.getDate());
+                    int week = week(e.getDate());
+                    String key = week + "_" + e.getDate().getYear();
                     Integer value = eventsPerWeek.get(key);
 
                     if(value==null){
-                        eventsPerWeek.put(week(e.getDate()), 1);
+                        eventsPerWeek.put(key, 1);
                     }
                     else{
-                        eventsPerWeek.put(week(e.getDate()), value + 1);
+                        eventsPerWeek.put(key, value + 1);
                     }
                 }
-                lineChartData();
+
+                //lineChartData();
 
             }
 
@@ -157,26 +161,32 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
     }
 
-    public String week(DateDTO date){
+    public int week(DateDTO date){
 
-        String[] monthsArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        String[] weeksArray = {"1", "2", "3", "4"};
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, date.getDay());
+        c.set(Calendar.MONTH, date.getMonth() - 1);
+        c.set(Calendar.YEAR, date.getYear());
 
-        return weeksArray[date.getDay()%4] + monthsArray[date.getMonth()%12] + date.getYear();
+        c.getWeekYear();
+
+        return c.get(Calendar.WEEK_OF_YEAR);
 
     }
 
     public DateDTO trimester(DateDTO date){
 
-        if(date.getMonth() < 2){
-            return new DateDTO(1, 11, date.getYear()-1);
-        }
+        int month = date.getMonth();
 
-        if(date.getMonth() < 3){
-            return new DateDTO(1, 10, date.getYear()-1);
+        if (month >= Calendar.JANUARY && month <= Calendar.MARCH) {
+          return new DateDTO(1, 1, date.getYear());
+        } else if (month >= Calendar.APRIL && month <= Calendar.JUNE) {
+          return new DateDTO(1, 4, date.getYear());
+        } else if (month >= Calendar.JULY && month <= Calendar.SEPTEMBER) {
+          return new DateDTO(1, 7, date.getYear());
+        } else {
+          return new DateDTO(1, 10, date.getYear());
         }
-
-        return new DateDTO(1, date.getMonth()-2, date.getYear());
     }
 
     public void barChart(){
@@ -338,7 +348,6 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         chartUI.getAxisRight().setDrawGridLines(false);
         chartUI.getXAxis().setDrawAxisLine(false);
         chartUI.getXAxis().setDrawGridLines(false);
-        chartUI.getXAxis().setLabelRotationAngle(-9f);
         chartUI.getXAxis().setAvoidFirstLastClipping(true);
         chartUI.setTouchEnabled(true);
         chartUI.setDragEnabled(true);
@@ -355,10 +364,9 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
         l.setTextSize(15);
         l.setTextColor(Color.rgb(0, 0, 0));
 
-        chartUI.setVisibleXRangeMaximum(60);
-
         chartUI.getXAxis().setCenterAxisLabels(true);
-        chartUI.getXAxis().setGranularity(10f); // 10 seconds
+        //chartUI.getXAxis().setGranularity(1f);
+        /*
         chartUI.getXAxis().setValueFormatter(new IndexAxisValueFormatter() {
 
             private final SimpleDateFormat mFormat = new SimpleDateFormat("dd/MM/yy");
@@ -367,71 +375,53 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
             public String getFormattedValue(float value) {
 
                 long millis = TimeUnit.DAYS.toMillis((long) value);
-                long actualDate = (long) millis;// + firstDate*1000; //TODO: aqui
+                long actualDate = (long) millis;// + firstDate*1000;
                 return mFormat.format(new Date(actualDate));
             }
-        });
+        });*/
 
         lineChart  = chartUI;
 
     }
 
     public void lineChartData(){
-        /*
-        ArrayList<Entry> temp = new ArrayList<>();
-        ArrayList<Entry> hum = new ArrayList<>();
 
-        for (PointDTO p : chartPoints) {
+        ArrayList<Entry> weeks = new ArrayList<>();
 
-            String str = p.getTimestamp();
-            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+        for (Enumeration<String> k = eventsPerWeek.keys(); k.hasMoreElements();) {
+            String key = k.nextElement();
+            int value = (int) eventsPerWeek.get(key);
+            int week;
 
-            try {
+            if(key.length() == 6){
+                week = Character.getNumericValue(key.charAt(0));
+            }
+            else{
+                week = Character.getNumericValue(key.charAt(0))*10 + Character.getNumericValue(key.charAt(1));
+            }
 
-                Date date = df.parse(str);
-                long epoch = date.getTime()/1000 - firstDate; //divide by 1000 - milliseconds
-                //Dps posso converter para a data normal again
+            if(trimesterWeek>50){
+                trimesterWeek = 0;
+            }
 
-                if(p.getTemperature() != null) {
-                    temp.add(new Entry(epoch, p.getTemperature()));
-                }
-
-                if(p.getHumidity() != null){
-                    hum.add(new Entry(epoch, p.getHumidity()));
-                }
-
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if(week >= trimesterWeek && week < trimesterWeek + 12){
+                weeks.add(new Entry((float) week, (float) value));
             }
         }
 
-        LineDataSet tempLine = new LineDataSet(temp, "Temperature");
+        LineDataSet line = new LineDataSet(weeks, "OI");
 
-        tempLine.setLineWidth(2f);
-        tempLine.setCircleRadius(3f);
-        tempLine.setColor(colors[2]);
-        tempLine.setCircleColor(colors[2]);
-        tempLine.setDrawValues(false);
+        line.setLineWidth(2f);
+        line.setCircleRadius(3f);
+        line.setColor(colors[2]);
+        line.setCircleColor(colors[2]);
+        line.setDrawValues(false);
 
-        LineData tempData = new LineData(tempLine);
+        LineData data = new LineData(line);
 
-        chart1.resetTracking();
-        chart1.setData(tempData);
-        chart1.invalidate();
-
-        LineDataSet humLine = new LineDataSet(hum, "Humidity");
-
-        humLine.setLineWidth(2f);
-        humLine.setCircleRadius(3f);
-        humLine.setColor(colors[3]);
-        humLine.setCircleColor(colors[3]);
-        humLine.setDrawValues(false);
-
-        LineData humData = new LineData(humLine);
-
-        chart2.resetTracking();
-        chart2.setData(humData);
-        chart2.invalidate();*/
+        lineChart.resetTracking();
+        lineChart.setData(data);
+        lineChart.invalidate();
     }
 
     @Override

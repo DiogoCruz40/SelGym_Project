@@ -20,10 +20,10 @@
 
     <Button
         android:id="@+id/leaveEvent"
-        android:layout_width="101dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginBottom="16dp"
         android:text="Leave"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -35,7 +35,7 @@
         android:id="@+id/concludeEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
         android:text="Conclude"

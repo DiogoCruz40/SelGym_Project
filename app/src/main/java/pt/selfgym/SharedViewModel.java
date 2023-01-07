@@ -32,6 +32,7 @@ import pt.selfgym.Interfaces.ActivityInterface;
 import pt.selfgym.database.AppDatabase;
 import pt.selfgym.database.entities.Exercise;
 import pt.selfgym.database.entities.Workout;
+import pt.selfgym.dtos.DateDTO;
 import pt.selfgym.dtos.EventDTO;
 import pt.selfgym.dtos.ExerciseDTO;
 import pt.selfgym.dtos.ExerciseWODTO;
@@ -54,7 +55,6 @@ public class SharedViewModel extends AndroidViewModel {
     private final MutableLiveData<List<String>> topics = new MutableLiveData<List<String>>();
     private MQTTHelper mqttHelper;
 
-    //TODO: ver isto melhor
     private final MutableLiveData<List<WorkoutDTO>> workoutsTop5 = new MutableLiveData<>();
     private final MutableLiveData<Dictionary<String, Integer>> stats = new MutableLiveData<>();
 
