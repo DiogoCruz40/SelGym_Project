@@ -586,29 +586,20 @@ public class StatisticsFragment extends Fragment implements OnChartGestureListen
 
     private final int[] colors = new int[] {
 
-            /*
-            ColorTemplate.LIBERTY_COLORS[0],
-            ColorTemplate.LIBERTY_COLORS[1],
-            ColorTemplate.LIBERTY_COLORS[2],
-            ColorTemplate.LIBERTY_COLORS[3],
-            ColorTemplate.LIBERTY_COLORS[4]*/
-            /*
-            ColorTemplate.JOYFUL_COLORS[0],
+            //ColorTemplate.JOYFUL_COLORS[0],
             ColorTemplate.JOYFUL_COLORS[1],
-            ColorTemplate.JOYFUL_COLORS[2],
-            ColorTemplate.JOYFUL_COLORS[3],
-            ColorTemplate.JOYFUL_COLORS[4]*/
+            ColorTemplate.VORDIPLOM_COLORS[2],
+            //ColorTemplate.VORDIPLOM_COLORS[4],
+            ColorTemplate.JOYFUL_COLORS[0],
+            ColorTemplate.VORDIPLOM_COLORS[3],
+            ColorTemplate.JOYFUL_COLORS[4]
 
+            /*
             ColorTemplate.VORDIPLOM_COLORS[0],
             ColorTemplate.VORDIPLOM_COLORS[1],
-            ColorTemplate.VORDIPLOM_COLORS[2], //este
+            ColorTemplate.VORDIPLOM_COLORS[2],
             ColorTemplate.VORDIPLOM_COLORS[3],
-            ColorTemplate.VORDIPLOM_COLORS[4]
-            //d37200 e07d00 ed8700 fa920f ff9d21 ffa82e ffb33b
-            //Color.rgb(207, 248, 246)
-            //more colors
-            //ColorTemplate.JOYFUL_COLORS
-            //ColorTemplate.LIBERTY_COLORS
+            ColorTemplate.VORDIPLOM_COLORS[4]*/
     };
 
     @Override
